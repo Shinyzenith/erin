@@ -1,1 +1,1 @@
-# erin
+# Erin bot
