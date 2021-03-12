@@ -83,7 +83,7 @@ class Utility(commands.Cog):
             if activity_message.lower().startswith("in "):
                 activity_message = activity_message[3:].strip()
         elif activity_type == ActivityType.streaming:
-            url = "https://www.twitch.tv/pokimane"
+            url = "https://www.twitch.tv/pokimane" # cuz i'm a simp
             pass
 
         if activity_type is not None:
