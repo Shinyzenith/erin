@@ -7,7 +7,8 @@ import os
 
 from dotenv import load_dotenv
 from pathlib import Path
-
+#TODO make all owner commands owner only in utility.py file
+#TODO implement logger 
 
 load_dotenv()
 load_dotenv(verbose=True)
