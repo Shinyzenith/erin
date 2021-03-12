@@ -18,14 +18,14 @@ load_dotenv(dotenv_path=env_path)
 client = commands.Bot(command_prefix="-")
 global cache
 cache = json.load(
-    open("eco.json")
+    open("./json/eco.json")
 )
 
 
 def load_cache():
     global cache
     cache = json.load(
-        open("eco.json")
+        open("./json/eco.json")
     )
 
 
@@ -33,40 +33,40 @@ def save_cache():
     global cache
     json.dump(
         cache,
-        open("eco.json", "w"),
+        open("./json/eco.json", "w"),
         indent=4
     )
 
 
 def load_codes():
     codes = json.load(
-        open("promo.json", "r")
+        open("./json/promo.json", "r")
     )
     return codes
 
 
 def load_shop():
     shop = json.load(
-        open("shop.json", "r")
+        open("./json/shop.json", "r")
     )
     return shop
 
 
 def update_code(code, update):
     codes = json.load(
-        open("promo.json", "r")
+        open("./json/promo.json", "r")
     )
     codes[code] = update
     json.dump(
         codes,
-        open("promo.json", "w"),
+        open("./json/promo.json", "w"),
         indent=4
     )
 
 
 def fetch_claims(c):
     claims = json.load(
-        open("claims.json", "r")
+        open("./json/claims.json", "r")
     )
     if not c in claims:
         claims[c] = {"claimed": {}}
@@ -75,14 +75,14 @@ def fetch_claims(c):
 
 def save_claims(c, claim):
     claims = json.load(
-        open("claims.json", "r")
+        open("./json/claims.json", "r")
     )
     if not c in claims:
         claims[c] = {"claimed": {}}
     claims[c]["claimed"] = claim
     json.dump(
         claims,
-        open("claims.json", "w"),
+        open("./json/claims.json", "w"),
         indent=4
     )
 
