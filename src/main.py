@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 
+from discord.enums import ActivityType, Status
+
+
 load_dotenv()
 load_dotenv(verbose=True)
 env_path = Path('./../') / '.env'
@@ -275,4 +278,6 @@ async def gamble_error(ctx, error):
         em = discord.Embed(title=f"Slow it down bro!",color=discord.Colour.red())
         em.description=f"Try again in {error.retry_after:.2f}s."
         await ctx.send(embed=em)
+
+client.load_extension('cogs.Utility')
 client.run(os.getenv("TOKEN"))
