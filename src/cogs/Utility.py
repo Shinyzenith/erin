@@ -18,7 +18,7 @@ class Utility(commands.Cog):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
     @commands.command(aliases=["presence"])
-    async def activity(self, ctx, activity_type: str.lower, *, message: str = ""):
+    async def activity(self, ctx, activity_type: str.lower,status_type:str.lower,*, message: str):
         """
         Set an activity status for the bot.
         Possible activity types:
@@ -42,16 +42,18 @@ class Utility(commands.Cog):
             embed = discord.Embed(title="Activity Removed", color=ctx.message.author.color)
             return await ctx.send(embed=embed)
 
-        if not message:
-            raise commands.MissingRequiredArgument(SimpleNamespace(name="message"))
-
         try:
             activity_type = ActivityType[activity_type]
         except KeyError:
-            raise commands.MissingRequiredArgument(SimpleNamespace(name="activity"))
+            return await ctx.send(f"{ctx.message.author.mention}, mention a proper activity object.")
+
+        try:
+            status_type = Status[status_type]
+        except KeyError:
+            return await ctx.send(f"{ctx.message.author.mention}, mention a proper status object.")
 
         activity, _ = await self.set_presence(
-            activity_type=activity_type, activity_message=message
+            activity_type=activity_type, activity_message=message, status=status_type
         )
         msg = f"Activity set to: {activity.type.name.capitalize()} "
         if activity.type == ActivityType.listening:
@@ -65,16 +67,24 @@ class Utility(commands.Cog):
         return await ctx.send(embed=embed)
 
     async def set_presence(self, *, status=None, activity_type=None, activity_message=None):
-        if status is None:
-            pass
+
+        if status=="idle":
+            status=discord.Status.idle
+        elif status=="online":
+            status=discord.Status.online
+        elif status=="offline":
+            status=discord.Status.invisible
+        elif status=="dnd":
+            status=discord.Status.do_not_disturb
+            
         if activity_type is None:
-            pass
+            activity_type = discord.Game
         url = None
         if activity_type is not None and not activity_message:
-            logger.warning(
-                'No activity message found whilst activity is provided, defaults to "Modmail".'
-            )
-            activity_message = "Modmail"
+            # logger.warning(
+            #     'No activity message found whilst activity is provided, defaults to "Erin-bot".'
+            # )
+            activity_message = "Erin-bot"
 
         if activity_type == ActivityType.listening:
             if activity_message.lower().startswith("to "):
@@ -92,6 +102,11 @@ class Utility(commands.Cog):
             activity = None
         await self.bot.change_presence(activity=activity, status=status)
         return activity, status
+    @commands.command()
+    async def status(self,ctx,statusType:str=None):
+        if statusType!="idle" and statusType!="online" and statusType!="offline" and statusType!="dnd":
+            return await ctx.send(f"{ctx.message.author.mention}, Invalid set presence parameter.")
+        return await self.set_presence(status=statusType)
 
 def setup(bot):
     bot.add_cog(Utility(bot))
