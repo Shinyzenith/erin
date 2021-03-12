@@ -16,6 +16,10 @@
             "newCode": {
                 "uses": 5,
                 "last_used": 1615509635
+            },
+            "testCode": {
+                "uses": 1,
+                "last_used": 1615544696
             }
         }
     }
