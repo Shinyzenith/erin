@@ -9,16 +9,13 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 
-from discord.enums import ActivityType, Status
-
-
 load_dotenv()
 load_dotenv(verbose=True)
 env_path = Path('./../') / '.env'
 load_dotenv(dotenv_path=env_path)
 
-
 client = commands.Bot(command_prefix="-")
+
 global cache
 cache = json.load(
     open("./json/eco.json")
@@ -272,12 +269,12 @@ async def gamble(ctx, quantity: int = 10):
             return await ctx.send(f"lol sadphroge, you landed tails :pensive: and made a loss of `{int(quantity*(abs(1-rr)))} strings`")
     else:
         return await ctx.send("You don't have `{quantity} string` to gamble")
-@gamble.error
-async def gamble_error(ctx, error):
-    if isinstance(error, commands.CommandOnCooldown):
-        em = discord.Embed(title=f"Slow it down bro!",color=discord.Colour.red())
-        em.description=f"Try again in {error.retry_after:.2f}s."
-        await ctx.send(embed=em)
 
-client.load_extension('cogs.Utility')
+# @client.event
+# async def on_ready():
+cwd = Path(__file__).parents[0]
+cwd = str(cwd)
+for file in os.listdir(cwd + "/cogs"):
+        if file.endswith(".py") and not file.startswith("_"):
+                client.load_extension(f"cogs.{file[:-3]}")
 client.run(os.getenv("TOKEN"))
