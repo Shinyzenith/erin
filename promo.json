@@ -1,0 +1,12 @@
+{
+    "fresh_start": {
+        "active": true,
+        "award": {
+            "item": "string",
+            "quantity": 15000
+        },
+        "uses": 7,
+        "cooldown": 30,
+        "per_person": 5
+    }
+}

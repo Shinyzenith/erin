@@ -1,0 +1,108 @@
+{
+    "bass":{
+        "name":"Bass :guitar:",
+        "price":{
+            "item":"string",
+            "quantity":4
+        }
+    },
+    "ubass":{
+        "name":"Ultimate Bass :guitar: :fire:",
+        "price":{
+            "item":"bass",
+            "quantity":10
+        }
+    },
+    "gbass":{
+        "name":"Golden Bass :guitar: :trophy:",
+        "price":{
+            "item":"ubass",
+            "quantity":120
+        }
+    },
+    "dbass":{
+        "name":"Diamond Bass :guitar: :diamond_shape_with_a_dot_inside:",
+        "price":{
+            "item":"ubass",
+            "quantity":1200
+        }
+    },
+    "juanbass":{
+        "name":"Juan's Secret Bass :guitar: :horse:",
+        "price":{
+            "item":"gbass",
+            "quantity":69
+        }
+    },
+    "mbass":{
+        "name":"Man :guitar: :horse:",
+        "price":{
+            "item":"juanbass",
+            "quantity":30
+        }
+    },
+
+    "nicebass":{
+        "name":"A Very Nice Bass :guitar: :wink:",
+        "price":{
+            "item":"dbass",
+            "quantity":30
+        }
+    },
+    "gsbl":{
+        "name":"Get Stick Bugged lol :bug:",
+        "price":{
+            "item":"ubass",
+            "quantity":15000
+        }
+    },
+    "thedoo":{
+        "name":"The Doo's Guitar :star::guitar::star:",
+        "price":{
+            "item":"dbass",
+            "quantity":70
+        }
+    },
+    "unknown":{
+        "name":"Forbidden Bass :x::guitar:",
+        "price":{
+            "item":"dbass",
+            "quantity":150
+        }
+    },
+    "pwb":{
+        "name":"Putin with Bass <:pwb:813832635340030033> ",
+        "price":{
+            "item":"ubass",
+            "quantity":20
+        }
+    },
+    "rab":{
+        "name":"Rick Astley with Bass <:rick:813833089062404137> ",
+        "price":{
+            "item":"bass",
+            "quantity":40
+        }
+    },
+    "hbass":{
+        "name":"Holy Bass :flushed:",
+        "price":{
+            "item":"ubass",
+            "quantity":8750
+        }
+    },
+    "ebass":{
+        "name":"Eternal Bass :flushed:",
+        "price":{
+            "item":"hbass",
+            "quantity":15
+        }
+    },
+    "pewdsbass":{
+        "name":"PewdiePie's Bass :flushed:",
+        "price":{
+            "item":"hbass",
+            "quantity":3
+        }
+    }           
+}
