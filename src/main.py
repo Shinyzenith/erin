@@ -32,4 +32,8 @@ cwd = str(cwd)
 for file in os.listdir(cwd + "/cogs"):
 	if file.endswith(".py") and not file.startswith("_"):
 		client.load_extension(f"cogs.{file[:-3]}")
+
+
+#demo change
+	
 client.run(os.getenv("TOKEN"))
