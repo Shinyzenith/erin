@@ -32,7 +32,4 @@ cwd = str(cwd)
 for file in os.listdir(cwd + "/cogs"):
 	if file.endswith(".py") and not file.startswith("_"):
 		client.load_extension(f"cogs.{file[:-3]}")
-#TODO add command permission restrictors
-#TODO implement logger 
-
 client.run(os.getenv("TOKEN"))
