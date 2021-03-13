@@ -79,25 +79,7 @@ class Utility(commands.Cog):
         return await ctx.message.reply(embed=embed)
 
     @commands.command(aliases=["presence"])
-    async def activity(self, ctx, activity_type: str.lower,status_type:str.lower,*, message: str):
-        """
-        Set an activity status for the bot.
-        Possible activity types:
-            - `playing`
-            - `streaming`
-            - `listening`
-            - `watching`
-            - `competing`
-        When activity type is set to `listening`,
-        it must be followed by a "to": "listening to..."
-        When activity type is set to `competing`,
-        it must be followed by a "in": "competing in..."
-        When activity type is set to `streaming`, you can set
-        the linked twitch page:
-        - `{prefix}config set twitch_url https://www.twitch.tv/somechannel/`
-        To remove the current activity status:
-        - `{prefix}activity clear`
-        """
+    async def activity(self, ctx, activity_type: str.lower,status_type:str.lower,*, message: str):W
         if activity_type == "clear":
             await self.set_presence()
             embed = discord.Embed(title="Activity Removed", color=ctx.message.author.color)
@@ -141,12 +123,6 @@ class Utility(commands.Cog):
         if activity_type is None:
             activity_type = discord.Game
         url = None
-        if activity_type is not None and not activity_message:
-            # logger.warning(
-            #     'No activity message found whilst activity is provided, defaults to "Erin-bot".'
-            # )
-            activity_message = "Erin-bot"
-
         if activity_type == ActivityType.listening:
             if activity_message.lower().startswith("to "):
                 activity_message = activity_message[3:].strip()
@@ -163,11 +139,5 @@ class Utility(commands.Cog):
             activity = None
         await self.bot.change_presence(activity=activity, status=status)
         return activity, status
-    @commands.command()
-    async def status(self,ctx,statusType:str=None):
-        if statusType!="idle" and statusType!="online" and statusType!="offline" and statusType!="dnd":
-            return await ctx.send(f"{ctx.message.author.mention}, Invalid set presence parameter.")
-        return await self.set_presence(status=statusType)
-
 def setup(bot):
     bot.add_cog(Utility(bot))
