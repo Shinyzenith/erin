@@ -36,6 +36,24 @@ class Utility(commands.Cog):
 		await cursor.close()
 		await db.commit()
 		await db.close()
+	@commands.Cog.listener()
+	async def on_message(self,message):
+		try:
+			if message.mentions[0] == self.bot.user:
+				prefix_list=[]
+				db = await aiosqlite.connect('./db/prefix.db')
+				cursor= await db.execute('SELECT prefix FROM prefix WHERE guild_id=?',(message.guild.id,))
+				prefixes = await cursor.fetchall()
+				await cursor.close()
+				await db.commit()
+				for item in prefixes:
+					for p in item:
+						prefix_list.append(str(p))
+				reply_message="".join([f"\n`{prefix}`" for prefix in prefix_list])
+				await message.reply(f"My prefixes in this server are:{reply_message}")
+		except:
+			pass
+		# await self.bot.process_commands(message) 
 
 	@commands.command(name="addprefix")
 	@commands.has_permissions(administrator=True)
@@ -52,9 +70,6 @@ class Utility(commands.Cog):
 		for item in prefixes:
 			for p in item:
 				prefix_list.append(str(p))
-		for character in prefix:
-			if ord(character)>127:
-				return await ctx.message.reply("Unicode characters are not allowed as custom guild prefix.")
 		if not prefix:
 			embed.title="Current prefix list"
 			prefixNames="".join([f"`{prefix}`\n" for prefix in prefix_list])
@@ -62,6 +77,9 @@ class Utility(commands.Cog):
 			embed.set_thumbnail(url=ctx.message.author.avatar_url)
 			await db.close()
 			return await ctx.message.reply("Please mention a valid prefix to be set.", embed=embed)
+		for character in prefix:
+			if ord(character)>127:
+				return await ctx.message.reply("Unicode characters are not allowed as custom guild prefix.")
 		if len(prefix_list)>=3:
 			await db.close()
 			return await ctx.message.reply(f"Unable to add `{prefix}` as a custom prefix. Guild has reached the max amount (3) of custom prefixes.\nRun `{ctx.prefix}removeprefix` to free up a slot")
