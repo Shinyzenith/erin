@@ -36,7 +36,48 @@ class Utility(commands.Cog):
         await cursor.close()
         await db.commit()
         await db.close()
-        
+
+    @commands.command(name="addprefix")
+    @commands.has_permissions(administrator=True)
+    async def addprefix(self,ctx,prefix:str=None):
+        #check if mentioned prefix already exists
+        #check if prefix count exceeds 3
+        sql=""
+        prefix_list_print=[]
+        embed=discord.Embed(color=ctx.message.author.color,timestamp=ctx.message.created_at)
+        embed.set_footer(text=ctx.message.author.display_name,icon_url=ctx.message.author.avatar_url)
+        embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
+        db = await aiosqlite.connect('./db/prefix.db')
+        if not prefix:
+            prefix= await db.execute('SELECT prefix FROM prefix WHERE guild_id=?',(ctx.message.guild.id,))
+            prefix_list = await prefix.fetchall()
+            await prefix.close()
+            await db.commit()
+            await db.close()
+            for item in prefix_list:
+                for p in item:
+                    prefix_list_print.append(str(p))
+            embed.title="Current prefix list"
+            prefixNames="".join([f"`{prefix}`\n" for prefix in prefix_list_print])
+            embed.description=prefixNames
+            embed.set_thumbnail(url=ctx.message.author.avatar_url)
+            return await ctx.message.reply("Please mention a valid prefix to be set.", embed=embed)
+        if len(prefix)>2:
+            await db.close()
+            return await ctx.message.reply("Please enter a valid 2 character prefix.")
+        if '"' in prefix or "'" in prefix:
+            await db.close()
+            return await ctx.message.reply("Please avoid using \' or \" during prefix setup ");
+        sql="INSERT INTO prefix(guild_id, prefix) VALUES (?,?)"
+        val = (ctx.message.guild.id,prefix,)
+        cursor = await db.execute(sql,val)
+        await cursor.close()
+        await db.commit()
+        await db.close()
+        embed.title="Prefix added"
+        embed.description=f"`{prefix}` added to guild prefix list"
+        return await ctx.message.reply(embed=embed)
+
     @commands.command(aliases=["presence"])
     async def activity(self, ctx, activity_type: str.lower,status_type:str.lower,*, message: str):
         """
