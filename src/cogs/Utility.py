@@ -70,6 +70,7 @@ class Utility(commands.Cog):
 
 	#prefix manager sub command
 	@commands.group(name="prefix",aliases=['setprefix'],case_insensitive=True)
+	@commands.cooldown(10, 120, commands.BucketType.guild)
 	@commands.has_permissions(manage_guild=True)
 	async def prefix(self,ctx):
 		if ctx.invoked_subcommand is None:
@@ -138,6 +139,7 @@ class Utility(commands.Cog):
 
 	#bot owner only, sets the bot activity
 	@commands.command(aliases=["presence"])
+	@commands.is_owner()
 	async def activity(self, ctx, activity_type: str.lower,status_type:str.lower,*, message: str):
 		if activity_type == "clear":
 			await self.set_presence()
