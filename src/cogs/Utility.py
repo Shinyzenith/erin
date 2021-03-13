@@ -117,7 +117,7 @@ class Utility(commands.Cog):
 			for p in item:
 				prefix_list.append(str(p))
 		if len(prefix_list)<2:
-			return await ctx.message.reply("Guild must have atleast 1 prefix, add another one before removing the existing prefix.")
+			return await ctx.message.reply("Guild must have atleast 1 prefix, add another one before removing any.")
 		if len(prefix)>2:
 			return await ctx.message.reply("Please provide a valid prefix to remove.")
 		if not (prefix in prefix_list):
