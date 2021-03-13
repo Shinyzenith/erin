@@ -1,108 +1,108 @@
 {
-    "bass":{
-        "name":"Bass :guitar:",
+    "kanna":{
+        "name":"Kanna Kamui :guitar:",
         "price":{
-            "item":"string",
+            "item":"erin",
             "quantity":4
         }
     },
-    "ubass":{
-        "name":"Ultimate Bass :guitar: :fire:",
+    "tohru":{
+        "name":"Tohru :guitar: :fire:",
         "price":{
-            "item":"bass",
+            "item":"kanna",
             "quantity":10
         }
     },
-    "gbass":{
-        "name":"Golden Bass :guitar: :trophy:",
+    "koboyashi":{
+        "name":"Koboyashi san~ :guitar: :trophy:",
         "price":{
-            "item":"ubass",
+            "item":"tohru",
             "quantity":120
         }
     },
-    "dbass":{
-        "name":"Diamond Bass :guitar: :diamond_shape_with_a_dot_inside:",
+    "megumin":{
+        "name":"Megumin  :guitar: :diamond_shape_with_a_dot_inside:",
         "price":{
-            "item":"ubass",
+            "item":"erin",
             "quantity":1200
         }
     },
-    "juanbass":{
-        "name":"Juan's Secret Bass :guitar: :horse:",
+    "aqua":{
+        "name":"Aqua Sama :guitar: :horse:",
         "price":{
-            "item":"gbass",
-            "quantity":69
+            "item":"megumin",
+            "quantity":3500
         }
     },
-    "mbass":{
-        "name":"Man :guitar: :horse:",
+    "yunyun":{
+        "name":"Yunyun is a cutie :guitar: :horse:",
         "price":{
-            "item":"juanbass",
+            "item":"megumin",
             "quantity":30
         }
     },
-
-    "nicebass":{
-        "name":"A Very Nice Bass :guitar: :wink:",
+    "darkness":{
+        "name":"Horny Darkness :guitar: :wink:",
         "price":{
-            "item":"dbass",
-            "quantity":30
-        }
-    },
-    "gsbl":{
-        "name":"Get Stick Bugged lol :bug:",
-        "price":{
-            "item":"ubass",
-            "quantity":15000
-        }
-    },
-    "thedoo":{
-        "name":"The Doo's Guitar :star::guitar::star:",
-        "price":{
-            "item":"dbass",
-            "quantity":70
-        }
-    },
-    "unknown":{
-        "name":"Forbidden Bass :x::guitar:",
-        "price":{
-            "item":"dbass",
-            "quantity":150
-        }
-    },
-    "pwb":{
-        "name":"Putin with Bass <:pwb:813832635340030033> ",
-        "price":{
-            "item":"ubass",
-            "quantity":20
-        }
-    },
-    "rab":{
-        "name":"Rick Astley with Bass <:rick:813833089062404137> ",
-        "price":{
-            "item":"bass",
-            "quantity":40
-        }
-    },
-    "hbass":{
-        "name":"Holy Bass :flushed:",
-        "price":{
-            "item":"ubass",
-            "quantity":8750
-        }
-    },
-    "ebass":{
-        "name":"Eternal Bass :flushed:",
-        "price":{
-            "item":"hbass",
+            "item":"aqua",
             "quantity":15
         }
     },
-    "pewdsbass":{
-        "name":"PewdiePie's Bass :flushed:",
+    "chomosuke":{
+        "name":"Chomo doggo :bug:",
         "price":{
-            "item":"hbass",
-            "quantity":3
+            "item":"megumin",
+            "quantity":15000
+        }
+    },
+    "kazuma":{
+        "name":"Kazuma is the best waifu :star::guitar::star:",
+        "price":{
+            "item":"darkness",
+            "quantity":70
+        }
+    },
+    "korone":{
+        "name":"Korone Doggo :x::guitar:",
+        "price":{
+            "item":"erin",
+            "quantity":150
+        }
+    },
+    "okayu":{
+        "name":"Okayu >-< <:pwb:813832635340030033> ",
+        "price":{
+            "item":"korone",
+            "quantity":20
+        }
+    },
+    "gura":{
+        "name":"Hydrophobic Gura <:rick:813833089062404137> ",
+        "price":{
+            "item":"korone",
+            "quantity":450
+        }
+    },
+    "amelia":{
+        "name":"Amelia Watson :flushed:",
+        "price":{
+            "item":"gura",
+            "quantity":10
+        }
+    },
+    "fubuki":{
+        "name":"Fubuki :flushed:",
+        "price":{
+            "item":"gura",
+            "quantity":1200
+        }
+    },
+    "kizuna":{
+        "name":"Kizuna Ai :flushed:",
+        "price":{
+            "item":"fubuki",
+            "quantity":50
         }
     }           
 }
+

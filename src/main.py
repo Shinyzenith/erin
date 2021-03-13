@@ -27,6 +27,15 @@ def get_prefix(client,message):
 	print(prefix_list)
 	return prefix_list
 client=commands.Bot(command_prefix=get_prefix,case_insensitive=True,intents=intents,guild_subscriptions=True)
+@client.command()
+async def reload(ctx):
+        cwd = Path(__file__).parents[0]
+        cwd = str(cwd)
+        for file in os.listdir(cwd + "/cogs"):
+                if file.endswith(".py") and not file.startswith("_"):
+                        try: client.unload_extension(f"cogs.{file[:-3]}")
+                        except: pass       
+                        client.load_extension(f"cogs.{file[:-3]}")     
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
 for file in os.listdir(cwd + "/cogs"):

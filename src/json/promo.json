@@ -2,7 +2,7 @@
     "fresh_start": {
         "active": true,
         "award": {
-            "item": "string",
+            "item": "erin",
             "quantity": 15000
         },
         "uses": 7,
@@ -12,7 +12,7 @@
     "testCode": {
         "active": true,
         "award": {
-            "item": "string",
+            "item": "erin",
             "quantity": 15000
         },
         "uses": 8,
@@ -20,3 +20,4 @@
         "per_person": 5
     }
 }
+
