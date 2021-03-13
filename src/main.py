@@ -24,7 +24,6 @@ def get_prefix(client,message):
 	for item in prefix:
 		for p in item:
 			prefix_list.append(str(p))
-	print(prefix_list)
 	return prefix_list
 client=commands.Bot(command_prefix=get_prefix,case_insensitive=True,intents=intents,guild_subscriptions=True)
 						   
