@@ -52,7 +52,9 @@ class Utility(commands.Cog):
 		for item in prefixes:
 			for p in item:
 				prefix_list.append(str(p))
-		
+		for character in prefix:
+			if ord(character)>127:
+				return await ctx.message.reply("Unicode characters are not allowed as custom guild prefix.")
 		if not prefix:
 			embed.title="Current prefix list"
 			prefixNames="".join([f"`{prefix}`\n" for prefix in prefix_list])
