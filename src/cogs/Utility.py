@@ -1,6 +1,7 @@
 import discord
 import asyncio
 import os
+import aiosqlite
 
 from discord.ext import commands,tasks
 from discord.enums import ActivityType, Status
@@ -16,7 +17,26 @@ class Utility(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
-
+    # on guild add , add a default prefix
+    @commands.Cog.listener()
+    async def on_guild_join(self,guild):
+        db = await aiosqlite.connect('./db/prefix.db')
+        sql = "INSERT INTO prefix(guild_id, prefix) VALUES (?,?);"
+        val = (guild.id, '-',)
+        cursor = await db.execute(sql,val)
+        await cursor.close()
+        await db.commit()
+        await db.close()
+    #on guild remove, remove all the prefixes from the database
+    @commands.Cog.listener()
+    async def on_guild_remove(self,guild):
+        db = await aiosqlite.connect("./db/prefix.db")
+        sql = f"DELETE FROM prefix WHERE guild_id={guild.id}"
+        cursor = await db.execute(sql)
+        await cursor.close()
+        await db.commit()
+        await db.close()
+        
     @commands.command(aliases=["presence"])
     async def activity(self, ctx, activity_type: str.lower,status_type:str.lower,*, message: str):
         """
