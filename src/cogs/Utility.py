@@ -36,6 +36,7 @@ class Utility(commands.Cog):
 		await cursor.close()
 		await db.commit()
 		await db.close()
+	#print guild prefixes on pinging the bot
 	@commands.Cog.listener()
 	async def on_message(self,message):
 		try:
@@ -53,14 +54,10 @@ class Utility(commands.Cog):
 				await message.reply(f"My prefixes in this server are:{reply_message}")
 		except:
 			pass
-
-	@commands.command(name="addprefix",aliases=['setprefix'])
-	@commands.has_permissions(administrator=True)
-	async def addprefix(self,ctx,prefix:str=None):
+	#helper functions for all prefix commands
+	async def get_prefix_list(self,ctx):
+		guild_id=ctx.message.guild.id
 		prefix_list=[]
-		embed=discord.Embed(color=ctx.message.author.color,timestamp=ctx.message.created_at)
-		embed.set_footer(text=ctx.message.author.display_name,icon_url=ctx.message.author.avatar_url)
-		embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 		db = await aiosqlite.connect('./db/prefix.db')
 		cursor= await db.execute('SELECT prefix FROM prefix WHERE guild_id=?',(ctx.message.guild.id,))
 		prefixes = await cursor.fetchall()
@@ -69,59 +66,68 @@ class Utility(commands.Cog):
 		for item in prefixes:
 			for p in item:
 				prefix_list.append(str(p))
+		return prefix_list
+
+	#prefix manager sub command
+	@commands.group(name="prefix",aliases=['setprefix'],case_insensitive=True)
+	@commands.has_permissions(manage_guild=True)
+	async def prefix(self,ctx):
+		if ctx.invoked_subcommand is None:
+			await ctx.message.reply("please mention a proper argument such as `add` or `remove`")
+	@prefix.command()
+	@commands.has_permissions(manage_guild=True)
+	async def add(self,ctx,*,prefix:str=None):
+		prefix_list = await self.get_prefix_list(ctx)
+		embed=discord.Embed(color=ctx.message.author.color,timestamp=ctx.message.created_at)
+		embed.set_footer(text=ctx.message.author.display_name,icon_url=ctx.message.author.avatar_url)
+		embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
+
 		if not prefix:
 			embed.title="Current prefix list"
 			prefixNames="".join([f"`{prefix}`\n" for prefix in prefix_list])
 			embed.description=prefixNames
 			embed.set_thumbnail(url=ctx.message.author.avatar_url)
-			await db.close()
 			return await ctx.message.reply("Please mention a valid prefix to be set.", embed=embed)
 		for character in prefix:
 			if ord(character)>127:
 				return await ctx.message.reply("Unicode characters are not allowed as custom guild prefix.")
 		if len(prefix_list)>=3:
-			await db.close()
 			return await ctx.message.reply(f"Unable to add `{prefix}` as a custom prefix. Guild has reached the max amount (3) of custom prefixes.\nRun `{ctx.prefix}removeprefix` to free up a slot")
 		if prefix in prefix_list:
-			await db.close()
 			return await ctx.message.reply(f"Prefix `{prefix}` already exists.")
 		if len(prefix)>2:
-			await db.close()
 			return await ctx.message.reply("Please enter a valid 2 character prefix.")
 		if '"' in prefix or "'" in prefix:
-			await db.close()
 			return await ctx.message.reply("Please avoid using \' or \" during prefix setup ");
+
+		db = await aiosqlite.connect("./db/prefix.db")
 		sql="INSERT INTO prefix(guild_id, prefix) VALUES (?,?)"
 		val = (ctx.message.guild.id,prefix,)
 		cursor = await db.execute(sql,val)
 		await cursor.close()
 		await db.commit()
 		await db.close()
+
 		embed.title="Prefix added"
 		embed.description=f"`{prefix}` added to guild prefix list"
-		return await ctx.message.reply(embed=embed)
 
-	@commands.command(name="removeprefix")
-	@commands.has_permissions(administrator=True)
-	async def removeprefix(self,ctx,prefix:str):
-		prefix_list=[]
+		return await ctx.message.reply(embed=embed)
+	@prefix.command()
+	@commands.has_permissions(manage_guild=True)
+	async def remove(self,ctx,*,prefix:str=None):
+		prefix_list=await self.get_prefix_list(ctx)
 		embed=discord.Embed(color=ctx.message.author.color,timestamp=ctx.message.created_at)
 		embed.set_footer(text=ctx.message.author.display_name,icon_url=ctx.message.author.avatar_url)
 		embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
-		db = await aiosqlite.connect('./db/prefix.db')
-		cursor= await db.execute('SELECT prefix FROM prefix WHERE guild_id=?',(ctx.message.guild.id,))
-		prefixes = await cursor.fetchall()
-		await cursor.close()
-		await db.commit()
-		for item in prefixes:
-			for p in item:
-				prefix_list.append(str(p))
+
 		if len(prefix_list)<2:
 			return await ctx.message.reply("Guild must have atleast 1 prefix, add another one before removing any.")
 		if len(prefix)>2:
 			return await ctx.message.reply("Please provide a valid prefix to remove.")
 		if not (prefix in prefix_list):
 			return await ctx.message.reply(f"`{prefix}` is not a custom prefix in `{ctx.message.guild.name}`")
+		
+		db=await aiosqlite.connect("./db/prefix.db")
 		cursor = await db.execute("DELETE FROM prefix WHERE guild_id=? AND prefix=?",(ctx.message.guild.id,prefix))
 		await cursor.close()
 		await db.commit()
@@ -130,6 +136,7 @@ class Utility(commands.Cog):
 		embed.description=f"`{prefix}` removed from guild prefix list"
 		return await ctx.message.reply(embed=embed)
 
+	#bot owner only, sets the bot activity
 	@commands.command(aliases=["presence"])
 	async def activity(self, ctx, activity_type: str.lower,status_type:str.lower,*, message: str):
 		if activity_type == "clear":
@@ -160,9 +167,8 @@ class Utility(commands.Cog):
 
 		embed = discord.Embed(title="Activity Changed", description=msg, color=ctx.message.author.color)
 		return await ctx.send(embed=embed)
-
+	#helper function for activity command
 	async def set_presence(self, *, status=None, activity_type=None, activity_message=None):
-
 		if status=="idle":
 			status=discord.Status.idle
 		elif status=="online":
