@@ -79,7 +79,7 @@ class Utility(commands.Cog):
 		return await ctx.message.reply(embed=embed)
 
 	@commands.command(aliases=["presence"])
-	async def activity(self, ctx, activity_type: str.lower,status_type:str.lower,*, message: str):W
+	async def activity(self, ctx, activity_type: str.lower,status_type:str.lower,*, message: str):
 		if activity_type == "clear":
 			await self.set_presence()
 			embed = discord.Embed(title="Activity Removed", color=ctx.message.author.color)
