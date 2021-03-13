@@ -24,4 +24,4 @@
 </p>
 
 
-# Erin bot
+# Loli for life bot
