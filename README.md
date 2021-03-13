@@ -6,7 +6,7 @@
   <br>
 </h1>
 
-<h4 align="center">Music, Moderation, Trivia.</h4>
+<h4 align="center">Music, Moderation, Trivia, economy.</h4>
 
 <p align="center">
   <a href="https://discord.gg/davie504">
