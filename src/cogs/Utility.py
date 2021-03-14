@@ -2,6 +2,7 @@ import discord
 import asyncio
 import os
 import aiosqlite
+import time
 
 from discord.ext import commands,tasks
 from discord.enums import ActivityType, Status
@@ -212,5 +213,15 @@ class Utility(commands.Cog):
 			activity = None
 		await self.bot.change_presence(activity=activity, status=status)
 		return activity, status
+
+	@commands.cooldown(1, 3, commands.BucketType.user)
+	@commands.command()
+	async def ping(self, ctx):
+		time_now = time.time()
+		msg = await ctx.message.reply(embed=discord.Embed(title="Pinging...", color = 0x00FFFF))
+		embed = discord.Embed(title="Pong! :ping_pong:", description=f"API Latency: **{round(self.bot.latency * 1000)}ms**\nBot Latency: **{round((time.time() - time_now) * 1000)}ms**", color=0x00FFFF)
+		embed.set_footer(text=f"{ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
+		embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
+		await msg.edit(embed=embed)
 def setup(bot):
 	bot.add_cog(Utility(bot))
