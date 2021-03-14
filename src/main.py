@@ -1,11 +1,7 @@
 from discord.ext import commands
-from datetime import datetime
 import discord
-import json
-import random
 import os
 import sqlite3
-
 from dotenv import load_dotenv
 from pathlib import Path
 
