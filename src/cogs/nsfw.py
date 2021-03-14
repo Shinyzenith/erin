@@ -60,8 +60,8 @@ class NSFW(commands.Cog):
             await ctx.message.reply("This command can only be used in a NSFW channel.")
 
     @commands.cooldown(1, 5, commands.BucketType.user)
-    @commands.command(name="nekogif",aliases=['neko'])
-    async def nekogif(self, ctx):
+    @commands.command(name="nekofuck",aliases=['nekosex','nekogif'])
+    async def nekofuck(self, ctx):
         if ctx.channel.is_nsfw():
             response = requests.get("https://nekos.life/api/v2/img/nsfw_neko_gif")
             realResponse = response.json()
