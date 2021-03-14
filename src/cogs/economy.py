@@ -7,6 +7,7 @@ import os
 import numpy as np
 import time
 import asyncio
+import aiosqlite
 global cache
 cache = json.load(
     open("./json/eco.json")
