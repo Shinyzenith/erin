@@ -53,7 +53,7 @@ class NSFW(commands.Cog):
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
 	@commands.cooldown(1, 5, commands.BucketType.user)
-	@commands.command()
+	@commands.command(name='thighs',aliases=['thigh',['animethigh']])
 	async def thighs(self, ctx):
 		if ctx.channel.is_nsfw():
 			response = requests.get("https://shiro.gg/api/images/nsfw/thighs")
