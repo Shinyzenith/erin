@@ -3,6 +3,10 @@ import asyncio
 import os
 import aiosqlite
 import time
+import psutil
+import humanize
+import traceback
+import datetime
 
 from discord.ext import commands,tasks
 from discord.enums import ActivityType, Status
@@ -10,6 +14,17 @@ from typing import Union
 from aiohttp import ClientResponseError
 from discord.ext import commands, tasks
 from discord.ext.commands.view import StringView
+
+class plural:
+	def __init__(self, value):
+		self.value = value
+
+	def __format__(self, format_spec):
+		if self.value == 1:
+			return f"{self.value} {format_spec}"
+		else:
+			return f"{self.value} {format_spec}s"
+
 
 class Utility(commands.Cog):
 	def __init__(self,bot):
@@ -223,5 +238,36 @@ class Utility(commands.Cog):
 		embed.set_footer(text=f"{ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
 		embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 		await msg.edit(embed=embed)
+
+	@commands.command(name="reload", description="Reload an extension")
+	@commands.is_owner()
+	async def reload(self, ctx, extension):
+		try:
+			self.bot.reload_extension(extension)
+			await ctx.send(f"**:repeat: Reloaded** `{extension}`")
+		except Exception as e:
+			full = "".join(traceback.format_exception(type(e), e, e.__traceback__, 1))
+			await ctx.send(f"**:warning: Extension `{extension}` not reloaded.**\n```py\n{full}```")
+
+	@commands.command(name="stats", description="View system stats")
+	async def stats(self, ctx):
+		em = discord.Embed(title="Server Stats", color=discord.Color.blurple())
+		em.add_field(name="CPU", value=f"{psutil.cpu_percent()}% used with {plural(psutil.cpu_count()):CPU}",inline=False)
+		mem = psutil.virtual_memory()
+		em.add_field(name="Memory", value=f"{humanize.naturalsize(mem.used)}/{humanize.naturalsize(mem.total)} ({mem.percent}% used)",inline=False)
+		disk = psutil.disk_usage("/")
+		em.add_field(name="Disk", value=f"{humanize.naturalsize(disk.used)}/{humanize.naturalsize(disk.total)} ({disk.percent}% used)",inline=False)
+		await ctx.send(embed=em)
+
+	@commands.command(name="uptime", description="Check my uptime")
+	async def uptime(self, ctx):
+		delta = datetime.datetime.utcnow()-self.bot.startup_time
+		await ctx.send(f"I started up {humanize.naturaldelta(delta)} ago")
+
+	@commands.command(name="invite", description="Get a invite link to add me to your server")
+	async def invite(self, ctx):
+		perms = discord.Permissions.all()
+		await ctx.send(f"<{discord.utils.oauth_url(self.bot.user.id, permissions=perms)}>")
+
 def setup(bot):
 	bot.add_cog(Utility(bot))

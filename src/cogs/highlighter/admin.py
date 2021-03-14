@@ -101,16 +101,6 @@ class Tabulate:
     def __repr__(self):
         return self.draw()
 
-class plural:
-    def __init__(self, value):
-        self.value = value
-
-    def __format__(self, format_spec):
-        if self.value == 1:
-            return f"{self.value} {format_spec}"
-        else:
-            return f"{self.value} {format_spec}s"
-
 class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -122,29 +112,6 @@ class Admin(commands.Cog):
 
     def cog_unload(self):
         self.update_loop.cancel()
-
-    @commands.command(name="reload", description="Reload an extension")
-    @commands.is_owner()
-    async def reload(self, ctx, extension):
-        try:
-            self.bot.reload_extension(extension)
-            await ctx.send(f"**:repeat: Reloaded** `{extension}`")
-        except Exception as e:
-            full = "".join(traceback.format_exception(type(e), e, e.__traceback__, 1))
-            await ctx.send(f"**:warning: Extension `{extension}` not reloaded.**\n```py\n{full}```")
-
-    @commands.command(name="process", description="View system stats")
-    async def process(self, ctx):
-        em = discord.Embed(title="Process", color=discord.Color.blurple())
-        em.add_field(name="CPU", value=f"{psutil.cpu_percent()}% used with {plural(psutil.cpu_count()):CPU}",inline=False)
-
-        mem = psutil.virtual_memory()
-        em.add_field(name="Memory", value=f"{humanize.naturalsize(mem.used)}/{humanize.naturalsize(mem.total)} ({mem.percent}% used)",inline=False)
-
-        disk = psutil.disk_usage("/")
-        em.add_field(name="Disk", value=f"{humanize.naturalsize(disk.used)}/{humanize.naturalsize(disk.total)} ({disk.percent}% used)",inline=False)
-
-        await ctx.send(embed=em)
 
     @commands.command(name="sql", description="Run some sql")
     @commands.is_owner()

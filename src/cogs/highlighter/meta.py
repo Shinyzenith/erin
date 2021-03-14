@@ -82,15 +82,5 @@ class Meta(commands.Cog):
     def cog_unload(self):
         self.bot.help_command = self._original_help_command
 
-    @commands.command(name="uptime", description="Check my uptime")
-    async def uptime(self, ctx):
-        delta = datetime.datetime.utcnow()-self.bot.startup_time
-        await ctx.send(f"I started up {humanize.naturaldelta(delta)} ago")
-
-    @commands.command(name="invite", description="Get a invite link to add me to your server")
-    async def invite(self, ctx):
-        perms = discord.Permissions.all()
-        await ctx.send(f"<{discord.utils.oauth_url(self.bot.user.id, permissions=perms)}>")
-
 def setup(bot):
     bot.add_cog(Meta(bot))
