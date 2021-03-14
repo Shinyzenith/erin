@@ -60,7 +60,7 @@ class Actions(commands.Cog):
 		pat_users="".join(f'{users.mention} ' for users in user)
 		embed = discord.Embed(
 			title = "*cute pats*",
-			description = f"<a:uwuAYAYA:800611977247719424> {ctx.author.mention} just patted {pat_users}",
+			description = f"<:kanna:820279669131575306> {ctx.author.mention} just patted {pat_users}",
 			color = 0xFFC0CB
 			)
 		embed.set_image(url=requests.get("https://nekos.life/api/pat").json()['url'])
