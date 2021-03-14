@@ -2,7 +2,6 @@ import discord
 import os
 import sqlite3
 import logging
-import config
 import json
 import asyncpg
 import logging
@@ -56,7 +55,7 @@ class ErinBot(commands.Bot):
 
         async def init(conn):
             await conn.set_type_codec("jsonb", schema="pg_catalog", encoder=json.dumps, decoder=json.loads, format="text")
-        self.db = await asyncpg.create_pool(config.database_uri, init=init)
+        self.db = await asyncpg.create_pool(os.getenv("DATABASEURI"), init=init)
 
         log.info("Initiating database")
 
