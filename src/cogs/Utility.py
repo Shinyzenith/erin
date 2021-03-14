@@ -50,6 +50,11 @@ class Utility(commands.Cog):
 				for item in prefixes:
 					for p in item:
 						prefix_list.append(str(p))
+				if len(prefix_list)==0:
+					cursor= await db.execute('INSERT INTO prefix(guild_id, prefix) VALUES(?,?)',(message.guild.id,'-'))
+					await cursor.close()
+					await db.commit()
+					prefix_list.append('-')
 				await db.close()
 				reply_message="".join([f"\n`{prefix}`" for prefix in prefix_list])
 				await message.reply(f"My prefixes in this server are:{reply_message}")
