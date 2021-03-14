@@ -14,6 +14,14 @@ import humanize
 import pkg_resources
 from jishaku.codeblocks import codeblock_converter
 
+async def webhook_send(url, message, username="LoggingCog",avatar="https://assets.stickpng.com/images/580b585b2edbce24c47b245d.png"):
+    async with aiohttp.ClientSession() as session:
+        webhook = discord.Webhook.from_url(url, adapter=discord.AsyncWebhookAdapter(session))
+        if isinstance(message, discord.Embed):
+            await webhook.send(embed=message, username=username,avatar_url=avatar)
+        else:
+            await webhook.send(message, username=username,avatar_url=avatar)
+
 class Confirm(menus.Menu):
     def __init__(self, msg):
         super().__init__(timeout=30.0, delete_message_after=True)
@@ -248,7 +256,7 @@ class Admin(commands.Cog):
             for package in outdated:
                 em.description += f"\n{package[0]} (Current: {package[1]} | Latest: {package[2]})"
 
-            await self.bot.console.send(embed=em)
+            await webhook_send(os.getenv("WARNLOG"),em)
 
     @update_loop.before_loop
     async def before_update_loop(self):

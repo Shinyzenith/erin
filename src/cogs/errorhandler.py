@@ -2,10 +2,10 @@
 import discord
 from discord.ext import commands
 import aiohttp
+import os
 import pickle
 import traceback
 #Standards
-LOGGING_WEBHOOK="https://canary.discord.com/api/webhooks/810848579828580362/9oYe-IZi_OcJAgywCYU9Khpw9EtH0M8sOlyi5P2X_lI0QM8wzclcVAcvImhCT_8LWryh"
 
 async def webhook_send(url, message, username="LoggingCog",avatar="https://assets.stickpng.com/images/580b585b2edbce24c47b245d.png"):
     async with aiohttp.ClientSession() as session:
@@ -33,7 +33,7 @@ async def export_exception(ctx, error):
             on guild `{ctx.guild.id}` with name `{ctx.guild.name}`
             on channel `{ctx.channel.id}` with name `{ctx.channel.name}`
         """
-        await webhook_send(LOGGING_WEBHOOK, embed)
+        await webhook_send(os.getenv("WARNLOG"), embed)
         embed=discord.Embed()
         embed.title="An error occured"
         embed.description="The error has been reported to the devs"
