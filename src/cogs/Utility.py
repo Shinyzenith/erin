@@ -40,29 +40,28 @@ class Utility(commands.Cog):
 	@commands.Cog.listener()
 	async def on_message(self,message):
 		try:
-			if message.mentions[0] == self.bot.user:
-				prefix_list=[]
-				db = await aiosqlite.connect('./db/prefix.db')
-				cursor= await db.execute('SELECT prefix FROM prefix WHERE guild_id=?',(message.guild.id,))
-				prefixes = await cursor.fetchall()
+			prefix_list=[]
+			db = await aiosqlite.connect('./db/prefix.db')
+			cursor= await db.execute('SELECT prefix FROM prefix WHERE guild_id=?',(message.guild.id,))
+			prefixes = await cursor.fetchall()
+			await cursor.close()
+			await db.commit()
+			for item in prefixes:
+				for p in item:
+					prefix_list.append(str(p))
+			if len(prefix_list)==0:
+				cursor= await db.execute('INSERT INTO prefix(guild_id, prefix) VALUES(?,?)',(message.guild.id,'-'))
 				await cursor.close()
 				await db.commit()
-				for item in prefixes:
-					for p in item:
-						prefix_list.append(str(p))
-				if len(prefix_list)==0:
-					cursor= await db.execute('INSERT INTO prefix(guild_id, prefix) VALUES(?,?)',(message.guild.id,'-'))
-					await cursor.close()
-					await db.commit()
-					prefix_list.append('-')
-				await db.close()
+				prefix_list.append('-')
+			await db.close()
+			if message.mentions[0] == self.bot.user:
 				reply_message="".join([f"\n`{prefix}`" for prefix in prefix_list])
 				await message.reply(f"My prefixes in this server are:{reply_message}")
 		except:
 			pass
 	#helper functions for all prefix commands
 	async def get_prefix_list(self,ctx):
-		guild_id=ctx.message.guild.id
 		prefix_list=[]
 		db = await aiosqlite.connect('./db/prefix.db')
 		cursor= await db.execute('SELECT prefix FROM prefix WHERE guild_id=?',(ctx.message.guild.id,))
