@@ -50,6 +50,7 @@ class Utility(commands.Cog):
 				for item in prefixes:
 					for p in item:
 						prefix_list.append(str(p))
+				await db.close()
 				reply_message="".join([f"\n`{prefix}`" for prefix in prefix_list])
 				await message.reply(f"My prefixes in this server are:{reply_message}")
 		except:
@@ -66,6 +67,7 @@ class Utility(commands.Cog):
 		for item in prefixes:
 			for p in item:
 				prefix_list.append(str(p))
+		await db.close()
 		return prefix_list
 
 	#prefix manager sub command
