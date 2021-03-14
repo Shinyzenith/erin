@@ -105,7 +105,7 @@ class Utility(commands.Cog):
 		if len(prefix)>2:
 			return await ctx.message.reply("Please enter a valid 2 character prefix.")
 		if '"' in prefix or "'" in prefix:
-			return await ctx.message.reply("Please avoid using \' or \" during prefix setup ");
+			return await ctx.message.reply("Please avoid using \' or \" during prefix setup ")
 
 		db = await aiosqlite.connect("./db/prefix.db")
 		sql="INSERT INTO prefix(guild_id, prefix) VALUES (?,?)"
