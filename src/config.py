@@ -1,0 +1,1 @@
+database_uri = "postgres://highlight:aakash@localhost/highlight"
