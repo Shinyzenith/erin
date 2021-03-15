@@ -1,8 +1,9 @@
+
 <h1 align="center">
   <br>
   <a href="https://github.com/AakashSharma7269/erin.git"><img src="https://wallpapercave.com/wp/wp3844476.jpg" alt="Red - Discord Bot"></a>
   <br>
-  Erin Discord Bot
+  Erin Discord Bot (Development)
   <br>
 </h1>
 
@@ -20,6 +21,12 @@
   </a>
   <a href="https://github.com/Rapptz/discord.py/">
      <img src="https://img.shields.io/badge/discord-py-blue.svg" alt="discord.py">
+  </a>
+  <a href="https://www.python.org/downloads">
+      <img src="https://img.shields.io/badge/development-(beta)-blue.svg" alt="dev badge">
+  </a>
+  <a href="https://www.python.org/downloads">
+      <img src="https://img.shields.io/badge/Made%20with-Python-1f425f.svg" alt="dev badge">
   </a>
 </p>
 
