@@ -87,7 +87,7 @@ class NSFW(commands.Cog):
 			)
 			embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
-			embed.set_image(url = await api_call("https://shiro.gg/api/images/nsfw/nsfw_neko_gif")
+			embed.set_image(url = await api_call("https://shiro.gg/api/images/nsfw/nsfw_neko_gif"))
 			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
@@ -103,7 +103,7 @@ class NSFW(commands.Cog):
 			)
 			embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
-			embed.set_image(url = await api_call("https://shiro.gg/api/images/nsfw/boobs")
+			embed.set_image(url = await api_call("https://shiro.gg/api/images/nsfw/boobs"))
 
 			await ctx.message.reply(embed = embed)
 		else:
@@ -120,7 +120,7 @@ class NSFW(commands.Cog):
 			)
 			embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
-			embed.set_image(url = await api_call("https://shiro.gg/api/images/nsfw/blowjob")
+			embed.set_image(url = await api_call("https://shiro.gg/api/images/nsfw/blowjob"))
 
 			await ctx.message.reply(embed = embed)
 		else:
@@ -137,7 +137,7 @@ class NSFW(commands.Cog):
 			)
 			embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
-			embed.set_image(url = await api_call("https://shiro.gg/api/images/nsfw/pussy")
+			embed.set_image(url = await api_call("https://shiro.gg/api/images/nsfw/pussy"))
 
 			await ctx.message.reply(embed = embed)
 		else:
@@ -159,7 +159,7 @@ class NSFW(commands.Cog):
 			)
 			embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
-			embed.set_image(url = await api_call("https://shiro.gg/api/images/nsfw/spank")
+			embed.set_image(url = await api_call("https://shiro.gg/api/images/nsfw/spank"))
 			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
