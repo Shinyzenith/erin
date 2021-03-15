@@ -16,9 +16,7 @@ NSFW COG || NSFW COG || NSFW COG || NSFW COG || NSFW COG || NSFW COG || NSFW COG
 async def api_call(call_uri):
 	async with aiohttp.ClientSession() as session:
 		async with session.get(f"{call_uri}") as response:
-			response=await response.read()
-			response=response.decode("utf-8")
-			response=json.loads(response)
+			response= await response.json()
 			return response['url']
 			
 class NSFW(commands.Cog):
@@ -54,7 +52,7 @@ class NSFW(commands.Cog):
 			)
 			embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
-			embed.set_image(url = await api_call("https://shiro.gg/api/images/nsfw/cum"))
+			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/cum"))
 			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
@@ -63,7 +61,6 @@ class NSFW(commands.Cog):
 	@commands.command(name='thighs',aliases=['thigh','animethigh'])
 	async def thighs(self, ctx):
 		if ctx.channel.is_nsfw():
-			realResponse = response.json()
 			embed = discord.Embed(
 				title = "Thic thighs!",
 				color = ctx.message.author.color,
@@ -87,13 +84,13 @@ class NSFW(commands.Cog):
 			)
 			embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
-			embed.set_image(url = await api_call("https://shiro.gg/api/images/nsfw/nsfw_neko_gif"))
+			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/nsfw_neko_gif"))
 			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
 	@commands.cooldown(5, 7, commands.BucketType.user)
-	@commands.command()
+	@commands.command(name='boobs',aliases=['boob'])
 	async def boobs(self, ctx):
 		if ctx.channel.is_nsfw():
 			embed = discord.Embed(
@@ -103,14 +100,14 @@ class NSFW(commands.Cog):
 			)
 			embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
-			embed.set_image(url = await api_call("https://shiro.gg/api/images/nsfw/boobs"))
+			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/boobs"))
 
 			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
 	@commands.cooldown(5, 7, commands.BucketType.user)
-	@commands.command()
+	@commands.command(name='blowjob',aliases=['bj'])
 	async def blowjob(self, ctx):
 		if ctx.channel.is_nsfw():
 			embed = discord.Embed(
@@ -120,7 +117,7 @@ class NSFW(commands.Cog):
 			)
 			embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
-			embed.set_image(url = await api_call("https://shiro.gg/api/images/nsfw/blowjob"))
+			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/blowjob"))
 
 			await ctx.message.reply(embed = embed)
 		else:
@@ -137,7 +134,7 @@ class NSFW(commands.Cog):
 			)
 			embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
-			embed.set_image(url = await api_call("https://shiro.gg/api/images/nsfw/pussy"))
+			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/pussy"))
 
 			await ctx.message.reply(embed = embed)
 		else:
@@ -159,7 +156,7 @@ class NSFW(commands.Cog):
 			)
 			embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
-			embed.set_image(url = await api_call("https://shiro.gg/api/images/nsfw/spank"))
+			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/spank"))
 			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
