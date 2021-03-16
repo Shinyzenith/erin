@@ -2,6 +2,7 @@ import discord
 import asyncio
 import os
 import aiosqlite
+import aiohttp
 import motor.motor_asyncio
 import sys
 from discord.ext import commands, tasks
@@ -11,6 +12,13 @@ from aiohttp import ClientResponseError
 from discord.ext import commands, tasks
 from discord.ext.commands.view import StringView
 
+async def webhook_send(url, message, username="Erin Logs",avatar="https://media.discordapp.net/attachments/769824167188889600/820197487238184960/Erin.jpeg"):
+    async with aiohttp.ClientSession() as session:
+        webhook = discord.Webhook.from_url(url, adapter=discord.AsyncWebhookAdapter(session))
+        if isinstance(message, discord.Embed):
+            await webhook.send(embed=message, username=username,avatar_url=avatar)
+        else:
+            await webhook.send(message, username=username,avatar_url=avatar)
 
 allowed_ords = list(range(65, 91)) + list(range(97, 123)) + \
 	[32, 33, 35, 36, 37, 38, 42, 43, 45, 46, 47] + list(range(48, 65)) + list(range(90, 97))
@@ -247,7 +255,7 @@ class Utility(commands.Cog):
 	@commands.command(aliases=["reboot"])
 	@commands.is_owner()
 	async def restart(self,ctx):
-		await ctx.send("Bot is restarting...")
+		await webhook_send(os.getenv("WARNLOG"), f"Bot restart command issued by {ctx.message.author.mention}")
 		os.execv(sys.executable, [sys.executable] + sys.argv)
 
 
