@@ -1,12 +1,12 @@
 import discord
 import os
-import sqlite3
 import logging
 import json
 import asyncpg
 import logging
 import datetime
 import aiohttp
+from pymongo import MongoClient
 
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -22,21 +22,32 @@ intents=discord.Intents.all()
 log = logging.getLogger("ErinBot")
 logging.basicConfig(level=logging.INFO, format="(%(asctime)s) %(levelname)s %(message)s", datefmt="%m/%d/%y - %H:%M:%S %Z")
 
-def get_prefix(client,message):
-	prefix_list=[]
-	db = sqlite3.connect('./db/prefix.db').cursor()
-	prefix= db.execute('SELECT prefix FROM prefix WHERE guild_id=?',(message.guild.id,))
-	prefix = prefix.fetchall()
-	db.close()
-	for item in prefix:
-		for p in item:
-			prefix_list.append(str(p))
-	return prefix_list
+
+class PrefixManager:
+	def __init__(self):
+		self.client=MongoClient('localhost',27017)
+        # self.client = MongoClient(os.getenv('CONNECTION_URI'))
+		self.db=self.client.guilds
+		self.col=self.db["prefix"]
+
+	def register_guild(self, g):
+		self.col.insert_one({"gid":g.id,"prefixes":["-"]})
+
+	def get_prefix(self, client, message):
+		prefixes=[]
+		guild=self.col.find_one({"gid":message.guild.id})
+		if not guild:
+			self.register_guild(message.guild)
+			prefixes=["-"]
+		else:
+			prefixes=guild["prefixes"]
+		return prefixes
+
 
 class ErinBot(commands.Bot):
     def __init__(self):
         intents = intents=discord.Intents.all()
-        super().__init__(command_prefix=get_prefix, description="No description rn lmfao", intents=intents,guild_subscriptions=True)
+        super().__init__(command_prefix=PrefixManager().get_prefix, description="No description rn lmfao", intents=intents,guild_subscriptions=True)
         self.loop.create_task(self.prepare_bot())
         log.info("Loading extensions")
         self.cogs_to_add = ["cogs.actions", "cogs.economy", "cogs.Utility", "cogs.errorhandler","cogs.fun","cogs.nsfw1","cogs.nsfw2","cogs.highlighter.admin","cogs.highlighter.highlight","cogs.highlighter.meta","cogs.highlighter.timers"]
@@ -104,7 +115,6 @@ class ErinBot(commands.Bot):
 
     async def on_ready(self):
         log.info(f"Logged in as {self.user.name} - {self.user.id}")
-        self.console = self.get_channel(config.console)
 
     def run(self):
         super().run(os.getenv("TOKEN"))
