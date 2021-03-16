@@ -7,13 +7,13 @@ import pickle
 import traceback
 #Standards
 
-async def webhook_send(url, message, username="LoggingCog",avatar="https://assets.stickpng.com/images/580b585b2edbce24c47b245d.png"):
-    async with aiohttp.ClientSession() as session:
-        webhook = discord.Webhook.from_url(url, adapter=discord.AsyncWebhookAdapter(session))
-        if isinstance(message, discord.Embed):
-            await webhook.send(embed=message, username=username,avatar_url=avatar)
-        else:
-            await webhook.send(message, username=username,avatar_url=avatar)
+async def webhook_send(url, message, username="Erin Logs",avatar="https://media.discordapp.net/attachments/769824167188889600/820197487238184960/Erin.jpeg"):
+	async with aiohttp.ClientSession() as session:
+		webhook = discord.Webhook.from_url(url, adapter=discord.AsyncWebhookAdapter(session))
+		if isinstance(message, discord.Embed):
+			await webhook.send(embed=message, username=username,avatar_url=avatar)
+		else:
+			await webhook.send(message, username=username,avatar_url=avatar)
 
 async def export_exception(ctx, error):
         embed=discord.Embed()
