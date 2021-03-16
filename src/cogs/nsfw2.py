@@ -29,6 +29,101 @@ class NSFW2(commands.Cog):
 	@commands.Cog.listener()
 	async def on_ready(self):
 		print(f"{self.__class__.__name__} Cog has been loaded\n-----")
+	
+	@commands.cooldown(3,7,commands.BucketType.user)
+	@commands.command(name="ass",aliases=['hentaiass','hass'])
+	async def ass(self,ctx):
+		if ctx.channel.is_nsfw():
+			response = await api_call("https://nekobot.xyz/api/image?type=hass")
+			embed = discord.Embed(
+				title = "",
+				color = response['color'],
+				timestamp=ctx.message.created_at
+			)
+
+			embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
+			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
+
+			embed.set_image(url = response['message'] )
+			await ctx.message.reply(embed = embed)
+		else:
+			await ctx.message.reply("This command can only be used in a NSFW channel.")
+	
+	@commands.cooldown(3,7,commands.BucketType.user)
+	@commands.command(name="porn",aliases=['pgif'])
+	async def porn(self,ctx):
+		if ctx.channel.is_nsfw():
+			response = await api_call("https://nekobot.xyz/api/image?type=pgif")
+			embed = discord.Embed(
+				title = "",
+				color = response['color'],
+				timestamp=ctx.message.created_at
+			)
+
+			embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
+			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
+
+			embed.set_image(url = response['message'] )
+			await ctx.message.reply(embed = embed)
+		else:
+			await ctx.message.reply("This command can only be used in a NSFW channel.")
+
+	@commands.cooldown(3,7,commands.BucketType.user)
+	@commands.command(name="4k")
+	async def fourk(self,ctx):
+		if ctx.channel.is_nsfw():
+			response = await api_call("https://nekobot.xyz/api/image?type=4k")
+			embed = discord.Embed(
+				title = "",
+				color = response['color'],
+				timestamp=ctx.message.created_at
+			)
+
+			embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
+			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
+
+			embed.set_image(url = response['message'] )
+			await ctx.message.reply(embed = embed)
+		else:
+			await ctx.message.reply("This command can only be used in a NSFW channel.")
+
+	@commands.cooldown(3,7,commands.BucketType.user)
+	@commands.command(name="yaoi")
+	async def yaoi(self,ctx):
+		if ctx.channel.is_nsfw():
+			response = await api_call("https://nekobot.xyz/api/image?type=yaoi")
+			embed = discord.Embed(
+				title = "",
+				color = response['color'],
+				timestamp=ctx.message.created_at
+			)
+
+			embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
+			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
+
+			embed.set_image(url = response['message'] )
+			await ctx.message.reply(embed = embed)
+		else:
+			await ctx.message.reply("This command can only be used in a NSFW channel.")
+
+	@commands.cooldown(3,7,commands.BucketType.user)
+	@commands.command(name="thigh",aliases=['thighs'])
+	async def thigh(self,ctx):
+		if ctx.channel.is_nsfw():
+			response = await api_call("https://nekobot.xyz/api/image?type=thigh")
+			embed = discord.Embed(
+				title = "",
+				color = response['color'],
+				timestamp=ctx.message.created_at
+			)
+
+			embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
+			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
+
+			embed.set_image(url = response['message'] )
+			await ctx.message.reply(embed = embed)
+		else:
+			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
 def setup(bot):
 	bot.add_cog(NSFW2(bot))

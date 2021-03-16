@@ -37,7 +37,7 @@ class NSFW1(commands.Cog):
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 
 			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/Random_hentai_gif"))
-			await ctx.send(embed = embed)
+			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
@@ -55,7 +55,7 @@ class NSFW1(commands.Cog):
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 
 			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/erok"))
-			await ctx.send(embed = embed)
+			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
@@ -73,7 +73,7 @@ class NSFW1(commands.Cog):
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 
 			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/erokemo"))
-			await ctx.send(embed = embed)
+			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
@@ -91,7 +91,7 @@ class NSFW1(commands.Cog):
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 
 			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/feetg"))
-			await ctx.send(embed = embed)
+			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 			
@@ -112,8 +112,8 @@ class NSFW1(commands.Cog):
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
 	@commands.cooldown(5, 7, commands.BucketType.user)
-	@commands.command(name='thighs',aliases=['thigh','animethigh'])
-	async def thighs(self, ctx):
+	@commands.command(name='hthighs',aliases=['hthigh','animethigh'])
+	async def hthighs(self, ctx):
 		if ctx.channel.is_nsfw():
 			embed = discord.Embed(
 				title = "Thic thighs!",
@@ -291,7 +291,7 @@ class NSFW1(commands.Cog):
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/ngif"))
 
-			await ctx.send(embed = embed)
+			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
@@ -308,7 +308,7 @@ class NSFW1(commands.Cog):
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/fox_girl"))
 
-			await ctx.send(embed = embed)
+			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 	
@@ -325,7 +325,7 @@ class NSFW1(commands.Cog):
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/lewdk"))
 
-			await ctx.send(embed = embed)
+			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
@@ -342,7 +342,7 @@ class NSFW1(commands.Cog):
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/kuni"))
 
-			await ctx.send(embed = embed)
+			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
@@ -360,7 +360,7 @@ class NSFW1(commands.Cog):
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/femdom"))
 
-			await ctx.send(embed = embed)
+			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 	
@@ -377,7 +377,7 @@ class NSFW1(commands.Cog):
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/erofeet"))
 
-			await ctx.send(embed = embed)
+			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
@@ -394,7 +394,7 @@ class NSFW1(commands.Cog):
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/solog"))
 
-			await ctx.send(embed = embed)
+			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
@@ -411,7 +411,7 @@ class NSFW1(commands.Cog):
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/gasm"))
 
-			await ctx.send(embed = embed)
+			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
@@ -428,7 +428,7 @@ class NSFW1(commands.Cog):
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/yuri"))
 
-			await ctx.send(embed = embed)
+			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
@@ -445,7 +445,7 @@ class NSFW1(commands.Cog):
 			embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 			embed.set_image(url = await api_call("https://nekos.life/api/v2/img/anal"))
 
-			await ctx.send(embed = embed)
+			await ctx.message.reply(embed = embed)
 		else:
 			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
