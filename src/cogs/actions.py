@@ -7,11 +7,14 @@ import asyncio
 from discord.ext import commands
 
 
-async def api_call(call_uri):
+async def api_call(call_uri,state=True):
 	async with aiohttp.ClientSession() as session:
 		async with session.get(f"{call_uri}") as response:
 			response= await response.json()
-			return response['url']
+			if state:
+				return response['url']
+			if state ==False:
+				return response
 
 class Actions(commands.Cog):
 	def __init__(self, client):
@@ -34,6 +37,51 @@ class Actions(commands.Cog):
 			color = 0xFFC0CB
 			)
 		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/hug"))
+
+		await ctx.send(embed = embed)
+	@commands.cooldown(3, 5, commands.BucketType.user)
+	@commands.command()
+	async def laugh(self, ctx, user: commands.Greedy[discord.Member] = None):
+		if user == None:
+			await ctx.message.reply(f"Mention someone you wanna laugh at ;)")
+			return
+		laughedat="".join(f'{users.mention} ' for users in user)
+		embed = discord.Embed(
+			title = "AHAHAHAH!!",
+			description = f"{ctx.author.mention} just laughed at {laughedat}",
+			color = 0xFFC0CB
+			)
+		response=await api_call("http://api.nekos.fun:8080/api/laugh",state=False)
+		embed.set_image(url=response['image'])
+
+		await ctx.send(embed = embed)
+	
+	@commands.cooldown(3, 5, commands.BucketType.user)
+	@commands.command()
+	async def lick(self, ctx, user: commands.Greedy[discord.Member] = None):
+		if user == None:
+			await ctx.message.reply(f"Mention someone you wanna lick ;)")
+			return
+		licked_users="".join(f'{users.mention} ' for users in user)
+		embed = discord.Embed(
+			title = "*Tasty*",
+			description = f"{ctx.author.mention} just licked {licked_users}",
+			color = 0xFFC0CB
+			)
+		response=await api_call("http://api.nekos.fun:8080/api/lick",state=False)
+		embed.set_image(url=response['image'])
+
+		await ctx.send(embed = embed)
+
+	@commands.cooldown(3, 5, commands.BucketType.user)
+	@commands.command()
+	async def cry(self, ctx):
+		embed = discord.Embed(
+			title = "**:'((**",
+			color = 0xFFC0CB
+			)
+		response=await api_call("http://api.nekos.fun:8080/api/cry",state=False)
+		embed.set_image(url=response['image'])
 
 		await ctx.send(embed = embed)
 
