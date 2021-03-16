@@ -43,10 +43,10 @@ class Actions(commands.Cog):
 		if user == None:
 			await ctx.message.reply(f"Mention someone you wanna cuddle ;)")
 			return
-		hugged_users="".join(f'{users.mention} ' for users in user)
+		cuddle_users="".join(f'{users.mention} ' for users in user)
 		embed = discord.Embed(
 			title = "aww cuddles uwu",
-			description = f"{ctx.author.mention} just cuddled {hugged_users}",
+			description = f"{ctx.author.mention} just cuddled {cuddle_users}",
 			color = 0xFFC0CB
 			)
 		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/cuddle"))
@@ -103,10 +103,10 @@ class Actions(commands.Cog):
 		if user == ctx.author:
 			await ctx.message.reply("Imagine patting yourself... why are you so lonely")
 			return
-		pat_users="".join(f'{users.mention} ' for users in user)
+		poke_users="".join(f'{users.mention} ' for users in user)
 		embed = discord.Embed(
 			title = "***poke poke***",
-			description = f"<:kanna:820279669131575306> {ctx.author.mention} just poked {pat_users}",
+			description = f"<:kanna:820279669131575306> {ctx.author.mention} just poked {poke_users}",
 			color = 0xFFC0CB
 			)
 		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/poke"))
@@ -119,10 +119,10 @@ class Actions(commands.Cog):
 		if user == None:
 			await ctx.message.reply(f"Who tf are you calling a baka?")
 			return
-		pat_users="".join(f'{users.mention} ' for users in user)
+		bakas="".join(f'{users.mention} ' for users in user)
 		embed = discord.Embed(
 			title = "**BAKA!!**",
-			description = f"{pat_users}, ANTA BAKA??!?!?!?",
+			description = f"{bakas}, ANTA BAKA??!?!?!?",
 			color = 0xFFC0CB
 			)
 		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/baka"))
@@ -135,10 +135,10 @@ class Actions(commands.Cog):
 		if user == None:
 			await ctx.message.reply(f"Who tf are you feeding?")
 			return
-		pat_users="".join(f'{users.mention} ' for users in user)
+		fed_users="".join(f'{users.mention} ' for users in user)
 		embed = discord.Embed(
 			title = "",
-			description = f"<:kanna:820279669131575306> {ctx.author.mention} fed {pat_users}",
+			description = f"<:kanna:820279669131575306> {ctx.author.mention} fed {fed_users}",
 			color = 0xFFC0CB
 			)
 		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/feed"))
