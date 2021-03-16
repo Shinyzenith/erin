@@ -26,24 +26,6 @@ class Fun(commands.Cog):
 				response=response.decode("utf-8")
 				response=json.loads(response)
 				return await ctx.message.reply(response['owo'])
-
-	@commands.cooldown(1, 5, commands.BucketType.user)
-	@commands.command()
-	async def neko(self, ctx):
-		response = requests.get("https://shiro.gg/api/images/neko")
-
-		realResponse = response.json()
-
-		embed = discord.Embed(
-			title = "Neko!!!!! CATGIRL!!!",
-			color = ctx.message.author.color,
-			timestamp=ctx.message.created_at
-		)
-		embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
-		embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
-		embed.set_image(url = realResponse['url'])
-
-		await ctx.send(embed = embed)
 	
 	@commands.cooldown(5,10,commands.BucketType.user)
 	@commands.command(name="8ball")
