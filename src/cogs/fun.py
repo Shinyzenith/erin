@@ -150,6 +150,20 @@ class Fun(commands.Cog):
 		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/wallpaper"))
 
 		await ctx.send(embed=embed)
+
+	@commands.cooldown(3, 7, commands.BucketType.user)
+	@commands.command(name="waifu")
+	async def waifu(self, ctx):
+		embed = discord.Embed(
+			title = "",
+			color = ctx.message.author.color,
+			timestamp=ctx.message.created_at
+		)
+		embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
+		embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
+		embed.set_image(url = await api_call("https://nekos.life/api/v2/img/waifu"))
+
+		await ctx.send(embed = embed)
 		
 def setup(bot):
 	bot.add_cog(Fun(bot))

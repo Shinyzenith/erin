@@ -39,7 +39,7 @@ class ErinBot(commands.Bot):
         super().__init__(command_prefix=get_prefix, description="No description rn lmfao", intents=intents,guild_subscriptions=True)
         self.loop.create_task(self.prepare_bot())
         log.info("Loading extensions")
-        self.cogs_to_add = ["cogs.actions", "cogs.economy", "cogs.Utility", "cogs.errorhandler","cogs.fun","cogs.nsfw","cogs.highlighter.admin","cogs.highlighter.highlight","cogs.highlighter.meta","cogs.highlighter.timers"]
+        self.cogs_to_add = ["cogs.actions", "cogs.economy", "cogs.Utility", "cogs.errorhandler","cogs.fun","cogs.nsfw1","cogs.nsfw2","cogs.highlighter.admin","cogs.highlighter.highlight","cogs.highlighter.meta","cogs.highlighter.timers"]
         self.load_extension("jishaku")
         for cog in self.cogs_to_add:
             self.load_extension(cog)
