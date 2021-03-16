@@ -7,7 +7,7 @@ import pickle
 import traceback
 #Standards
 
-async def webhook_send(url, message, username="Erin Logs",avatar="https://media.discordapp.net/attachments/769824167188889600/820197487238184960/Erin.jpeg"):
+async def webhook_send(url, message, username="Erin error Logs",avatar="https://media.discordapp.net/attachments/769824167188889600/820197487238184960/Erin.jpeg"):
 	async with aiohttp.ClientSession() as session:
 		webhook = discord.Webhook.from_url(url, adapter=discord.AsyncWebhookAdapter(session))
 		if isinstance(message, discord.Embed):

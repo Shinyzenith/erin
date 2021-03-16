@@ -16,7 +16,7 @@ from aiohttp import ClientResponseError
 from discord.ext import commands, tasks
 from discord.ext.commands.view import StringView
 
-async def webhook_send(url, message, username="Erin Logs",avatar="https://media.discordapp.net/attachments/769824167188889600/820197487238184960/Erin.jpeg"):
+async def webhook_send(url, message, username="Erin uptime Logs",avatar="https://media.discordapp.net/attachments/769824167188889600/820197487238184960/Erin.jpeg"):
 	async with aiohttp.ClientSession() as session:
 		webhook = discord.Webhook.from_url(url, adapter=discord.AsyncWebhookAdapter(session))
 		if isinstance(message, discord.Embed):
@@ -259,12 +259,12 @@ class Utility(commands.Cog):
 	@commands.command(aliases=["reboot"])
 	@commands.is_owner()
 	async def restart(self,ctx):
-		await webhook_send(os.getenv("WARNLOG"), f"Bot restart command issued by {ctx.message.author.mention}")
+		await webhook_send(os.getenv("UPTIMELOG"), f"Bot restart command issued by {ctx.message.author.mention}")
 		os.execv(sys.executable, [sys.executable] + sys.argv)
 	@commands.command(name="logout", description="Logout the bot")
 	@commands.is_owner()
 	async def logout(self, ctx):
-		await webhook_send(os.getenv("WARNLOG"), f"Bot logout command issued by {ctx.message.author.mention}")
+		await webhook_send(os.getenv("UPTIMELOG"), f"Bot logout command issued by {ctx.message.author.mention}")
 		await self.bot.logout()
 	
 	@commands.cooldown(1, 3, commands.BucketType.user)

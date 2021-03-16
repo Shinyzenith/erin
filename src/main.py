@@ -22,7 +22,7 @@ intents=discord.Intents.all()
 log = logging.getLogger("ErinBot")
 logging.basicConfig(level=logging.INFO, format="(%(asctime)s) %(levelname)s %(message)s", datefmt="%m/%d/%y - %H:%M:%S %Z")
 
-async def webhook_send(url, message, username="Erin Logs",avatar="https://media.discordapp.net/attachments/769824167188889600/820197487238184960/Erin.jpeg"):
+async def webhook_send(url, message, username="Erin uptime Logs",avatar="https://media.discordapp.net/attachments/769824167188889600/820197487238184960/Erin.jpeg"):
 	async with aiohttp.ClientSession() as session:
 		webhook = discord.Webhook.from_url(url, adapter=discord.AsyncWebhookAdapter(session))
 		if isinstance(message, discord.Embed):
@@ -121,7 +121,7 @@ class ErinBot(commands.Bot):
                 self.cached_words.append(row["word"])
 
     async def on_ready(self):
-        await webhook_send(os.getenv("WARNLOG"),"Erin started up 👍")
+        await webhook_send(os.getenv("UPTIMELOG"),"Erin started up 👍")
         log.info(f"Logged in as {self.user.name} - {self.user.id}")
 
     def run(self):
