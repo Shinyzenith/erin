@@ -8,6 +8,12 @@ import asyncio
 import os
 from discord.ext import commands
 
+async def api_call(call_uri):
+	async with aiohttp.ClientSession() as session:
+		async with session.get(f"{call_uri}") as response:
+			response= await response.json()
+			return response['url']
+
 class Fun(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
@@ -139,6 +145,29 @@ class Fun(commands.Cog):
 				response=await response.json()
 
 		return await ctx.message.reply(response['fact'])
+
+	@commands.cooldown(5, 7, commands.BucketType.user)
+	@commands.command(name="goose")
+	async def goose(self, ctx):
+		embed = discord.Embed(
+			title = "",
+			color = ctx.message.author.color,
+			timestamp=ctx.message.created_at
+		)
+		embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
+		embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
+		embed.set_image(url = await api_call("https://nekos.life/api/v2/img/goose"))
+		await ctx.message.reply(embed = embed)
+
+	@commands.cooldown(3, 7, commands.BucketType.user)
+	@commands.command(name="wallpaper",aliases=['wl'])
+	async def wallpaper(self, ctx):
+		embed = discord.Embed(
+			color = 0xFFC0CB
+			)
+		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/wallpaper"))
+
+		await ctx.send(embed=embed)
 		
 def setup(bot):
 	bot.add_cog(Fun(bot))
