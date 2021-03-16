@@ -187,12 +187,6 @@ class Admin(commands.Cog):
 
     #     await ctx.send(text)
 
-    @commands.command(name="logout", description="Logout the bot")
-    @commands.is_owner()
-    async def logout(self, ctx):
-        await ctx.send(":wave: Logging out")
-        await self.bot.logout()
-
     @tasks.loop(hours=10)
     async def update_loop(self):
         installed = [

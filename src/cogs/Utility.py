@@ -13,12 +13,12 @@ from discord.ext import commands, tasks
 from discord.ext.commands.view import StringView
 
 async def webhook_send(url, message, username="Erin Logs",avatar="https://media.discordapp.net/attachments/769824167188889600/820197487238184960/Erin.jpeg"):
-    async with aiohttp.ClientSession() as session:
-        webhook = discord.Webhook.from_url(url, adapter=discord.AsyncWebhookAdapter(session))
-        if isinstance(message, discord.Embed):
-            await webhook.send(embed=message, username=username,avatar_url=avatar)
-        else:
-            await webhook.send(message, username=username,avatar_url=avatar)
+	async with aiohttp.ClientSession() as session:
+		webhook = discord.Webhook.from_url(url, adapter=discord.AsyncWebhookAdapter(session))
+		if isinstance(message, discord.Embed):
+			await webhook.send(embed=message, username=username,avatar_url=avatar)
+		else:
+			await webhook.send(message, username=username,avatar_url=avatar)
 
 allowed_ords = list(range(65, 91)) + list(range(97, 123)) + \
 	[32, 33, 35, 36, 37, 38, 42, 43, 45, 46, 47] + list(range(48, 65)) + list(range(90, 97))
@@ -257,6 +257,51 @@ class Utility(commands.Cog):
 	async def restart(self,ctx):
 		await webhook_send(os.getenv("WARNLOG"), f"Bot restart command issued by {ctx.message.author.mention}")
 		os.execv(sys.executable, [sys.executable] + sys.argv)
+	@commands.command(name="logout", description="Logout the bot")
+	@commands.is_owner()
+	async def logout(self, ctx):
+		await webhook_send(os.getenv("WARNLOG"), f"Bot logout command issued by {ctx.message.author.mention}")
+		await self.bot.logout()
+	
+	@commands.cooldown(1, 3, commands.BucketType.user)
+	@commands.command()
+	async def ping(self, ctx):
+		time_now = time.time()
+		msg = await ctx.message.reply(embed=discord.Embed(title="Pinging...", color = 0x00FFFF))
+		embed = discord.Embed(title="Pong! :ping_pong:", description=f"API Latency: **{round(self.bot.latency * 1000)}ms**\nBot Latency: **{round((time.time() - time_now) * 1000)}ms**", color=0x00FFFF)
+		embed.set_footer(text=f"{ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
+		embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
+		await msg.edit(embed=embed)
+
+	@commands.command(name="reload", description="Reload an extension")
+	@commands.is_owner()
+	async def reload(self, ctx, extension):
+		try:
+			self.bot.reload_extension(extension)
+			await ctx.send(f"**:repeat: Reloaded** `{extension}`")
+		except Exception as e:
+			full = "".join(traceback.format_exception(type(e), e, e.__traceback__, 1))
+			await ctx.send(f"**:warning: Extension `{extension}` not reloaded.**\n```py\n{full}```")
+
+	@commands.command(name="stats", description="View system stats")
+	async def stats(self, ctx):
+		em = discord.Embed(title="Server Stats", color=discord.Color.blurple())
+		em.add_field(name="CPU", value=f"{psutil.cpu_percent()}% used with {plural(psutil.cpu_count()):CPU}",inline=False)
+		mem = psutil.virtual_memory()
+		em.add_field(name="Memory", value=f"{humanize.naturalsize(mem.used)}/{humanize.naturalsize(mem.total)} ({mem.percent}% used)",inline=False)
+		disk = psutil.disk_usage("/")
+		em.add_field(name="Disk", value=f"{humanize.naturalsize(disk.used)}/{humanize.naturalsize(disk.total)} ({disk.percent}% used)",inline=False)
+		await ctx.send(embed=em)
+
+	@commands.command(name="uptime", description="Check my uptime")
+	async def uptime(self, ctx):
+		delta = datetime.datetime.utcnow()-self.bot.startup_time
+		await ctx.send(f"I started up {humanize.naturaldelta(delta)} ago")
+
+	@commands.command(name="invite", description="Get a invite link to add me to your server")
+	async def invite(self, ctx):
+		perms = discord.Permissions.all()
+		await ctx.send(f"<{discord.utils.oauth_url(self.bot.user.id, permissions=perms)}>")
 
 
 def setup(bot):
