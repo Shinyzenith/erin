@@ -5,6 +5,10 @@ import aiosqlite
 import aiohttp
 import motor.motor_asyncio
 import sys
+import time
+import psutil
+import datetime
+import humanize
 from discord.ext import commands, tasks
 from discord.enums import ActivityType, Status
 from typing import Union
