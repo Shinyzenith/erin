@@ -66,6 +66,10 @@ class ErrorHandler(commands.Cog):
             return await ctx.send(embed=embed)
 
 
+        if isinstance(error, commands.BadUnionArgument):
+            embed.title= "Bad argument error"
+            return await ctx.send(embed=embed)
+
         if isinstance(error, commands.errors.MissingPermissions):
             embed.title="Missing Permissions \N{CROSS MARK}"
             permlist=''
