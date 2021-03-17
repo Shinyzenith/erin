@@ -316,14 +316,25 @@ class Utility(commands.Cog):
 		msg="```"
 		for file in os.listdir(cwd):
 				if file.endswith(".py") and not file.startswith("_"):
-						try: self.bot.unload_extension(f"cogs.{file[:-3]}")
-						except: pass       
-						self.bot.load_extension(f"cogs.{file[:-3]}")     
-						msg+=f"\n[+] Loaded cogs.{file[:-3]}"
-						log.warning(f"[+] Reloaded cogs.{file[:-3]} by {ctx.message.author.display_name}#{ctx.message.author.discriminator}  -  {ctx.message.author.id}")
+					try: self.bot.unload_extension(f"cogs.{file[:-3]}")
+					except: pass
+					self.bot.load_extension(f"cogs.{file[:-3]}")     
+					msg+=f"\n[+] Loaded cogs.{file[:-3]}"
+					log.warning(f"[+] Reloaded cogs.{file[:-3]} by {ctx.message.author.display_name}#{ctx.message.author.discriminator}  -  {ctx.message.author.id}")
 		msg+="```"
 		log.info("")
 		return await ctx.message.reply(msg)
+
+	@commands.command()
+	@commands.is_owner()
+	async def unload(self, ctx, extension):
+		try:
+			self.bot.unload_extension(extension)
+			await ctx.send(f"**:x: Unloaded** `{extension}`")
+			log.warning(f"[+] {extension} Unloaded by {ctx.message.author.display_name}#{ctx.message.author.discriminator}  -  {ctx.message.author.id}")
+		except Exception as e:
+			full = "".join(traceback.format_exception(type(e), e, e.__traceback__, 1))
+			await ctx.send(f"**:warning: Extension `{extension}` not reloaded.**\n```py\n{full}```")
 
 	@commands.command(name="stats", description="View system stats")
 	async def stats(self, ctx):
