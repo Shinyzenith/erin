@@ -27,6 +27,16 @@ async def webhook_send(url, message, username="Erin uptime Logs",avatar="https:/
 allowed_ords = list(range(65, 91)) + list(range(97, 123)) + \
 	[32, 33, 35, 36, 37, 38, 42, 43, 45, 46, 47] + list(range(48, 65)) + list(range(90, 97))
 
+class plural:
+	def __init__(self, value):
+		self.value = value
+
+	def __format__(self, format_spec):
+		if self.value == 1:
+			return f"{self.value} {format_spec}"
+		else:
+			return f"{self.value} {format_spec}s"
+
 
 class PrefixManager:
 	def __init__(self):
