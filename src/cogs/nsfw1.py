@@ -4,6 +4,7 @@ import datetime
 import asyncio
 import aiohttp
 import json
+import logging,coloredlogs
 
 from discord.ext.commands import cooldown, BucketType
 from discord.ext.commands import (CommandOnCooldown)
@@ -13,6 +14,8 @@ from discord.ext import commands
 !!!!!!!!!!!!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 NSFW COG || NSFW COG || NSFW COG || NSFW COG || NSFW COG || NSFW COG || NSFW COG || NSFW COG || NSFW COG || NSFW COG || 
 """
+log = logging.getLogger("NSFW(1) cog")
+coloredlogs.install(logger=log)
 async def api_call(call_uri):
 	async with aiohttp.ClientSession() as session:
 		async with session.get(f"{call_uri}") as response:
@@ -25,7 +28,7 @@ class NSFW1(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_ready(self):
-		print(f"{self.__class__.__name__} Cog has been loaded\n-----")
+		log.warn(f"{self.__class__.__name__} Cog has been loaded")
 			
 	@commands.cooldown(5, 7, commands.BucketType.user)
 	@commands.command()

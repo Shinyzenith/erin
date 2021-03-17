@@ -9,6 +9,7 @@ import time
 import psutil
 import datetime
 import humanize
+import coloredlogs, logging
 import traceback
 from discord.ext import commands, tasks
 from discord.enums import ActivityType, Status
@@ -16,7 +17,7 @@ from typing import Union
 from aiohttp import ClientResponseError
 from discord.ext import commands, tasks
 from discord.ext.commands.view import StringView
-from pathlib import path
+from pathlib import Path
 
 async def webhook_send(url, message, username="Erin uptime Logs",avatar="https://media.discordapp.net/attachments/769824167188889600/820197487238184960/Erin.jpeg"):
 	async with aiohttp.ClientSession() as session:
@@ -26,6 +27,8 @@ async def webhook_send(url, message, username="Erin uptime Logs",avatar="https:/
 		else:
 			await webhook.send(message, username=username,avatar_url=avatar)
 
+log = logging.getLogger('Utility cog')
+coloredlogs.install(logger=log)
 allowed_ords = list(range(65, 91)) + list(range(97, 123)) + \
 	[32, 33, 35, 36, 37, 38, 42, 43, 45, 46, 47] + list(range(48, 65)) + list(range(90, 97))
 
@@ -102,7 +105,7 @@ class Utility(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_ready(self):
-		print(f"{self.__class__.__name__} Cog has been loaded\n-----")
+		log.warn(f"{self.__class__.__name__} Cog has been loaded")
 	# on guild add , add a default prefix
 
 	@commands.Cog.listener()
@@ -231,6 +234,7 @@ class Utility(commands.Cog):
 
 		embed = discord.Embed(title="Activity Changed",
 							  description=msg, color=ctx.message.author.color)
+		log.warn(f"Bot activity command issued by {ctx.message.author.display_name}#{ctx.message.author.discriminator}  -  {ctx.message.author.id}\nCommand ran: {ctx.message.content}")
 		return await ctx.send(embed=embed)
 	# helper function for activity command
 
@@ -272,11 +276,14 @@ class Utility(commands.Cog):
 	@commands.is_owner()
 	async def restart(self,ctx):
 		await webhook_send(os.getenv("UPTIMELOG"), f"Bot restart command issued by {ctx.message.author.mention}")
+		log.warn(f"Bot restart command issued by {ctx.message.author.display_name}#{ctx.message.author.discriminator}  -  {ctx.message.author.id}")
 		os.execv(sys.executable, [sys.executable] + sys.argv)
+
 	@commands.command(name="logout", description="Logout the bot")
 	@commands.is_owner()
 	async def logout(self, ctx):
 		await webhook_send(os.getenv("UPTIMELOG"), f"Bot logout command issued by {ctx.message.author.mention}")
+		log.warn(f"Bot logout command issued by {ctx.message.author.display_name}#{ctx.message.author.discriminator}  -  {ctx.message.author.id}")
 		await self.bot.logout()
 	
 	@commands.cooldown(1, 3, commands.BucketType.user)
@@ -295,6 +302,7 @@ class Utility(commands.Cog):
 		try:
 			self.bot.reload_extension(extension)
 			await ctx.send(f"**:repeat: Reloaded** `{extension}`")
+			log.warning(f"[+] {extension} reloaded by {ctx.message.author.display_name}#{ctx.message.author.discriminator}  -  {ctx.message.author.id}")
 		except Exception as e:
 			full = "".join(traceback.format_exception(type(e), e, e.__traceback__, 1))
 			await ctx.send(f"**:warning: Extension `{extension}` not reloaded.**\n```py\n{full}```")
@@ -302,17 +310,19 @@ class Utility(commands.Cog):
 	@commands.command()
 	@commands.is_owner()
 	async def reload(self,ctx):
+		log.info("")
 		cwd = Path(__file__).parents[0]
 		cwd = str(cwd)
 		msg="```"
-		for file in os.listdir(cwd + "/cogs"):
+		for file in os.listdir(cwd):
 				if file.endswith(".py") and not file.startswith("_"):
 						try: self.bot.unload_extension(f"cogs.{file[:-3]}")
 						except: pass       
 						self.bot.load_extension(f"cogs.{file[:-3]}")     
 						msg+=f"\n[+] Loaded cogs.{file[:-3]}"
-						print(f"[+] Loaded cogs.{file[:-3]}")
+						log.warning(f"[+] Reloaded cogs.{file[:-3]} by {ctx.message.author.display_name}#{ctx.message.author.discriminator}  -  {ctx.message.author.id}")
 		msg+="```"
+		log.info("")
 		return await ctx.message.reply(msg)
 
 	@commands.command(name="stats", description="View system stats")

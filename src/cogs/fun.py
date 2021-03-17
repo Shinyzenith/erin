@@ -5,9 +5,12 @@ import aiohttp
 import requests
 import json
 import asyncio
+import logging,coloredlogs
 import os
 from discord.ext import commands
 
+log = logging.getLogger("fun cog")
+coloredlogs.install(logger=log)
 async def api_call(call_uri):
 	async with aiohttp.ClientSession() as session:
 		async with session.get(f"{call_uri}") as response:
@@ -17,6 +20,11 @@ async def api_call(call_uri):
 class Fun(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
+
+	@commands.Cog.listener()
+	async def on_ready(self):
+		log.warn(f"{self.__class__.__name__} Cog has been loaded")
+		
 	@commands.cooldown(5,7,commands.BucketType.user)
 	@commands.command(name="furrify",aliases=['owo','uwu'])
 	async def furrify(self, ctx, *, msg):

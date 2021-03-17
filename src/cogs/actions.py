@@ -4,9 +4,11 @@ import typing
 import aiohttp
 import json
 import asyncio
+import logging,coloredlogs
 from discord.ext import commands
 
-
+log = logging.getLogger("actions cog")
+coloredlogs.install(logger=log)
 async def api_call(call_uri,state=True):
 	async with aiohttp.ClientSession() as session:
 		async with session.get(f"{call_uri}") as response:
@@ -22,7 +24,7 @@ class Actions(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_ready(self):
-		print(f"{self.__class__.__name__} Cog has been loaded\n-----")
+		log.warn(f"{self.__class__.__name__} Cog has been loaded")
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
 	@commands.command()

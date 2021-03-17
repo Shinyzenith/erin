@@ -9,7 +9,7 @@ import re
 import datetime
 import dateparser
 import humanize
-import logging
+import logging,coloredlogs
 
 class DiscordConverter(commands.Converter):
 	def mention_or_id(self, arg):
@@ -105,7 +105,8 @@ class TimeConverter(commands.Converter):
 			raise commands.BadArgument("Failed to parse time")
 		return time
 
-log = logging.getLogger("cogs.highlight")
+log = logging.getLogger("Highlight cog")
+coloredlogs.install(logger=log)
 
 class Highlight(commands.Cog):
 	def __init__(self, bot):
@@ -158,10 +159,10 @@ class Highlight(commands.Cog):
 				"""
 		await self.bot.db.execute(query)
 		log.info("Preparing words cache")
-		self.cached_words = []
 		for row in await self.bot.db.fetch("SELECT word FROM words"):
-			if row["word"] not in self.cached_words:
-				self.cached_words.append(row["word"])
+			if row["word"] not in self.bot.cached_words:
+				self.bot.cached_words.append(row["word"])
+		log.warn(f"{self.__class__.__name__} Cog has been loaded")
 
 	def cog_unload(self):
 		self.bulk_insert_loop.stop()

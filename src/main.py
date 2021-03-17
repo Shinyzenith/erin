@@ -1,6 +1,6 @@
 import discord
 import os
-import logging
+import logging,coloredlogs
 import json
 import asyncpg
 import datetime
@@ -18,6 +18,7 @@ load_dotenv(dotenv_path=env_path)
 
 #logger config
 log = logging.getLogger("ErinBot")
+coloredlogs.install(logger=log)
 logging.basicConfig(level=logging.INFO, format="(%(asctime)s) %(levelname)s %(message)s", datefmt="%m/%d/%y - %H:%M:%S %Z")
 
 #webhook function
@@ -69,7 +70,7 @@ class ErinBot(commands.Bot):
     async def prepare_bot(self):
         log.info("Creating aiohttp session")
         self.session = aiohttp.ClientSession()
-
+        self.cached_words=[]
         log.info("Connecting to database")
         async def init(conn):
             await conn.set_type_codec("jsonb", schema="pg_catalog", encoder=json.dumps, decoder=json.loads, format="text")
