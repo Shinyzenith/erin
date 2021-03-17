@@ -144,12 +144,15 @@ class Fun(commands.Cog):
 	@commands.cooldown(3, 7, commands.BucketType.user)
 	@commands.command(name="wallpaper",aliases=['wl'])
 	async def wallpaper(self, ctx):
-		embed = discord.Embed(
-			color = 0xFFC0CB
-			)
-		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/wallpaper"))
+		if ctx.channel.is_nsfw():
+			embed = discord.Embed(
+				color = 0xFFC0CB
+				)
+			embed.set_image(url=await api_call("https://nekos.life/api/v2/img/wallpaper"))
 
-		await ctx.send(embed=embed)
+			await ctx.send(embed=embed)
+		else:
+			await ctx.message.reply("This command can only be used in a NSFW channel.")
 
 	@commands.cooldown(3, 7, commands.BucketType.user)
 	@commands.command(name="waifu")
