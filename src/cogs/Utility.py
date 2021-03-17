@@ -9,12 +9,14 @@ import time
 import psutil
 import datetime
 import humanize
+import traceback
 from discord.ext import commands, tasks
 from discord.enums import ActivityType, Status
 from typing import Union
 from aiohttp import ClientResponseError
 from discord.ext import commands, tasks
 from discord.ext.commands.view import StringView
+from pathlib import path
 
 async def webhook_send(url, message, username="Erin uptime Logs",avatar="https://media.discordapp.net/attachments/769824167188889600/820197487238184960/Erin.jpeg"):
 	async with aiohttp.ClientSession() as session:
@@ -287,15 +289,31 @@ class Utility(commands.Cog):
 		embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
 		await msg.edit(embed=embed)
 
-	@commands.command(name="reload", description="Reload an extension")
+	@commands.command(name="reloadone",aliases=['r1','rone'], description="Reload an extension")
 	@commands.is_owner()
-	async def reload(self, ctx, extension):
+	async def reloadone(self, ctx, extension):
 		try:
 			self.bot.reload_extension(extension)
 			await ctx.send(f"**:repeat: Reloaded** `{extension}`")
 		except Exception as e:
 			full = "".join(traceback.format_exception(type(e), e, e.__traceback__, 1))
 			await ctx.send(f"**:warning: Extension `{extension}` not reloaded.**\n```py\n{full}```")
+	
+	@commands.command()
+	@commands.is_owner()
+	async def reload(self,ctx):
+		cwd = Path(__file__).parents[0]
+		cwd = str(cwd)
+		msg="```"
+		for file in os.listdir(cwd + "/cogs"):
+				if file.endswith(".py") and not file.startswith("_"):
+						try: self.bot.unload_extension(f"cogs.{file[:-3]}")
+						except: pass       
+						self.bot.load_extension(f"cogs.{file[:-3]}")     
+						msg+=f"\n[+] Loaded cogs.{file[:-3]}"
+						print(f"[+] Loaded cogs.{file[:-3]}")
+		msg+="```"
+		return await ctx.message.reply(msg)
 
 	@commands.command(name="stats", description="View system stats")
 	async def stats(self, ctx):
