@@ -150,7 +150,7 @@ class Utility(commands.Cog):
 			if ord(character) not in allowed_ords:
 				return await ctx.message.reply(f"The character `{character}` in this prefix is not permitted")
 		if len(prefixes) >= 3:
-			return await ctx.message.reply(f"Unable to add `{prefix}` as a custom prefix. Guild has reached the max amount (3) of custom prefixes.\nRun `{ctx.prefix}removeprefix` to free up a slot")
+			return await ctx.message.reply(f"Unable to add `{prefix}` as a custom prefix. Guild has reached the max amount (3) of custom prefixes.\nRun `{ctx.prefix}prefix remove <prefix to be removed>` to free up a slot")
 		if prefix in prefixes:
 			return await ctx.message.reply(f"Prefix `{prefix}` already exists.")
 		if len(prefix) > 2:
