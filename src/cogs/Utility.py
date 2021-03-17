@@ -1,23 +1,26 @@
-import discord
-import asyncio
 import os
-import aiosqlite
-import aiohttp
-import motor.motor_asyncio
 import sys
 import time
 import psutil
-import datetime
+import asyncio
+import aiohttp
+import discord
+import logging
 import humanize
-import coloredlogs, logging
+import datetime
+import aiosqlite
 import traceback
-from discord.ext import commands, tasks
-from discord.enums import ActivityType, Status
+import coloredlogs
+import motor.motor_asyncio
+
+from pathlib import Path
 from typing import Union
+from discord.ext import commands, tasks
 from aiohttp import ClientResponseError
 from discord.ext import commands, tasks
+from discord.enums import ActivityType, Status
 from discord.ext.commands.view import StringView
-from pathlib import Path
+from collections import OrderedDict, deque, Counter
 
 async def webhook_send(url, message, username="Erin uptime Logs",avatar="https://media.discordapp.net/attachments/769824167188889600/820197487238184960/Erin.jpeg"):
 	async with aiohttp.ClientSession() as session:
@@ -336,14 +339,22 @@ class Utility(commands.Cog):
 			full = "".join(traceback.format_exception(type(e), e, e.__traceback__, 1))
 			await ctx.send(f"**:warning: Extension `{extension}` not reloaded.**\n```py\n{full}```")
 
-	@commands.command(name="stats", description="View system stats")
+
+	@commands.command(name="stats",aliases=['status'], description="View system stats")
 	async def stats(self, ctx):
-		em = discord.Embed(title="Server Stats", color=discord.Color.blurple())
-		em.add_field(name="CPU", value=f"{psutil.cpu_percent()}% used with {plural(psutil.cpu_count()):CPU}",inline=False)
+		channel_types = Counter(isinstance(c, discord.TextChannel) for c in self.bot.get_all_channels())
+		text = channel_types[True]
+		
 		mem = psutil.virtual_memory()
-		em.add_field(name="Memory", value=f"{humanize.naturalsize(mem.used)}/{humanize.naturalsize(mem.total)} ({mem.percent}% used)",inline=False)
 		disk = psutil.disk_usage("/")
-		em.add_field(name="Disk", value=f"{humanize.naturalsize(disk.used)}/{humanize.naturalsize(disk.total)} ({disk.percent}% used)",inline=False)
+		
+		em = discord.Embed(title="Bot Stats", color=discord.Color.blurple())
+		em.add_field(name="General info:",inline=False,value=f"Total Guilds: **{len(list(self.bot.guilds))}**\nTotal Users: **{len(list(self.bot.users))}**\nTotal Channels: **{text}**")
+		em.add_field(name="Developers:",inline=False,value="<@633967275090771971> (Shinyzenith#6969)\n<@488688724948025357>(DankCoder#9983)")
+		em.add_field(name="Server info:",value=f"Discord.py Version: **{discord.__version__}**\nPython verion: **{sys.version}**\nVerion info: **{sys.version_info}**\n\nCPU: **{psutil.cpu_percent()}% used with {plural(psutil.cpu_count()):CPU}**\nMemory: **{humanize.naturalsize(mem.used)}/{humanize.naturalsize(mem.total)} ({mem.percent}% used)**\nDisk Space: **{humanize.naturalsize(disk.used)}/{humanize.naturalsize(disk.total)} ({disk.percent}% used)**")
+		em.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
+		em.set_thumbnail(url=ctx.message.author.avatar_url)
+		em.set_footer(text=f"Requested by {ctx.author}")
 		await ctx.send(embed=em)
 
 	@commands.command(name="uptime", description="Check my uptime")

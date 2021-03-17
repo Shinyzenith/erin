@@ -61,7 +61,8 @@ class ErinBot(commands.Bot):
         intents=discord.Intents.all()
         super().__init__(command_prefix=PrefixManager().get_prefix, intents=intents,guild_subscriptions=True)
         
-        #saving startup time and creating process loop
+        #saving startup time and creating process loop (removing the default help command cuz it's ass)
+        self.remove_command('help')
         self.startup_time = datetime.datetime.utcnow()
         self.loop.create_task(self.prepare_bot())
 
