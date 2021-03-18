@@ -1,108 +1,704 @@
 {
-    "kanna":{
-        "name":"Kanna Kamui :guitar:",
-        "price":{
-            "item":"erin",
-            "quantity":4
-        }
+    "kanna": {
+        "name": "Kanna",
+        "price": {
+            "item": "erin",
+            "quantity": 4
+        },
+        "emoji": "<:kanna:820279669131575306>",
+        "raw_price": 4
     },
-    "tohru":{
-        "name":"Tohru :guitar: :fire:",
-        "price":{
-            "item":"kanna",
-            "quantity":10
-        }
+    "amelia": {
+        "name": "Amelia",
+        "price": {
+            "item": "kanna",
+            "quantity": 30
+        },
+        "emoji": "<:amelia:820283095088889856>",
+        "raw_price": 120
     },
-    "koboyashi":{
-        "name":"Koboyashi san~ :guitar: :trophy:",
-        "price":{
-            "item":"tohru",
-            "quantity":120
-        }
+    "okayu": {
+        "name": "Okayu",
+        "price": {
+            "item": "amelia",
+            "quantity": 25
+        },
+        "emoji": "<:okayu:820283095717511229>",
+        "raw_price": 3000
     },
-    "megumin":{
-        "name":"Megumin  :guitar: :diamond_shape_with_a_dot_inside:",
-        "price":{
-            "item":"erin",
-            "quantity":1200
-        }
+    "fubuki": {
+        "name": "Fubuki",
+        "price": {
+            "item": "amelia",
+            "quantity": 50
+        },
+        "emoji": "<:fubuki:820283097744146432>",
+        "raw_price": 6000
     },
-    "aqua":{
-        "name":"Aqua Sama :guitar: :horse:",
-        "price":{
-            "item":"megumin",
-            "quantity":3500
-        }
+    "chomosuke": {
+        "name": "Chomosuke",
+        "price": {
+            "item": "megumin",
+            "quantity": 50
+        },
+        "emoji": "<:chomosuke:820283098201587782>",
+        "raw_price": 350000
     },
-    "yunyun":{
-        "name":"Yunyun is a cutie :guitar: :horse:",
-        "price":{
-            "item":"megumin",
-            "quantity":30
-        }
+    "gura": {
+        "name": "Gura",
+        "price": {
+            "item": "fubuki",
+            "quantity": 350
+        },
+        "emoji": "<:gura:820283098369097748>",
+        "raw_price": 2100000
     },
-    "darkness":{
-        "name":"Horny Darkness :guitar: :wink:",
-        "price":{
-            "item":"aqua",
-            "quantity":15
-        }
+    "tohru": {
+        "name": "Tohru",
+        "price": {
+            "item": "kanna",
+            "quantity": 350
+        },
+        "emoji": "<:tohru:820283758183186452>",
+        "raw_price": 1400
     },
-    "chomosuke":{
-        "name":"Chomo doggo :bug:",
-        "price":{
-            "item":"megumin",
-            "quantity":15000
-        }
+    "korone": {
+        "name": "Korone",
+        "price": {
+            "item": "okayu",
+            "quantity": 5
+        },
+        "emoji": "<:korone:820283893969190954>",
+        "raw_price": 15000
     },
-    "kazuma":{
-        "name":"Kazuma is the best waifu :star::guitar::star:",
-        "price":{
-            "item":"darkness",
-            "quantity":70
-        }
+    "yunyun": {
+        "name": "Yunyun",
+        "price": {
+            "item": "megumin",
+            "quantity": 5
+        },
+        "emoji": "<:yunyun:820285442381316096>",
+        "raw_price": 35000
     },
-    "korone":{
-        "name":"Korone Doggo :x::guitar:",
-        "price":{
-            "item":"erin",
-            "quantity":150
-        }
+    "kazuma": {
+        "name": "Kazuma",
+        "price": {
+            "item": "erin",
+            "quantity": 300
+        },
+        "emoji": "<:kazuma:820285442515402753>",
+        "raw_price": 300
     },
-    "okayu":{
-        "name":"Okayu >-< <:pwb:813832635340030033> ",
-        "price":{
-            "item":"korone",
-            "quantity":20
-        }
+    "darkness": {
+        "name": "Darkness",
+        "price": {
+            "item": "kazuma",
+            "quantity": 25
+        },
+        "emoji": "<:adrkness:820285442577793024>",
+        "raw_price": 7500
     },
-    "gura":{
-        "name":"Hydrophobic Gura <:rick:813833089062404137> ",
-        "price":{
-            "item":"korone",
-            "quantity":450
-        }
+    "kizuna": {
+        "name": "Kizuna",
+        "price": {
+            "item": "gura",
+            "quantity": 15
+        },
+        "emoji": "<:kizuna:820285443475767297>",
+        "raw_price": 31500000
     },
-    "amelia":{
-        "name":"Amelia Watson :flushed:",
-        "price":{
-            "item":"gura",
-            "quantity":10
-        }
+    "koboyashi": {
+        "name": "Koboyashi",
+        "price": {
+            "item": "tohru",
+            "quantity": 25
+        },
+        "emoji": "<:koboyashi:820285443726901248>",
+        "raw_price": 35000
     },
-    "fubuki":{
-        "name":"Fubuki :flushed:",
-        "price":{
-            "item":"gura",
-            "quantity":1200
-        }
+    "megumin": {
+        "name": "Megumin",
+        "price": {
+            "item": "erin",
+            "quantity": 7000
+        },
+        "emoji": "<:megumin:820285443966763008>",
+        "raw_price": 7000
     },
-    "kizuna":{
-        "name":"Kizuna Ai :flushed:",
-        "price":{
-            "item":"fubuki",
-            "quantity":50
-        }
-    }           
+    "aqua": {
+        "name": "Aqua",
+        "price": {
+            "item": "megumin",
+            "quantity": 5
+        },
+        "emoji": "<:aqua:820285444116709396>",
+        "raw_price": 35000
+    },
+    "sagiri": {
+        "name": "Sagiri",
+        "price": {
+            "item": "erin",
+            "quantity": 2500
+        },
+        "emoji": "<:sagiri:820286340598857768>",
+        "raw_price": 2500
+    },
+    "hana": {
+        "name": "Hana Chan",
+        "price": {
+            "item": "erin",
+            "quantity": 500
+        },
+        "emoji": "<:hana:820288678689636363>",
+        "raw_price": 500
+    },
+    "hinata": {
+        "name": "Hinata",
+        "price": {
+            "item": "hana",
+            "quantity": 30
+        },
+        "emoji": "<:hinata:820288681688039424>",
+        "raw_price": 15000
+    },
+    "nico": {
+        "name": "Nico",
+        "price": {
+            "item": "erin",
+            "quantity": 725
+        },
+        "emoji": "<:nico:820288678764347402>",
+        "raw_price": 725
+    },
+    "Tedeza": {
+        "name": "Tedeza",
+        "price": {
+            "item": "syaro",
+            "quantity": 30
+        },
+        "emoji": "<:Tedeza:820288679506477097>",
+        "raw_price": 9000
+    },
+    "konata": {
+        "name": "Konata",
+        "price": {
+            "item": "erin",
+            "quantity": 7500
+        },
+        "emoji": "<:konata:820288681147236382>",
+        "raw_price": 7500
+    },
+    "tsukasa": {
+        "name": "Tsukasa",
+        "price": {
+            "item": "konata",
+            "quantity": 3
+        },
+        "emoji": "<:tsukasa:820288681160081448>",
+        "raw_price": 22500
+    },
+    "umaru": {
+        "name": "Umaru",
+        "price": {
+            "item": "erin",
+            "quantity": 4500
+        },
+        "emoji": "<:umaru:820288681297444915>",
+        "raw_price": 4500
+    },
+    "anko": {
+        "name": "Anko",
+        "price": {
+            "item": "erin",
+            "quantity": 500
+        },
+        "emoji": "<:anko:820288681839427615>",
+        "raw_price": 500
+    },
+    "cocoa": {
+        "name": "Cocoa",
+        "price": {
+            "item": "chino",
+            "quantity": 250
+        },
+        "emoji": "<:cocoa:820288682099474453>",
+        "raw_price": 17500
+    },
+    "chino": {
+        "name": "Chino Kafu",
+        "price": {
+            "item": "erin",
+            "quantity": 70
+        },
+        "emoji": "<:chino:821054922237804594>",
+        "raw_price": 70
+    },
+    "noa": {
+        "name": "Noa",
+        "price": {
+            "item": "hinata",
+            "quantity": 45
+        },
+        "emoji": "<:noa:820288682161471530>",
+        "raw_price": 675000
+    },
+    "wendy": {
+        "name": "Wendy",
+        "price": {
+            "item": "erin",
+            "quantity": 2500
+        },
+        "emoji": "<:wendy:820288682698342401>",
+        "raw_price": 2500
+    },
+    "shiro": {
+        "name": "Shiro",
+        "price": {
+            "item": "erin",
+            "quantity": 12000
+        },
+        "emoji": "<:shiro:820288682979754105>",
+        "raw_price": 12000
+    },
+    "akira": {
+        "name": "Akira",
+        "price": {
+            "item": "tsukasa",
+            "quantity": 320
+        },
+        "emoji": "<:akira:820288683897782302>",
+        "raw_price": 7200000
+    },
+    "akari": {
+        "name": "Akari",
+        "price": {
+            "item": "erin",
+            "quantity": 4735
+        },
+        "emoji": "<:akari:820331377232707605>",
+        "raw_price": 4735
+    },
+    "kurumi": {
+        "name": "Kurumi",
+        "price": {
+            "item": "erin",
+            "quantity": 8000
+        },
+        "emoji": "<:kurumi:820331377329045505>",
+        "raw_price": 8000
+    },
+    "rikka": {
+        "name": "Rikka",
+        "price": {
+            "item": "erin",
+            "quantity": 20500
+        },
+        "emoji": "<:rikka:820331377630642176>",
+        "raw_price": 20500
+    },
+    "emilia": {
+        "name": "Emilia",
+        "price": {
+            "item": "rem",
+            "quantity": 50
+        },
+        "emoji": "<:emilia:820331377643094108>",
+        "raw_price": 625000
+    },
+    "yuihira": {
+        "name": "Yuihira",
+        "price": {
+            "item": "erin",
+            "quantity": 5025
+        },
+        "emoji": "<:yuihira:820331377663672390>",
+        "raw_price": 5025
+    },
+    "miku": {
+        "name": "Miku",
+        "price": {
+            "item": "erin",
+            "quantity": 15000
+        },
+        "emoji": "<:miku:820331377698013215>",
+        "raw_price": 15000
+    },
+    "nadeko": {
+        "name": "Nadeko",
+        "price": {
+            "item": "erin",
+            "quantity": 3000
+        },
+        "emoji": "<:nadeko:820331377701683282>",
+        "raw_price": 3000
+    },
+    "sumi": {
+        "name": "Sumi",
+        "price": {
+            "item": "chizuru",
+            "quantity": 25
+        },
+        "emoji": "<:sumi:820331377731698715>",
+        "raw_price": 28125000
+    },
+    "minami": {
+        "name": "Minami",
+        "price": {
+            "item": "erin",
+            "quantity": 300
+        },
+        "emoji": "<:minami:820331377739956234>",
+        "raw_price": 300
+    },
+    "ruka": {
+        "name": "Ruka",
+        "price": {
+            "item": "mami",
+            "quantity": 50
+        },
+        "emoji": "<:ruka:820331377777311754>",
+        "raw_price": 12500
+    },
+    "reimi": {
+        "name": "Reimi",
+        "price": {
+            "item": "erin",
+            "quantity": 2500
+        },
+        "emoji": "<:reimi:820331377810604052>",
+        "raw_price": 2500
+    },
+    "mikoiino": {
+        "name": "Mikoiino",
+        "price": {
+            "item": "kaguya",
+            "quantity": 5
+        },
+        "emoji": "<:mikoiino:820331377818992650>",
+        "raw_price": 1800000
+    },
+    "mami": {
+        "name": "Mami",
+        "price": {
+            "item": "erin",
+            "quantity": 250
+        },
+        "emoji": "<:mami:820331377831968768>",
+        "raw_price": 250
+    },
+    "hayasaka": {
+        "name": "Hayasaka",
+        "price": {
+            "item": "erin",
+            "quantity": 8000
+        },
+        "emoji": "<:hayasaka:820331377835638824>",
+        "raw_price": 8000
+    },
+    "shiina": {
+        "name": "Shiina",
+        "price": {
+            "item": "nanami",
+            "quantity": 300
+        },
+        "emoji": "<:shiina:820331377836032080>",
+        "raw_price": 2400000
+    },
+    "kaguya": {
+        "name": "Kaguya",
+        "price": {
+            "item": "hayasaka",
+            "quantity": 45
+        },
+        "emoji": "<:kaguya:820331377856872468>",
+        "raw_price": 360000
+    },
+    "yumeko": {
+        "name": "Yumeko",
+        "price": {
+            "item": "erin",
+            "quantity": 14500
+        },
+        "emoji": "<:yumeko:820331377857527849>",
+        "raw_price": 14500
+    },
+    "fuuko": {
+        "name": "Fuuko",
+        "price": {
+            "item": "erin",
+            "quantity": 800
+        },
+        "emoji": "<:fuuko:820331377874436147>",
+        "raw_price": 800
+    },
+    "chizuru": {
+        "name": "Chizuru",
+        "price": {
+            "item": "ruka",
+            "quantity": 90
+        },
+        "emoji": "<:chizuru:820331378020319242>",
+        "raw_price": 1125000
+    },
+    "nao": {
+        "name": "Nao",
+        "price": {
+            "item": "erin",
+            "quantity": 9000
+        },
+        "emoji": "<:nao:820331378196873286>",
+        "raw_price": 9000
+    },
+    "syaro": {
+        "name": "Syaro",
+        "price": {
+            "item": "erin",
+            "quantity": 300
+        },
+        "emoji": "<:syaro:820339384053923850>",
+        "raw_price": 300
+    },
+    "taiga": {
+        "name": "Taiga",
+        "price": {
+            "item": "erin",
+            "quantity": 1500
+        },
+        "emoji": "<:taiga:820332735762530366>",
+        "raw_price": 1500
+    },
+    "toga": {
+        "name": "Toga",
+        "price": {
+            "item": "erin",
+            "quantity": 25000
+        },
+        "emoji": "<:toga:820332735780093965>",
+        "raw_price": 25000
+    },
+    "nezuko": {
+        "name": "Nezuko",
+        "price": {
+            "item": "taiga",
+            "quantity": 25
+        },
+        "emoji": "<:nezuko:820332735897665567>",
+        "raw_price": 37500
+    },
+    "nanami": {
+        "name": "Nanami",
+        "price": {
+            "item": "erin",
+            "quantity": 8000
+        },
+        "emoji": "<:nanami:820332736073302047>",
+        "raw_price": 8000
+    },
+    "chika": {
+        "name": "Chika",
+        "price": {
+            "item": "erin",
+            "quantity": 45000
+        },
+        "emoji": "<:chika:820332736152993822>",
+        "raw_price": 45000
+    },
+    "mai": {
+        "name": "Mai",
+        "price": {
+            "item": "erin",
+            "quantity": 18000
+        },
+        "emoji": "<:mai:820332737973059584>",
+        "raw_price": 18000
+    },
+    "rem": {
+        "name": "Rem",
+        "price": {
+            "item": "erin",
+            "quantity": 12500
+        },
+        "emoji": "<:rem:820332738878898207>",
+        "raw_price": 12500
+    },
+    "honda": {
+        "name": "Honda",
+        "price": {
+            "item": "erin",
+            "quantity": 4000
+        },
+        "emoji": "<:honda:820337876918992906>",
+        "raw_price": 4000
+    },
+    "mikasa": {
+        "name": "Mikasa",
+        "price": {
+            "item": "erin",
+            "quantity": 7000
+        },
+        "emoji": "<:mikasa:820337877263187979>",
+        "raw_price": 7000
+    },
+    "ichigo": {
+        "name": "Ichigo",
+        "price": {
+            "item": "erin",
+            "quantity": 7000
+        },
+        "emoji": "<:ichigo:820337877351006228>",
+        "raw_price": 7000
+    },
+    "akame": {
+        "name": "Akame",
+        "price": {
+            "item": "erin",
+            "quantity": 2000
+        },
+        "emoji": "<:akame:820337877392949307>",
+        "raw_price": 2000
+    },
+    "raphtalia": {
+        "name": "Raphtalia",
+        "price": {
+            "item": "fuuko",
+            "quantity": 50
+        },
+        "emoji": "<:raphtalia:820337877769781308>",
+        "raw_price": 40000
+    },
+    "misaki": {
+        "name": "Misaki",
+        "price": {
+            "item": "nadeko",
+            "quantity": 32
+        },
+        "emoji": "<:misaki:820337878671687712>",
+        "raw_price": 96000
+    },
+    "mitsuha": {
+        "name": "Mitsuha",
+        "price": {
+            "item": "shiina",
+            "quantity": 35
+        },
+        "emoji": "<:mitsuha:820337879518543883>",
+        "raw_price": 84000000
+    },
+    "lucy": {
+        "name": "Lucy",
+        "price": {
+            "item": "nao",
+            "quantity": 5
+        },
+        "emoji": "<:lucy:820337880961384519>",
+        "raw_price": 45000
+    },
+    "kofuku": {
+        "name": "Kofuku",
+        "price": {
+            "item": "rikka",
+            "quantity": 20
+        },
+        "emoji": "<:kofuku:820337881074761758>",
+        "raw_price": 410000
+    },
+    "kei": {
+        "name": "Kei",
+        "price": {
+            "item": "kaguya",
+            "quantity": 20
+        },
+        "emoji": "<:kei:820337882794557490>",
+        "raw_price": 7200000
+    },
+    "zerotwo": {
+        "name": "Zerotwo",
+        "price": {
+            "item": "rem",
+            "quantity": 250
+        },
+        "emoji": "<:zerotwo:820338187817189394>",
+        "raw_price": 3125000
+    },
+    "violet": {
+        "name": "Violet",
+        "price": {
+            "item": "Akari",
+            "quantity": 24
+        },
+        "emoji": "<:violet:820338187901337640>",
+        "raw_price": 24
+    },
+    "uraraka": {
+        "name": "Uraraka",
+        "price": {
+            "item": "shiro",
+            "quantity": 5
+        },
+        "emoji": "<:uraraka:820338187934105640>",
+        "raw_price": 60000
+    },
+    "touka": {
+        "name": "Touka",
+        "price": {
+            "item": "anko",
+            "quantity": 6
+        },
+        "emoji": "<:touka:820338187968184400>",
+        "raw_price": 3000
+    },
+    "sasha": {
+        "name": "Sasha",
+        "price": {
+            "item": "mikasa",
+            "quantity": 30
+        },
+        "emoji": "<:sasha:820338187984437289>",
+        "raw_price": 210000
+    },
+    "yuuki": {
+        "name": "Yuuki",
+        "price": {
+            "item": "erin",
+            "quantity": 23000
+        },
+        "emoji": "<:yuuki:820338188170166302>",
+        "raw_price": 23000
+    },
+    "tsunande": {
+        "name": "Tsunande",
+        "price": {
+            "item": "miku",
+            "quantity": 50
+        },
+        "emoji": "<:tsunande:820338188181831720>",
+        "raw_price": 750000
+    },
+    "shoko": {
+        "name": "Shoko",
+        "price": {
+            "item": "erin",
+            "quantity": 50000
+        },
+        "emoji": "<:shoko:820338188228886569>",
+        "raw_price": 50000
+    },
+    "rin": {
+        "name": "Rin",
+        "price": {
+            "item": "zerotwo",
+            "quantity": 3
+        },
+        "emoji": "<:rin:820338188391809114>",
+        "raw_price": 9375000
+    },
+    "sena": {
+        "name": "Sena",
+        "price": {
+            "item": "erin",
+            "quantity": 50
+        },
+        "emoji": "<:sena:820338189378125824>",
+        "raw_price": 50
+    }
 }
-
