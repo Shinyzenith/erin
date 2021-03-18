@@ -90,7 +90,7 @@ class Help(commands.Cog):
 						embed=None
 						command_list=""
 					if len(embeds)==1:
-						return await send_embed(embed=embeds[0])
+						return await send_embed(ctx,embed=embeds[0])
 					elif len(embeds)==0:
 						emb = discord.Embed(title="lol, sadphroge 😔😔😔",
 									description=f"ERROR 404 couldn't find `{input}` module",
