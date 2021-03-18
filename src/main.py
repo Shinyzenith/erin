@@ -2,6 +2,7 @@ import discord
 import os
 import logging,coloredlogs
 import json
+import motor.motor_asyncio
 import asyncpg
 import datetime
 import aiohttp
@@ -76,6 +77,8 @@ class ErinBot(commands.Bot):
         async def init(conn):
             await conn.set_type_codec("jsonb", schema="pg_catalog", encoder=json.dumps, decoder=json.loads, format="text")
         self.db = await asyncpg.create_pool(os.getenv("DATABASEURI"), init=init)
+        self.mongo = motor.motor_asyncio.AsyncIOMotorClient('localhost', 27017)  #DEVELOPMENT COMMAND
+        # self.mongo = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("CONECTION_URI"))  # RELEASE / PRODUCTION COMMAND
 
     #sends a webhook message for logging.
     async def on_ready(self):
@@ -91,9 +94,9 @@ class ErinBot(commands.Bot):
 
 #creating bot class instance and loading extensions
 log.info("Loading extensions")
-bot = ErinBot()
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
+bot = ErinBot()
 for file in os.listdir(cwd + "/cogs"):
     if file.endswith(".py") and not file.startswith("_"):
         bot.load_extension(f"cogs.{file[:-3]}")

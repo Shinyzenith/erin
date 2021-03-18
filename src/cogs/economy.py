@@ -20,8 +20,7 @@ ongoing_duel=[]
 
 class EconomyHandler:
 	def __init__(self):
-		self.client = motor.motor_asyncio.AsyncIOMotorClient(
-			'localhost', 27017)
+		self.client = motor.motor_asyncio.AsyncIOMotorClient('localhost', 27017)
 		self.db = self.client.users
 		self.col = self.db["economy"]
 

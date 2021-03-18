@@ -34,11 +34,13 @@ async def export_exception(ctx, error):
 			by user `{ctx.author.name}#{ctx.author.discriminator}`
 			on guild `{ctx.guild.id}` with name `{ctx.guild.name}`
 			on channel `{ctx.channel.id}` with name `{ctx.channel.name}`
+			on message `{ctx.message.id}`
 		"""
 		await webhook_send(os.getenv("WARNLOG"), embed)
 		embed=discord.Embed()
 		embed.title="An error occured"
 		embed.description="The error has been reported to the devs"
+		log.warn(f"Server level exception occured with messageID: {ctx.message.id}")
 		await ctx.send(embed=embed)
 class ErrorHandler(commands.Cog):
 	def __init__(self, bot):
