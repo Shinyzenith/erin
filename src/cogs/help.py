@@ -35,6 +35,8 @@ class Help(commands.Cog):
 
 			cogs_desc = ''
 			for cog in self.bot.cogs:
+				if len(self.bot.get_cog(cog).get_commands())==0:
+					continue
 				cogs_desc += f'`{cog}` {self.bot.cogs[cog].__doc__}\n'
 
 			emb.add_field(name='Modules', value=cogs_desc, inline=False)
@@ -88,7 +90,12 @@ class Help(commands.Cog):
 						embed=None
 						command_list=""
 					if len(embeds)==1:
-						return await ctx.send(embed=embeds[0])
+						return await send_embed(embed=embeds[0])
+					elif len(embeds)==0:
+						emb = discord.Embed(title="lol, sadphroge 😔😔😔",
+									description=f"ERROR 404 couldn't find `{input}` module",
+									color=ctx.message.author.color)
+						return await send_embed(ctx, emb)
 					else:
 						paginator = DiscordUtils.Pagination.CustomEmbedPaginator(ctx, remove_reactions=True)
 						paginator.add_reaction('⏮️', "first")
