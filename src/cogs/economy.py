@@ -47,7 +47,7 @@ def SFR(title=None, description=None, author=None, footer=None, thumbnail=None):
 class EconomyHandler:
 	def __init__(self):
 		self.client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("CONNECTIONURI"))
-		self.db = self.client.users
+		self.db = self.client.erin
 		self.col = self.db["economy"]
 
 	async def find_user(self, uid: int):

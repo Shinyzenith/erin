@@ -36,7 +36,7 @@ async def webhook_send(url, message, username="Erin uptime Logs",avatar="https:/
 class PrefixManager:
 	def __init__(self):
 		self.client = MongoClient(os.getenv('CONNECTIONURI'))
-		self.db=self.client.guilds
+		self.db=self.client.erin
 		self.col=self.db["prefix"]
 
 	def register_guild(self, g):
