@@ -1,0 +1,29 @@
+{
+    "basic": {
+        "name":"<:basic:821048213921333268> Basic Crate",
+        "price":{
+            "item":"erin",
+            "quantity":50000
+        },
+        "items":["kanna","amelia","korone","okayu","nico","umaru", "minami", "mami", "fuuko", "syaro","sena","sagiri"],
+        "quantity":"1-500"
+    },
+    "advanced": {
+        "name":"<:advanced:821048050612830239> Advanced Crate",
+        "price":{
+            "item":"erin",
+            "quantity":125000
+        },
+        "items":["gura","fubuki","mikasa","sasha","rem","emilia","taiga","nao","hayasaka", "mai","kurumi","hinata","megumin", "reimi", "miku"],
+        "quantity":"1-20"
+    },
+    "ultra": {
+        "name":"<:ultra:821049587350503495> Ultra Crate",
+        "price":{
+            "item":"erin",
+            "quantity":"725000"
+        },
+        "items":["kurumi","zerotwo","shoko","rin","yuuki","shiro","uraraka","kaguya","kei","chika", "miiko","rikka", "yumeko","nezuko"],
+        "quantity":"1-50"
+    }
+}

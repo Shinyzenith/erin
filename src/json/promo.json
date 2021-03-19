@@ -1,23 +1,32 @@
 {
-    "fresh_start": {
+    "newbie": {
         "active": true,
         "award": {
             "item": "erin",
             "quantity": 15000
         },
-        "uses": 7,
-        "cooldown": 30,
-        "per_person": 5
+        "uses": 5,
+        "cooldown": 9999,
+        "per_person": 1
     },
-    "testCode": {
+    "daily": {
         "active": true,
         "award": {
-            "item": "erin",
-            "quantity": 15000
+            "item": "kanna",
+            "quantity": 300
         },
-        "uses": 8,
-        "cooldown": 30,
-        "per_person": 5
+        "uses": 12,
+        "cooldown": 86400,
+        "per_person": 9999
+    },
+    "monthly": {
+        "active": true,
+        "award": {
+            "item": "amelia",
+            "quantity": 125
+        },
+        "uses": 12,
+        "cooldown": 2592000,
+        "per_person": 9999
     }
 }
-

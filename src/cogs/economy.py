@@ -1,4 +1,5 @@
 from discord.ext import commands
+import datetime as dt
 from datetime import datetime
 import discord
 import json
@@ -11,6 +12,7 @@ import coloredlogs
 import asyncio
 import DiscordUtils
 import motor.motor_asyncio
+import humanize
 
 log = logging.getLogger("fun cog")
 coloredlogs.install(logger=log)
@@ -174,17 +176,17 @@ class economy(commands.Cog):
 		claims = json.load(
 			open("./json/claims.json", "r")
 		)
-		if not c in claims:
-			claims[c] = {"claimed": {}}
-		return claims[c]
+		if not str(c) in claims:
+			claims[str(c)] = {"claimed": {}}
+		return claims[str(c)]
 
 	def save_claims(self, c, claim):
 		claims = json.load(
 			open("./json/claims.json", "r")
 		)
-		if not c in claims:
-			claims[c] = {"claimed": {}}
-		claims[c]["claimed"] = claim
+		if not str(c) in claims:
+			claims[str(c)] = {"claimed": {}}
+		claims[str(c)]["claimed"] = claim
 		json.dump(
 			claims,
 			open("./json/claims.json", "w"),
@@ -305,9 +307,10 @@ class economy(commands.Cog):
 							allowed = True
 						else:
 							allowed = False
+							t=humanize.naturaldelta(dt.timedelta(seconds=codes[code]["cooldown"]-evaluated))
 							return await ctx.send(embed=GLE(
 								None,
-								f'You are on a cooldown, try again in {codes[code]["cooldown"]-evaluated}s',
+								f'You are on a cooldown, try again in {t}',
 								ctx.author.avatar_url,
 								footer=f"{ctx.author.name}#{ctx.author.discriminator}"
 							))
@@ -404,6 +407,7 @@ class economy(commands.Cog):
 		if item in user and item in shop:
 			if user[item] >= amount:
 				user["erin"] += shop[item]["raw_price"]*amount
+				user[item]-=amount
 				embed = discord.Embed(color=ctx.author.color)
 				embed.title = "Item converted"
 				embed.description = f"{shop[item]['emoji']} {amount} {item} ➜ <:erin:820473033700671569> {shop[item]['raw_price']*amount} erin"

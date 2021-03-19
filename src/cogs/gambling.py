@@ -145,7 +145,7 @@ class Gambling(commands.Cog):
 
 	@commands.command()
 	@commands.cooldown(5, 180, commands.BucketType.user)
-	async def duel(self, ctx, member: discord.Member = None, amount=1, item="kanna"):
+	async def duel(self, ctx, member: discord.Member = None, amount=1, item=None):
 		global ongoing_duel
 		if ctx.author.id in ongoing_duel:
 			return await ctx.send(embed=GLE(
@@ -163,7 +163,14 @@ class Gambling(commands.Cog):
 				ctx.author.avatar_url,
 				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 			))
-
+		if not item:
+			ongoing_duel.remove(ctx.author.id)
+			return await ctx.send(embed=GLE(
+				None,
+				f"pls mention the bet for this battle",
+				ctx.author.avatar_url,
+				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+			))
 		else:
 			if member.id == ctx.author.id:
 				ongoing_duel.remove(ctx.author.id)
