@@ -6,9 +6,14 @@ import random
 import os
 import numpy as np
 import time
+import logging
+import coloredlogs
 import asyncio
 import DiscordUtils
 import motor.motor_asyncio
+
+log = logging.getLogger("fun cog")
+coloredlogs.install(logger=log)
 global ongoing_duel
 ongoing_duel = []
 
@@ -41,8 +46,8 @@ def SFR(title=None, description=None, author=None, footer=None, thumbnail=None):
 
 class EconomyHandler:
 	def __init__(self):
-		self.client = motor.motor_asyncio.AsyncIOMotorClient('localhost', 27017)
-		self.db = self.client.erin
+		self.client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("CONNECTIONURI"))
+		self.db = self.client.users
 		self.col = self.db["economy"]
 
 	async def find_user(self, uid: int):
@@ -100,7 +105,7 @@ class economy(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_ready(self):
-		print(f"{self.__class__.__name__} Cog has been loaded\n-----")
+		log.warn(f"{self.__class__.__name__} Cog has been loaded")
 
 	@commands.Cog.listener()
 	async def on_message(self, message):
@@ -220,7 +225,7 @@ class economy(commands.Cog):
 					text=f"Page {i}/{len(chunks)}", icon_url=ctx.author.avatar_url)
 				embed.set_thumbnail(url=ctx.author.avatar_url)
 				embeds.append(embed)
-		   	paginator = DiscordUtils.Pagination.CustomEmbedPaginator(ctx)
+			paginator = DiscordUtils.Pagination.CustomEmbedPaginator(ctx)
 			paginator.add_reaction('\N{Black Left-Pointing Double Triangle with Vertical Bar}', "first")
 			paginator.add_reaction('\N{Black Left-Pointing Double Triangle}', "back")
 			paginator.add_reaction('\N{CROSS MARK}', "lock")

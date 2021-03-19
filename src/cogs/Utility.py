@@ -48,7 +48,7 @@ class plural:
 
 class PrefixManager:
 	def __init__(self):
-		self.client = motor.motor_asyncio.AsyncIOMotorClient('localhost', 27017)
+		self.client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv('CONNECTIONURI'))
 		self.db = self.client.guilds
 		self.col = self.db["prefix"]
 

@@ -35,8 +35,7 @@ async def webhook_send(url, message, username="Erin uptime Logs",avatar="https:/
 #prefix manager class
 class PrefixManager:
 	def __init__(self):
-		self.client=MongoClient('localhost',27017)
-        # self.client = MongoClient(os.getenv('CONNECTION_URI'))
+		self.client = MongoClient(os.getenv('CONNECTIONURI'))
 		self.db=self.client.guilds
 		self.col=self.db["prefix"]
 
@@ -56,51 +55,50 @@ class PrefixManager:
 
 #bot instance class
 class ErinBot(commands.Bot):
-    def __init__(self):
-        
-        #intent and bot instance declaration
-        intents=discord.Intents.all()
-        super().__init__(command_prefix=PrefixManager().get_prefix, intents=intents,guild_subscriptions=True)
-        
-        #saving startup time and creating process loop (removing the default help command cuz it's ass)
-        self.remove_command('help')
-        self.startup_time = datetime.datetime.utcnow()
-        self.loop.create_task(self.prepare_bot())
+	def __init__(self):
+		
+		#intent and bot instance declaration
+		intents=discord.Intents.all()
+		super().__init__(command_prefix=PrefixManager().get_prefix, intents=intents,guild_subscriptions=True)
+		
+		#saving startup time and creating process loop (removing the default help command cuz it's ass)
+		self.remove_command('help')
+		self.startup_time = datetime.datetime.utcnow()
+		self.loop.create_task(self.prepare_bot())
 
 
-    #Prepares the bot and connects to the database
-    async def prepare_bot(self):
-        log.info("Creating aiohttp session")
-        self.session = aiohttp.ClientSession()
-        self.cached_words=[]
-        log.info("Connecting to database")
-        async def init(conn):
-            await conn.set_type_codec("jsonb", schema="pg_catalog", encoder=json.dumps, decoder=json.loads, format="text")
-        self.db = await asyncpg.create_pool(os.getenv("DATABASEURI"), init=init)
-        self.mongo = motor.motor_asyncio.AsyncIOMotorClient('localhost', 27017)  #DEVELOPMENT COMMAND
-        # self.mongo = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("CONECTION_URI"))  # RELEASE / PRODUCTION COMMAND
+	#Prepares the bot and connects to the database
+	async def prepare_bot(self):
+		log.info("Creating aiohttp session")
+		self.session = aiohttp.ClientSession()
+		self.cached_words=[]
+		log.info("Connecting to database")
+		async def init(conn):
+			await conn.set_type_codec("jsonb", schema="pg_catalog", encoder=json.dumps, decoder=json.loads, format="text")
+		self.db = await asyncpg.create_pool(os.getenv("DATABASEURI"), init=init)
+		self.mongo = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("CONNECTIONURI"))
 
-    #sends a webhook message for logging.
-    async def on_ready(self):
-        await webhook_send(os.getenv("UPTIMELOG"),"Erin started up 👍")
-        log.info(f"Logged in as {self.user.name} - {self.user.id}")
-
-    #runs the instance of the bot class.
-    def run(self):
-        super().run(os.getenv("TOKEN"))
+	#runs the instance of the bot class.
+	def run(self):
+		super().run(os.getenv("TOKEN"))
 
 
+#creating an erin bot object
+bot = ErinBot()
+
+#send message on startup
+@bot.event
+async def on_ready():
+	await webhook_send(os.getenv("UPTIMELOG"),"Erin started up \N{Thumbs Up Sign}")
+	log.info(f"Logged in as {bot.user.name} - {bot.user.id}")
 
 
 #creating bot class instance and loading extensions
 log.info("Loading extensions")
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
-bot = ErinBot()
 for file in os.listdir(cwd + "/cogs"):
-    if file.endswith(".py") and not file.startswith("_"):
-        bot.load_extension(f"cogs.{file[:-3]}")
-
-
+	if file.endswith(".py") and not file.startswith("_"):
+		bot.load_extension(f"cogs.{file[:-3]}")
 #running the bot
 bot.run()
