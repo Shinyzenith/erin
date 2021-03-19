@@ -9,12 +9,6 @@ import time
 import asyncio
 import DiscordUtils
 import motor.motor_asyncio
-import coloredlogs,logging
-
-
-log = logging.getLogger("economy cog")
-coloredlogs.install(logger=log)
-
 global ongoing_duel
 ongoing_duel = []
 
@@ -47,9 +41,8 @@ def SFR(title=None, description=None, author=None, footer=None, thumbnail=None):
 
 class EconomyHandler:
 	def __init__(self):
-		self.client = motor.motor_asyncio.AsyncIOMotorClient(
-			'localhost', 27017)
-		self.db = self.client.users
+		self.client = motor.motor_asyncio.AsyncIOMotorClient('localhost', 27017)
+		self.db = self.client.erin
 		self.col = self.db["economy"]
 
 	async def find_user(self, uid: int):
@@ -107,7 +100,7 @@ class economy(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_ready(self):
-		log.warn(f"{self.__class__.__name__} Cog has been loaded")
+		print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
 	@commands.Cog.listener()
 	async def on_message(self, message):
@@ -227,7 +220,7 @@ class economy(commands.Cog):
 					text=f"Page {i}/{len(chunks)}", icon_url=ctx.author.avatar_url)
 				embed.set_thumbnail(url=ctx.author.avatar_url)
 				embeds.append(embed)
-			paginator = DiscordUtils.Pagination.CustomEmbedPaginator(ctx)
+		   	paginator = DiscordUtils.Pagination.CustomEmbedPaginator(ctx)
 			paginator.add_reaction('\N{Black Left-Pointing Double Triangle with Vertical Bar}', "first")
 			paginator.add_reaction('\N{Black Left-Pointing Double Triangle}', "back")
 			paginator.add_reaction('\N{CROSS MARK}', "lock")
@@ -269,11 +262,12 @@ class economy(commands.Cog):
 			embed.set_footer(
 				text=f"Page {i}/{len(chunks)}", icon_url=ctx.author.avatar_url)
 			embeds.append(embed)
-			paginator.add_reaction('\N{Black Left-Pointing Double Triangle with Vertical Bar}', "first")
-			paginator.add_reaction('\N{Black Left-Pointing Double Triangle}', "back")
-			paginator.add_reaction('\N{CROSS MARK}', "lock")
-			paginator.add_reaction('\N{Black Right-Pointing Double Triangle}', "next")
-			paginator.add_reaction('\N{Black Right-Pointing Double Triangle with Vertical Bar}', "last")
+		paginator = DiscordUtils.Pagination.CustomEmbedPaginator(ctx)
+		paginator.add_reaction('\N{Black Left-Pointing Double Triangle with Vertical Bar}', "first")
+		paginator.add_reaction('\N{Black Left-Pointing Double Triangle}', "back")
+		paginator.add_reaction('\N{CROSS MARK}', "lock")
+		paginator.add_reaction('\N{Black Right-Pointing Double Triangle}', "next")
+		paginator.add_reaction('\N{Black Right-Pointing Double Triangle with Vertical Bar}', "last")
 		await paginator.run(embeds)
 
 	@commands.command()
@@ -329,7 +323,7 @@ class economy(commands.Cog):
 						self.update_code(code, codes[code])
 						return await ctx.send(embed=SFR(
 							None,
-							f"You got `{quantity} {award}` ✅",
+							f"You got `{quantity} {award}` \N{White Heavy Check Mark}",
 							ctx.author.avatar_url,
 							footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 						))
@@ -372,7 +366,7 @@ class economy(commands.Cog):
 					await self.eh.update_user(uid, user)
 					return await ctx.send(embed=SFR(
 						None,
-						f'You just crafted `{quantity} {item}` ✅',
+						f'You just crafted `{quantity} {item}` \N{White Heavy Check Mark}',
 						ctx.author.avatar_url,
 						footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 					))
@@ -448,7 +442,7 @@ class economy(commands.Cog):
 				await self.eh.update_user(tid, u2)
 				return await ctx.send(embed=SFR(
 					None,
-					f"You sent `{user.name}#{user.discriminator}` {quantity} {item} ✅",
+					f"You sent `{user.name}#{user.discriminator}` {quantity} {item} \N{White Heavy Check Mark}",
 					ctx.author.avatar_url,
 					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 				))
