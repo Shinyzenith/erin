@@ -84,8 +84,6 @@ class Help(commands.Cog):
 
 							command_list = command_list + f'{i}) ``{ctx.prefix}{command.name}``\n'
 							embed.add_field(inline=False,name=f"`{ctx.prefix}{command.name}`",value=f"Aliases: **{aliases}**\nDescription: **{description}**\nUsage: **{ctx.prefix+command.name} {command.signature}**")
-							print(dir(command))
-							print("\n\n")
 						embeds.append(embed)
 						embed=None
 						command_list=""
