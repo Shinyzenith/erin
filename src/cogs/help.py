@@ -90,22 +90,22 @@ class Help(commands.Cog):
 					if len(embeds)==1:
 						return await send_embed(ctx,embed=embeds[0])
 					elif len(embeds)==0:
-						emb = discord.Embed(title="lol, sadphroge 😔😔😔",
+						emb = discord.Embed(title="lol, sadphroge \N{PENSIVE FACE}\N{PENSIVE FACE}\N{PENSIVE FACE}",
 									description=f"ERROR 404 couldn't find `{input}` module",
 									color=ctx.message.author.color)
 						return await send_embed(ctx, emb)
 					else:
 						paginator = DiscordUtils.Pagination.CustomEmbedPaginator(ctx, remove_reactions=True)
-						paginator.add_reaction('⏮️', "first")
-						paginator.add_reaction('⏪', "back")
-						paginator.add_reaction('⏩', "next")
-						paginator.add_reaction('⏭️', "last")
-						paginator.add_reaction('❌', "lock")
+						paginator.add_reaction('\N{Black Left-Pointing Double Triangle with Vertical Bar}', "first")
+						paginator.add_reaction('\N{Black Left-Pointing Double Triangle}', "back")
+						paginator.add_reaction('\N{CROSS MARK}', "lock")
+						paginator.add_reaction('\N{Black Right-Pointing Double Triangle}', "next")
+						paginator.add_reaction('\N{Black Right-Pointing Double Triangle with Vertical Bar}', "last")
 						return await paginator.run(embeds)
 					break
 
 			else:
-				emb = discord.Embed(title="lol, sadphroge 😔😔😔",
+				emb = discord.Embed(title="lol, sadphroge \N{PENSIVE FACE}\N{PENSIVE FACE}\N{PENSIVE FACE}",
 									description=f"ERROR 404 couldn't find `{input}` module",
 									color=ctx.message.author.color)
 				return await send_embed(ctx, emb)
