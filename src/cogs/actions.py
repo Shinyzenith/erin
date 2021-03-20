@@ -42,7 +42,8 @@ class Actions(commands.Cog):
 			)
 		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/hug"))
 
-		await ctx.send(embed = embed)
+		await ctx.send(", ".join([users.mention for users in user]),embed = embed)
+	
 	@commands.cooldown(3, 5, commands.BucketType.user)
 	@commands.command()
 	async def laugh(self, ctx, user: commands.Greedy[discord.Member] = None):
@@ -58,7 +59,7 @@ class Actions(commands.Cog):
 		response=await api_call("http://api.nekos.fun:8080/api/laugh",state=False)
 		embed.set_image(url=response['image'])
 
-		await ctx.send(embed = embed)
+		await ctx.send(", ".join([users.mention for users in user]),embed = embed)
 	
 	@commands.cooldown(3, 5, commands.BucketType.user)
 	@commands.command()
@@ -75,13 +76,13 @@ class Actions(commands.Cog):
 		response=await api_call("http://api.nekos.fun:8080/api/lick",state=False)
 		embed.set_image(url=response['image'])
 
-		await ctx.send(embed = embed)
+		await ctx.send(", ".join([users.mention for users in user]),embed = embed)
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
 	@commands.command()
 	async def cry(self, ctx):
 		embed = discord.Embed(
-			title = "**:'((**",
+			title = "<a:KannaCry:822716843440734218><a:KannaCry:822716843440734218><a:KannaCry:822716843440734218>",
 			color = 0xFFC0CB
 			)
 		response=await api_call("http://api.nekos.fun:8080/api/cry",state=False)
@@ -103,7 +104,7 @@ class Actions(commands.Cog):
 			)
 		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/cuddle"))
 
-		await ctx.send(embed = embed)
+		await ctx.send(", ".join([users.mention for users in user]),embed = embed)
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
 	@commands.command()
@@ -123,7 +124,7 @@ class Actions(commands.Cog):
 			)
 		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/kiss"))
 
-		await ctx.send(embed=embed)
+		await ctx.send(", ".join([users.mention for users in user]),embed=embed)
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
 	@commands.command()
@@ -143,7 +144,7 @@ class Actions(commands.Cog):
 			)
 		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/pat"))
 
-		await ctx.send(embed=embed)
+		await ctx.send(", ".join([users.mention for users in user]),embed=embed)
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
 	@commands.command()
@@ -163,7 +164,7 @@ class Actions(commands.Cog):
 			)
 		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/poke"))
 
-		await ctx.send(embed=embed)
+		await ctx.send(", ".join([users.mention for users in user]),embed=embed)
 	
 	@commands.cooldown(3, 5, commands.BucketType.user)
 	@commands.command()
@@ -179,7 +180,7 @@ class Actions(commands.Cog):
 			)
 		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/baka"))
 
-		await ctx.send(embed=embed)
+		await ctx.send(", ".join([users.mention for users in user]),embed=embed)
 	
 	@commands.cooldown(3, 5, commands.BucketType.user)
 	@commands.command()
@@ -195,7 +196,7 @@ class Actions(commands.Cog):
 			)
 		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/feed"))
 
-		await ctx.send(embed=embed)
+		await ctx.send(", ".join([users.mention for users in user]),embed=embed)
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
 	@commands.command()
@@ -206,7 +207,7 @@ class Actions(commands.Cog):
 			)
 		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/smug"))
 
-		await ctx.send(embed=embed)
+		await ctx.send(", ".join([users.mention for users in user]),embed=embed)
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
 	@commands.command()
@@ -226,7 +227,7 @@ class Actions(commands.Cog):
 		)
 		embed.set_image(url =await api_call("https://nekos.life/api/v2/img/slap"))
 
-		await ctx.send(embed=embed)
+		await ctx.send(", ".join([users.mention for users in user]),embed=embed)
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
 	@commands.command()
@@ -246,7 +247,7 @@ class Actions(commands.Cog):
 		)
 		embed.set_image(url = await api_call("https://nekos.life/api/v2/img/tickle"))
 
-		await ctx.send(embed=embed)
+		await ctx.send(", ".join([users.mention for users in user]),embed=embed)
 
 def setup(client):
 	client.add_cog(Actions(client))
