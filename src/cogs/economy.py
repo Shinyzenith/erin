@@ -16,7 +16,7 @@ import datetime as dt
 from datetime import datetime
 from discord.ext import commands
 
-log = logging.getLogger("economy cog")
+log = logging.getLogger("fun cog")
 coloredlogs.install(logger=log)
 global ongoing_duel
 ongoing_duel = []
