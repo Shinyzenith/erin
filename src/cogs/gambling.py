@@ -5,7 +5,7 @@ import random
 import os
 import time
 import asyncio
-import logger,coloredlogs
+import logging,coloredlogs
 import motor.motor_asyncio
 
 log = logging.getLogger("gambling cog")
