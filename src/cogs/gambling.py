@@ -111,7 +111,7 @@ class Gambling(commands.Cog):
 				rr = 1.25
 			if quantity <= 8000:
 				rr = 1.5
-			if quantity >= 10000:
+			if quantity > 8000:
 				rr = 2
 			luck = random.randint(1, 2)
 			if luck == 2:
