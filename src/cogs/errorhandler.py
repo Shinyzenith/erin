@@ -1,11 +1,13 @@
 #imports
-import discord
-from discord.ext import commands
-import aiohttp
 import os
 import pickle
+import discord
+import aiohttp
+import logging
 import traceback
-import logging,coloredlogs
+import coloredlogs
+
+from discord.ext import commands
 
 
 log = logging.getLogger("errorhandler cog")

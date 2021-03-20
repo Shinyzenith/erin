@@ -1,11 +1,13 @@
 import discord
-from discord.ext import commands
-from discord.ext import tasks
-import logging,coloredlogs
+import logging
+import asyncio
 import datetime
 import humanize
-import asyncio
 import dateparser
+import coloredlogs
+
+from discord.ext import tasks
+from discord.ext import commands
 
 log = logging.getLogger('Timers cog')
 coloredlogs.install(logger=log)

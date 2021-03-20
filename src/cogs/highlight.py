@@ -1,15 +1,17 @@
-import discord
-from discord.ext import commands,tasks
 import os
-import json
-import asyncio
-import asyncpg
-import typing
 import re
+import json
+import typing
+import asyncio
+import discord
+import asyncpg
+import logging
+import humanize
 import datetime
 import dateparser
-import humanize
-import logging,coloredlogs
+import coloredlogs
+
+from discord.ext import commands,tasks
 
 class DiscordConverter(commands.Converter):
 	def mention_or_id(self, arg):

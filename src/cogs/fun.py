@@ -1,12 +1,14 @@
-import discord
-import datetime
-import random
-import aiohttp
-import requests
-import json
-import asyncio
-import logging,coloredlogs
 import os
+import json
+import random
+import asyncio
+import discord
+import aiohttp
+import logging
+import requests
+import datetime
+import coloredlogs
+
 from discord.ext import commands
 
 log = logging.getLogger("fun cog")

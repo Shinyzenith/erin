@@ -1,10 +1,11 @@
 import discord
-from discord.ext import commands
-from discord.errors import Forbidden
-import DiscordUtils
-from discord import Embed
 import logging
 import coloredlogs
+import DiscordUtils
+
+from discord import Embed
+from discord.ext import commands
+from discord.errors import Forbidden
 
 log = logging.getLogger("help cog")
 coloredlogs.install(logger=log)

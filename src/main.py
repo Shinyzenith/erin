@@ -1,15 +1,17 @@
-import discord
 import os
-import logging,coloredlogs
 import json
-import motor.motor_asyncio
+import discord
 import asyncpg
-import datetime
 import aiohttp
+import logging
+import datetime
+import coloredlogs
+import motor.motor_asyncio
+
+from pathlib import Path
+from dotenv import load_dotenv
 from pymongo import MongoClient
 from discord.ext import commands
-from dotenv import load_dotenv
-from pathlib import Path
 
 #dotenv config
 load_dotenv()

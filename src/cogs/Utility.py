@@ -13,8 +13,8 @@ import traceback
 import coloredlogs
 import motor.motor_asyncio
 
-from pathlib import Path
 from typing import Union
+from pathlib import Path
 from discord.ext import commands, tasks
 from aiohttp import ClientResponseError
 from discord.ext import commands, tasks

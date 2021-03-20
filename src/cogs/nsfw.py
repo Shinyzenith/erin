@@ -1,14 +1,14 @@
+import json
 import discord
-import requests
-import datetime
 import asyncio
 import aiohttp
-import json
-import logging,coloredlogs
+import logging
+import requests
+import datetime
+import coloredlogs
 
-from discord.ext.commands import cooldown, BucketType
-from discord.ext.commands import (CommandOnCooldown)
 from discord.ext import commands
+from discord.ext.commands import cooldown, BucketType
 
 """
 !!!!!!!!!!!!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

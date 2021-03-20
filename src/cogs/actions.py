@@ -1,10 +1,12 @@
-import discord
-import requests
+import json
 import typing
 import aiohttp
-import json
 import asyncio
-import logging,coloredlogs
+import discord
+import logging
+import requests
+import coloredlogs
+
 from discord.ext import commands
 
 log = logging.getLogger("actions cog")

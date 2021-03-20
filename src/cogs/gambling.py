@@ -1,12 +1,14 @@
-from discord.ext import commands
-import discord
-import json
-import random
 import os
+import json
 import time
+import random
+import discord
 import asyncio
-import logging,coloredlogs
+import logging
+import coloredlogs
 import motor.motor_asyncio
+
+from discord.ext import commands
 
 log = logging.getLogger("gambling cog")
 coloredlogs.install(logger=log)
