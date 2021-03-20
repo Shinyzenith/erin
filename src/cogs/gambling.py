@@ -9,8 +9,7 @@ import coloredlogs
 import motor.motor_asyncio
 
 from discord.ext import commands
-
-log = logging.getLogger("gambling cog")
+log = logging.getLogger("Gambling cog")
 coloredlogs.install(logger=log)
 global ongoing_duel
 ongoing_duel = []
@@ -91,7 +90,7 @@ class Gambling(commands.Cog):
 		)
 		return crates
 
-	@commands.command()
+	@commands.command(hidden=True)
 	async def pick(self, ctx):
 		try:
 			await ctx.message.delete()
