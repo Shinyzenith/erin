@@ -14,7 +14,7 @@ import DiscordUtils
 import motor.motor_asyncio
 import humanize
 
-log = logging.getLogger("fun cog")
+log = logging.getLogger("economy cog")
 coloredlogs.install(logger=log)
 global ongoing_duel
 ongoing_duel = []
