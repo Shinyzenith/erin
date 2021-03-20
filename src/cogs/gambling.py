@@ -3,13 +3,12 @@ import discord
 import json
 import random
 import os
-import logging
-import coloredlogs
 import time
 import asyncio
+import logging,coloredlogs
 import motor.motor_asyncio
 
-log = logging.getLogger("fun cog")
+log = logging.getLogger("gambling cog")
 coloredlogs.install(logger=log)
 global ongoing_duel
 ongoing_duel = []
@@ -90,7 +89,7 @@ class Gambling(commands.Cog):
 		)
 		return crates
 
-	@commands.command(hidden=True)
+	@commands.command()
 	async def pick(self, ctx):
 		try:
 			await ctx.message.delete()
@@ -155,14 +154,6 @@ class Gambling(commands.Cog):
 				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 			))
 		ongoing_duel.append(ctx.author.id)
-		if not member:
-			ongoing_duel.remove(ctx.author.id)
-			return await ctx.send(embed=GLE(
-				None,
-				f"pls mention a user",
-				ctx.author.avatar_url,
-				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
-			))
 		if not item:
 			ongoing_duel.remove(ctx.author.id)
 			return await ctx.send(embed=GLE(
@@ -171,6 +162,14 @@ class Gambling(commands.Cog):
 				ctx.author.avatar_url,
 				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 			))
+		if not member:
+			ongoing_duel.remove(ctx.author.id)
+			return await ctx.send(embed=GLE(
+				None,
+				f"pls mention a user",
+				ctx.author.avatar_url,
+				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+			))		
 		else:
 			if member.id == ctx.author.id:
 				ongoing_duel.remove(ctx.author.id)
