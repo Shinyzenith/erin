@@ -5,7 +5,6 @@ import asyncio
 import discord
 import aiohttp
 import logging
-import requests
 import datetime
 import coloredlogs
 
@@ -13,11 +12,14 @@ from discord.ext import commands
 
 log = logging.getLogger("fun cog")
 coloredlogs.install(logger=log)
-async def api_call(call_uri):
+async def api_call(call_uri,state=True):
 	async with aiohttp.ClientSession() as session:
 		async with session.get(f"{call_uri}") as response:
 			response= await response.json()
-			return response['url']
+			if state:
+				return response['url']
+			if state ==False:
+				return response
 
 class Fun(commands.Cog):
 	def __init__(self, bot):
@@ -30,20 +32,17 @@ class Fun(commands.Cog):
 	@commands.cooldown(5,7,commands.BucketType.user)
 	@commands.command(name="furrify",aliases=['owo','uwu'])
 	async def furrify(self, ctx, *, msg):
-		async with aiohttp.ClientSession() as session:
-			async with session.get(f"https://nekos.life/api/v2/owoify?text={msg}") as response:
-				response=await response.read()
-				response=response.decode("utf-8")
-				response=json.loads(response)
-				return await ctx.message.reply(response['owo'])
+		try:
+			await ctx.message.delete()
+		except discord.HTTPException:
+			pass
+		response=await api_call(f"https://nekos.life/api/v2/owoify?text={msg}",False)
+		return await ctx.send(response['owo'])
 	
 	@commands.cooldown(5,10,commands.BucketType.user)
 	@commands.command(name="8ball")
 	async def ball(self,ctx,question:str):
-		response=""
-		async with aiohttp.ClientSession() as session:
-			async with session.get(f"https://nekos.life/api/v2/8ball") as response:
-				response=await response.json()
+		response=await api_call(f"https://nekos.life/api/v2/8ball",False)
 		embed = discord.Embed(
 			title = "8ball",
 			color = ctx.message.author.color,
@@ -58,8 +57,7 @@ class Fun(commands.Cog):
 	@commands.cooldown(1 ,3,commands.BucketType.user)
 	@commands.command()
 	async def coffee(self,ctx):
-		response = requests.get("https://coffee.alexflipnote.dev/random.json")
-		realResponse = response.json()
+		response = await api_call("https://coffee.alexflipnote.dev/random.json",False)
 		embed = discord.Embed(
 			title = "*Coffee!*",
 			color = ctx.message.author.color,
@@ -67,43 +65,50 @@ class Fun(commands.Cog):
 		)
 		embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
 		embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
-		embed.set_image(url = realResponse['file'])
+		embed.set_image(url = response['file'])
 
 		await ctx.message.reply(embed = embed)       
 
 	@commands.cooldown(1, 5, commands.BucketType.user)
 	@commands.command(aliases = ['random_name'])
 	async def randomname(self, ctx):
-		await ctx.message.reply(requests.get("https://nekos.life/api/v2/name").json()['name'])
-	@commands.cooldown(1, 5, commands.BucketType.user)
+		response = await api_call("https://nekos.life/api/v2/name",False)
+		await ctx.message.reply(response['name'])
+		
+	@commands.cooldown(3, 5, commands.BucketType.user)
 	@commands.command()
 	async def quote(self, ctx):
-		results = requests.get('https://type.fit/api/quotes').json()
+		results = ""
+		async with aiohttp.ClientSession() as session:
+			async with session.get(f"https://type.fit/api/quotes") as response:
+				response= await response.read()
+				response=json.loads(response)
+				results = response
 		num = random.randint(1, 1500)
 		content = results[num]['text']
-		await ctx.message.reply(content)
+		author=results[num]['author']
+		await ctx.message.reply(f"\"{content}\" - {author}")
 
 	@commands.cooldown(1, 5, commands.BucketType.user)
 	@commands.command(aliases=['meow', 'simba', 'cats'])
 	async def cat(self, ctx):
-		async with aiohttp.ClientSession() as cs:
-			async with cs.get("http://aws.random.cat/meow") as r:
-				data = await r.json()
-
-				embed = discord.Embed(title = "Cute catto! <a:ConfusedCat:820562537971449886>", color = ctx.message.author.color,timestamp=ctx.message.created_at)
-				embed.set_image(url = data['file'])
-				embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
-				embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
-				await ctx.message.reply(embed=embed)
+		response = await api_call("http://aws.random.cat/meow",False)
+		embed = discord.Embed(title = "Cute catto! <a:ConfusedCat:820562537971449886>", color = ctx.message.author.color,timestamp=ctx.message.created_at)
+		embed.set_image(url = response['file'])
+		embed.set_footer(text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",icon_url=ctx.message.author.avatar_url)
+		embed.set_author(name=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
+		await ctx.message.reply(embed=embed)
 
 	@commands.cooldown(1, 5, commands.BucketType.user)
 	@commands.command()
 	async def advice(self, ctx):
-		url = "https://api.adviceslip.com/advice"
-		response = requests.get(url)
-		advice = response.json()
-		real_advice = advice['slip']['advice']
-		await ctx.message.reply(real_advice)
+		response = ""
+		async with aiohttp.ClientSession() as session:
+			async with session.get(f"https://api.adviceslip.com/advice") as response:
+				response= await response.read()
+				response=json.loads(response)
+		advice = response['slip']['advice']
+		await ctx.message.reply(advice)
 
 	@commands.cooldown(1, 5, commands.BucketType.user)
 	@commands.command()
@@ -128,14 +133,11 @@ class Fun(commands.Cog):
 				else:
 					res += c.lower()
 			await ctx.message.reply(res)
+
 	@commands.cooldown(3,5,commands.BucketType.user)
 	@commands.command()
 	async def fact(self,ctx):
-		reponse=""
-		async with aiohttp.ClientSession() as session:
-			async with session.get(f"https://nekos.life/api/v2/fact") as response:
-				response=await response.json()
-
+		response=await api_call("https://nekos.life/api/v2/fact",False)
 		return await ctx.message.reply(response['fact'])
 
 	@commands.cooldown(5, 7, commands.BucketType.user)
