@@ -399,10 +399,10 @@
         "name": "Shiina",
         "price": {
             "item": "nanami",
-            "quantity": 300
+            "quantity": 20
         },
         "emoji": "<:shiina:820331377836032080>",
-        "raw_price": 2400000
+        "raw_price": 160000
     },
     "kaguya": {
         "name": "Kaguya",
@@ -582,7 +582,7 @@
             "quantity": 35
         },
         "emoji": "<:mitsuha:820337879518543883>",
-        "raw_price": 84000000
+        "raw_price": 5600000
     },
     "lucy": {
         "name": "Lucy",
@@ -623,11 +623,11 @@
     "violet": {
         "name": "Violet",
         "price": {
-            "item": "Akari",
+            "item": "akari",
             "quantity": 24
         },
         "emoji": "<:violet:820338187901337640>",
-        "raw_price": 24
+        "raw_price": 113640
     },
     "uraraka": {
         "name": "Uraraka",
