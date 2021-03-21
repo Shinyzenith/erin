@@ -123,6 +123,8 @@ class Utility(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_message(self, message):
+		if message.author.bot:
+			return
 		prefixes = await self.pm.get_prefix(message.guild)
 		if len(message.mentions) > 0:
 			if message.mentions[0] == self.bot.user:

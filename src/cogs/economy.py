@@ -94,7 +94,7 @@ class ActivityRecorder:
 			times = [a[1] for a in active]
 			times = mean_difference(times)
 			if times < 7:
-				roll = random.randint(1, 6)
+				roll = random.randint(1, 12)
 				if roll == 6:
 					response = True
 			self.activity[gid] = []
@@ -114,19 +114,20 @@ class economy(commands.Cog):
 	@commands.Cog.listener()
 	async def on_message(self, message):
 		gid = str(message.guild.id)
-		if self.activity.update(gid, message):
-			await self.drop(message)
+		if not message.author.bot:
+			if self.activity.update(gid, message):
+				await self.drop(message)
 
 	async def drop(self, msg):
 		drop = random.choice(list(self.load_shop().keys()) +
 							 ["erin" for i in range(len(self.load_shop())//2)])
 		embed = discord.Embed()
 		quantity = random.randint(5, 60)
-		embed.title = f"Use -pick to get `{quantity} {drop}`"
+		embed.title = f"Use `-pick {quantity}`  to get `{quantity} {drop}`"
 		award = await msg.channel.send(embed=embed)
 
 		def check(m):
-			return m.content == "-pick" and m.channel.id == msg.channel.id
+			return m.content == f"-pick {quantity}" and m.channel.id == msg.channel.id
 
 		try:
 			m = await self.bot.wait_for('message', timeout=15.0, check=check)
@@ -218,6 +219,8 @@ class economy(commands.Cog):
 				for key, value in chunk:
 					if key == "_id" or key == "uid":
 						continue
+					if value==0:
+						continue
 					name = (shop[key]['emoji']+" "+shop[key]['name']
 							if key in shop else "<:erin:820473033700671569> "+key)
 					embed.add_field(
@@ -278,17 +281,6 @@ class economy(commands.Cog):
 		paginator.add_reaction('\N{Black Right-Pointing Double Triangle}', "next")
 		paginator.add_reaction('\N{Black Right-Pointing Double Triangle with Vertical Bar}', "last")
 		await paginator.run(embeds)
-
-	@commands.command()
-	async def recipe(self, ctx, item):
-		shop = self.load_shop()
-		if not item in shop:
-			return await ctx.send(GLE(
-				None,
-				"The specified item is not craftable",
-				ctx.author.avatar_url,
-				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
-			))
 
 	@commands.command()
 	async def claim(self, ctx, code):
@@ -518,7 +510,35 @@ class economy(commands.Cog):
 			embed.title = ""
 			embed.description = f"`{winner.name}` got the drop"
 			await award.edit(embed=embed)
-
-
+	@commands.command()
+	async def recipe(self, ctx, item, quantity: int=1):
+		shop=self.load_shop()
+		if not item in shop:
+			return await ctx.send(embed=GLE(
+				None,
+				"The specified item is not craftable",
+				ctx.author.avatar_url,
+				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+			))
+		def determine_price(item, amount):
+			if item in shop:
+				yield item, amount
+				yield from determine_price(shop[item]["price"]["item"], shop[item]["price"]["quantity"]*amount)
+			else:
+				yield item, amount
+		order=list(reversed(list(determine_price(item, quantity))))
+		embed=SFR(
+			title=f"Price for {quantity} {item}",
+			description="```",
+			author=ctx.author.avatar_url,
+			footer=f"{ctx.author.name}#{ctx.author.discriminator}"
+		)
+		i=0
+		for it in order:
+			i+=1
+			embed.description+="\n"
+			embed.description+="  "*i + f"\N{Downwards Arrow with Tip Rightwards} {humanize.intcomma(it[1])} {it[0]}"
+		embed.description+="```"
+		return await ctx.send(embed=embed)
 def setup(bot):
 	bot.add_cog(economy(bot))

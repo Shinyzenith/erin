@@ -203,11 +203,12 @@ class Actions(commands.Cog):
 	async def smug(self, ctx):
 		
 		embed = discord.Embed(
+			title=f"{ctx.author.name} smugged",
 			color = 0xFFC0CB
 			)
 		embed.set_image(url=await api_call("https://nekos.life/api/v2/img/smug"))
 
-		await ctx.send(", ".join([users.mention for users in user]),embed=embed)
+		await ctx.send(embed=embed)
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
 	@commands.command()
