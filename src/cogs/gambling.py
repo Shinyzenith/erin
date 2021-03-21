@@ -104,6 +104,13 @@ class Gambling(commands.Cog):
 	@commands.command()
 	@commands.cooldown(5, 300, commands.BucketType.user)
 	async def gamble(self, ctx, quantity: int = 10):
+		if quantity<=0:
+			return await ctx.send(embed=GLE(
+				None,
+				"You cannot gamble negative amounts",
+				author=ctx.author.avatar_url,
+				footer=f"{ctx.author.name}#{ctx.author.discriminator}"
+			))
 		uid = ctx.author.id
 		user = await self.eh.find_user(uid)
 		if quantity <= user["erin"]:
@@ -146,6 +153,13 @@ class Gambling(commands.Cog):
 	@commands.command()
 	@commands.cooldown(5, 180, commands.BucketType.user)
 	async def duel(self, ctx, member: discord.Member = None, amount=1, item=None):
+		if amount<=0:
+			return await ctx.send(embed=GLE(
+				None,
+				"You cannot duel for negative amounts",
+				author=ctx.author.avatar_url,
+				footer=f"{ctx.author.name}#{ctx.author.discriminator}"
+			))
 		global ongoing_duel
 		if ctx.author.id in ongoing_duel:
 			return await ctx.send(embed=GLE(
@@ -253,12 +267,12 @@ class Gambling(commands.Cog):
 				))
 				shop = self.load_shop()
 				random_emoj = shop[random.choice(list(shop.keys()))]["emoji"]
-				msg = await ctx.send("this message will change in several seconds, first to say `-pick` will win the award")
+				msg = await ctx.send(f"this message will change in several seconds, first to say `{ctx.prefix}pick` will win the award")
 				await asyncio.sleep(random.randint(7, 12))
 				await msg.edit(content=random_emoj)
 
 				def check2(m):
-					return (m.author.id == member.id or m.author.id == ctx.author.id) and m.channel.id == ctx.channel.id and m.content == "-pick"
+					return (m.author.id == member.id or m.author.id == ctx.author.id) and m.channel.id == ctx.channel.id and m.content == f"{ctx.prefix}pick"
 				try:
 					m = await self.bot.wait_for('message', timeout=15, check=check2)
 				except asyncio.TimeoutError:

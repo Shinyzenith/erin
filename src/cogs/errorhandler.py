@@ -56,7 +56,7 @@ class ErrorHandler(commands.Cog):
 			return
 		embed=discord.Embed(color=ctx.message.author.color,timestamp=ctx.message.created_at)
 		embed.set_footer(text=self.bot.user.display_name,icon_url=self.bot.user.avatar_url)
-		embed.set_author(name=ctx.message.author.display_name,icon_url=ctx.message.author.avatar_url)
+		embed.set_author(name=f"{ctx.message.author.name}#{ctx.author.discriminator}",icon_url=ctx.message.author.avatar_url)
 		error = getattr(error, 'original', error)
 
 
@@ -105,7 +105,7 @@ class ErrorHandler(commands.Cog):
 			invalidargs=''
 			for invalid in error.args:
 				invalidargs=invalidargs+invalid+'\n'
-			embed.description=f'**{invalidargs}**'
+			embed.description=f'**{invalidargs}**\n Correct command usage: `{ctx.prefix+ctx.command.name} {ctx.command.signature}`'
 			return await ctx.send(embed=embed)
 
 		if isinstance(error, commands.errors.NoPrivateMessage):

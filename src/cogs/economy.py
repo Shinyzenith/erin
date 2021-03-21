@@ -21,6 +21,24 @@ coloredlogs.install(logger=log)
 global ongoing_duel
 ongoing_duel = []
 
+class PrefixManager:
+	def __init__(self):
+		self.client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv('CONNECTIONURI'))
+		self.db=self.client.erin
+		self.col=self.db["prefix"]
+
+	async def register_guild(self, g):
+		await self.col.insert_one({"gid":g.id,"prefixes":["-"]})
+
+	async def get_prefix(self, message):
+		prefixes=[]
+		guild=await self.col.find_one({"gid":message.guild.id})
+		if not guild:
+			await self.register_guild(message.guild)
+			prefixes=["-"]
+		else:
+			prefixes=guild["prefixes"]
+		return prefixes
 
 def GLE(title=None, description=None, author=None, footer=None, thumbnail=None):  # Good Looking Error
 	embed = discord.Embed(
@@ -53,7 +71,10 @@ class EconomyHandler:
 		self.client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("CONNECTIONURI"))
 		self.db = self.client.erin
 		self.col = self.db["economy"]
-
+	async def all_users(self):
+		users=self.col.find({})
+		return await users.to_list(length=100)
+	
 	async def find_user(self, uid: int):
 		user = await self.col.find_one({"uid": uid})
 		if not user:
@@ -106,7 +127,7 @@ class economy(commands.Cog):
 		self.activity = ActivityRecorder()
 		self.bot = bot
 		self.eh = EconomyHandler()
-
+		self.pm=PrefixManager()
 	@commands.Cog.listener()
 	async def on_ready(self):
 		log.warn(f"{self.__class__.__name__} Cog has been loaded")
@@ -119,15 +140,16 @@ class economy(commands.Cog):
 				await self.drop(message)
 
 	async def drop(self, msg):
+		prefix=await self.pm.get_prefix(msg)[0]
 		drop = random.choice(list(self.load_shop().keys()) +
 							 ["erin" for i in range(len(self.load_shop())//2)])
 		embed = discord.Embed()
 		quantity = random.randint(5, 60)
-		embed.title = f"Use `-pick {quantity}`  to get `{quantity} {drop}`"
+		embed.title = f"Use `{prefix}pick {quantity}`  to get `{quantity} {drop}`"
 		award = await msg.channel.send(embed=embed)
 
 		def check(m):
-			return m.content == f"-pick {quantity}" and m.channel.id == msg.channel.id
+			return m.content == f"{prefix}pick {quantity}" and m.channel.id == msg.channel.id
 
 		try:
 			m = await self.bot.wait_for('message', timeout=15.0, check=check)
@@ -219,7 +241,7 @@ class economy(commands.Cog):
 				for key, value in chunk:
 					if key == "_id" or key == "uid":
 						continue
-					if value==0:
+					if value==0 and key!="erin":
 						continue
 					name = (shop[key]['emoji']+" "+shop[key]['name']
 							if key in shop else "<:erin:820473033700671569> "+key)
@@ -245,6 +267,8 @@ class economy(commands.Cog):
 			embed.set_thumbnail(url=ctx.author.avatar_url)
 			for key, value in chunks[0]:
 				if key == "_id" or key == "uid":
+					continue
+				if value==0 and key!="erin":
 					continue
 				name = (shop[key]['emoji']+" "+shop[key]['name']
 						if key in shop else "<:erin:820473033700671569> "+key)
@@ -424,6 +448,13 @@ class economy(commands.Cog):
 
 	@commands.command()
 	async def send(self, ctx, user: discord.Member, quantity: int, item: str):
+		if quantity<=0:
+			return await ctx.send(embed=GLE(
+				None,
+				"You cannot send negative amounts",
+				author=ctx.author.avatar_url,
+				footer=f"{ctx.author.name}#{ctx.author.discriminator}"
+			))
 		if user.bot:
 			return await ctx.send(embed=GLE(
 				None,
@@ -486,13 +517,14 @@ class economy(commands.Cog):
 			))
 		embed = discord.Embed()
 		embed.title = f"{ctx.author.name}#{ctx.author.discriminator} dropped `{amount} {item}`"
+		embed.set_footer(text=f'Pick it up using {ctx.prefix}pick')
 		award = await ctx.channel.send(embed=embed)
 
 		def check(m):
-			return m.content == "-pick" and m.channel.id == ctx.channel.id and m.author.id != ctx.author.id
+			return m.content == "{ctx.prefix}pick" and m.channel.id == ctx.channel.id and m.author.id != ctx.author.id
 
 		try:
-			m = await self.bot.wait_for('message', timeout=15.0, check=check)
+			m = await self.bot.wait_for('message', timeout=120.0, check=check)
 		except asyncio.TimeoutError:
 			embed.title = ""
 			embed.description = f"nobody picked the juicy drop :("
@@ -540,5 +572,47 @@ class economy(commands.Cog):
 			embed.description+="  "*i + f"\N{Downwards Arrow with Tip Rightwards} {humanize.intcomma(it[1])} {it[0]}"
 		embed.description+="```"
 		return await ctx.send(embed=embed)
+	@commands.command()
+	async def reset(self, ctx):
+		embed = discord.Embed(color=ctx.author.color)
+		embed.title = f"Are you sure that you wish to reset your progress? (y/n)"
+		embed.description="Once it resets, your progress will cannot be reverted back. "
+		embed.set_thumbnail(url=ctx.author.avatar_url)
+		embed.set_footer(text="This message will auto-cancel in 15 seconds", icon_url=ctx.author.avatar_url)
+		msg = await ctx.send(embed=embed)
+
+		def check(m):
+			condition = False
+			if m.content.lower() == "y" or m.content.lower() == "yes" or m.content.lower() == "n" or m.content.lower() == "no":
+				condition = True
+			return m.author.id == ctx.author.id and m.channel.id == ctx.channel.id and condition
+
+		try:
+			m = await self.bot.wait_for('message', timeout=15, check=check)
+		except asyncio.TimeoutError:
+			await msg.edit(embed=GLE(
+				None,
+				f"Your progress hasn't been resetted",
+				ctx.author.avatar_url,
+				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+			))
+		else:
+			if m.content.lower() == "n" or m.content.lower() == "no":
+				return await msg.edit(embed=GLE(
+					None,
+					f"Your progress hasn't been resetted",
+					ctx.author.avatar_url,
+					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+				))
+			user=await self.eh.find_user(ctx.author.id)
+			user2={"_id":user["_id"], "uid":ctx.author.id, "erin":0}
+			await self.eh.update_user(ctx.author.id, user2)	
+			await msg.edit(embed=SFR(
+				None,
+				f"Your progess has been removed ",
+				ctx.author.avatar_url,
+				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+			))
+		
 def setup(bot):
 	bot.add_cog(economy(bot))
