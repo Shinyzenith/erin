@@ -61,7 +61,7 @@ class ErinBot(commands.Bot):
 		
 		#intent and bot instance declaration
 		intents=discord.Intents.all()
-		super().__init__(command_prefix=PrefixManager().get_prefix, intents=intents,guild_subscriptions=True)
+		super().__init__(command_prefix=PrefixManager().get_prefix, intents=intents,guild_subscriptions=True,case_insensitive=True)
 		
 		#saving startup time and creating process loop (removing the default help command cuz it's ass)
 		self.remove_command('help')
