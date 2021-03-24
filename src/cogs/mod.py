@@ -160,9 +160,16 @@ class mod(commands.Cog):
 
         elif len(embeds) == 0:
             emb = discord.Embed(
-                title="lol, sadphroge \N{PENSIVE FACE}\N{PENSIVE FACE}\N{PENSIVE FACE}",
-                description=f"ERROR 404 couldn't find module",
-                color=ctx.message.author.color,
+                description=f"{searchUser.mention} has a clean state",
+                color=11661816,
+                timestamp=ctx.message.created_at,
+            )
+            emb.set_footer(
+                text=ctx.message.author.display_name,
+                icon_url=ctx.message.author.avatar_url,
+            )
+            emb.set_author(
+                name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
             )
             return await ctx.send(embed=emb)
 
