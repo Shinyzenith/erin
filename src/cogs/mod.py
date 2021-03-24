@@ -47,10 +47,14 @@ class dbHandler:
         await self.col.replace_one({"uid": uid}, data)
 
 
-class mod(commands.Cog):
+class Mod(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.dbHandler = dbHandler()
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        log.warn(f"{self.__class__.__name__} Cog has been loaded")
 
     @commands.command(name="warn", aliases=["strike"])
     @commands.has_permissions(manage_messages=True)
@@ -257,4 +261,4 @@ class mod(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(mod(bot))
+    bot.add_cog(Mod(bot))
