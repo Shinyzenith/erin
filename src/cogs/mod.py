@@ -31,7 +31,12 @@ class dbHandler:
         user = await self.col.find_one({"uid": uid})
         if not user:
             user = await self.register_user(uid, gid)
-        return user
+        try:
+            user[f"{gid}"]
+        except KeyError:
+            user[f"{gid}"] = []
+        finally:
+            return user
 
     async def register_user(self, uid: int, gid: int):
         data = {"uid": uid, f"{str(gid)}": []}
@@ -117,7 +122,7 @@ class mod(commands.Cog):
         except:
             pass
 
-    @commands.command()
+    @commands.command(name="search", aliases=["warns"])
     @commands.guild_only()
     async def search(self, ctx, searchUser: discord.Member):
         user = await self.dbHandler.find_user(searchUser.id, ctx.message.guild.id)
@@ -187,6 +192,68 @@ class mod(commands.Cog):
                 "\N{Black Right-Pointing Double Triangle with Vertical Bar}", "last"
             )
             return await paginator.run(embeds)
+
+    @commands.command()
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    async def delpunishments(self, ctx, user: discord.Member):
+        delUser = await self.dbHandler.find_user(user.id, ctx.message.guild.id)
+        request = await ctx.send(
+            f"**This will delete ALL punishments that the user has.** Do you want to continue?"
+        )
+        await request.add_reaction("\N{WHITE HEAVY CHECK MARK}")
+        await request.add_reaction("\N{CROSS MARK}")
+
+        def check(reaction, user):
+            state = (
+                user == ctx.message.author
+                and str(reaction.emoji) == "\N{WHITE HEAVY CHECK MARK}"
+                or str(reaction.emoji) == "\N{CROSS MARK}"
+                and reaction.message.id == request.id
+                and user.bot == False
+            )
+            return state
+
+        try:
+            reaction, author = await self.bot.wait_for(
+                "reaction_add", timeout=30.0, check=check
+            )
+        except asyncio.TimeoutError:
+            return await ctx.message.channel.send(
+                "Woops you didnt react within 30 seconds...."
+            )
+
+        if str(reaction.emoji) == "\N{WHITE HEAVY CHECK MARK}":
+            try:
+                await request.clear_reaction("\N{WHITE HEAVY CHECK MARK}")
+                await request.clear_reaction("\N{CROSS MARK}")
+            except:
+                pass
+            delUser.pop(f"{ctx.message.guild.id}")
+            await self.dbHandler.update_user_warn(user.id, delUser)
+            try:
+                return await request.edit(
+                    content=f"All records of {user.mention} have been deleted"
+                )
+            except:
+                return await ctx.send(
+                    f"All records of {user.mention} have been deleted"
+                )
+        elif str(reaction.emoji) == "\N{CROSS MARK}":
+            try:
+                await request.clear_reaction("\N{WHITE HEAVY CHECK MARK}")
+                await request.clear_reaction("\N{CROSS MARK}")
+            except:
+                pass
+
+            try:
+                return await request.edit(
+                    content=f"\N{CROSS MARK} reaction recieved ...cancelling process"
+                )
+            except:
+                return await ctx.send(
+                    f"\N{CROSS MARK} reaction recieved ...cancelling process"
+                )
 
 
 def setup(bot):
