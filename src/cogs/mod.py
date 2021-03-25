@@ -348,5 +348,8 @@ class Mod(commands.Cog):
         return await ctx.message.reply(embed=channelEmbed)
 
 
+# TODO: 1) SOFTBAN 2) TEMPBAN 3) MUTE COMMAND 4) ADD EXPIRATION FIELD TO THE JSON OBJECT 5) rmpunish command
+
+
 def setup(bot):
     bot.add_cog(Mod(bot))
