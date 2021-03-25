@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import typing
 import asyncio
 import aiohttp
 import discord
@@ -65,7 +66,7 @@ class Mod(commands.Cog):
             return await ctx.message.reply("Don't even **try** to warn my kind :)")
 
         if len(reason) > 150:
-            return await ctx.send(
+            return await ctx.message.reply(
                 "Reason parameter exceeded 150 characters. Please write a shorter reason to continue"
             )
 
@@ -113,6 +114,8 @@ class Mod(commands.Cog):
         dmEmbed.add_field(name="Action", value="Strike/Warn", inline=True)
 
         dmEmbed.add_field(name="Reason", value=f"{reason}", inline=True)
+
+        dmEmbed.add_field(name="Moderator", value=f"<@{entryData['mod']}>", inline=True)
 
         dmEmbed.set_footer(
             text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
@@ -178,7 +181,7 @@ class Mod(commands.Cog):
             emb.set_author(
                 name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
             )
-            return await ctx.send(embed=emb)
+            return await ctx.message.reply(embed=emb)
 
         else:
             paginator = DiscordUtils.Pagination.CustomEmbedPaginator(
@@ -198,10 +201,10 @@ class Mod(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
-    async def delpunishments(self, ctx, user: discord.Member):
+    async def delpunishments(self, ctx, user: discord.User):
         delUser = await self.dbHandler.find_user(user.id, ctx.message.guild.id)
-        request = await ctx.send(
-            f"**This will delete ALL punishments that the user has.** Do you want to continue?"
+        request = await ctx.message.reply(
+            f"**This will delete ALL punishments that the {user.mention} has.** Do you want to continue?"
         )
         await request.add_reaction("\N{WHITE HEAVY CHECK MARK}")
         await request.add_reaction("\N{CROSS MARK}")
@@ -238,7 +241,7 @@ class Mod(commands.Cog):
                     content=f"All records of {user.mention} have been deleted"
                 )
             except:
-                return await ctx.send(
+                return await ctx.message.reply(
                     f"All records of {user.mention} have been deleted"
                 )
         elif str(reaction.emoji) == "\N{CROSS MARK}":
@@ -253,14 +256,96 @@ class Mod(commands.Cog):
                     content=f"\N{CROSS MARK} reaction recieved ...cancelling process"
                 )
             except:
-                return await ctx.send(
+                return await ctx.message.reply(
                     f"\N{CROSS MARK} reaction recieved ...cancelling process"
                 )
 
-    # @commands.command()
-    # @commands.guild_only()
-    # @commands.has_permissions(ban_members=True)
-    # async def ban(self,ctx,user:discord.User,*,reason:str)
+    @commands.command()
+    @commands.guild_only()
+    @commands.has_permissions(ban_members=True)
+    async def ban(
+        self,
+        ctx,
+        user: typing.Union[discord.Member, discord.User],
+        *,
+        reason: str,
+    ):
+        if len(reason) > 150:
+            return await ctx.message.reply(
+                "Reason paraeter exceeded 150 characters. Please write a shorter reason to continue."
+            )
+        entryData = {
+            "type": "Ban",
+            "reason": reason,
+            "time": ctx.message.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"),
+            "mod": f"{ctx.message.author.id}",
+        }
+
+        channelEmbed = discord.Embed(
+            description=f"{user.mention} has been banned from {ctx.guild.name}",
+            color=11661816,
+            timestamp=ctx.message.created_at,
+        )
+        channelEmbed.set_footer(
+            text=ctx.message.author.display_name,
+            icon_url=ctx.message.author.avatar_url,
+        )
+        channelEmbed.set_author(
+            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+        )
+        dmEmbed = discord.Embed(
+            title="Erin Moderation",
+            description=f"Your punishments have been updated in {ctx.message.guild.name}.",
+            color=11661816,
+            timestamp=ctx.message.created_at,
+        )
+
+        dmEmbed.add_field(name="Action", value="Ban", inline=True)
+
+        dmEmbed.add_field(name="Reason", value=f"{reason}", inline=True)
+
+        dmEmbed.add_field(name="Moderator", value=f"<@{entryData['mod']}>", inline=True)
+
+        dmEmbed.set_footer(
+            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+        )
+        dmEmbed.set_author(
+            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+        )
+        if isinstance(user, discord.User):
+            try:
+                await user.send(embed=dmEmbed)
+            except:
+                pass
+            await ctx.message.guild.ban(user, reason=reason)
+        if isinstance(user, discord.Member):
+            bot = ctx.guild.get_member(self.bot.user.id)
+            if (
+                user.top_role.position > ctx.message.author.top_role.position
+                or user.top_role.position == ctx.message.author.top_role.position
+            ):
+                return await ctx.message.reply(
+                    "You can't use me to ban someone below or at the same role level as you :)"
+                )
+
+            if (
+                user.top_role.position > bot.top_role.position
+                or user.top_role.position == bot.top_role.position
+            ):
+                return await ctx.message.reply(
+                    f"Cannot ban {user.mention} as their highest role is the same as or above me."
+                )
+            try:
+                await user.send(embed=dmEmbed)
+            except:
+                pass
+            await ctx.message.guild.ban(user, reason=reason)
+
+        userData = await self.dbHandler.find_user(user.id, ctx.message.guild.id)
+        userData[f"{ctx.message.author.guild.id}"].append(entryData)
+        # uodating user entries
+        await self.dbHandler.update_user_warn(user.id, userData)
+        return await ctx.message.reply(embed=channelEmbed)
 
 
 def setup(bot):
