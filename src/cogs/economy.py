@@ -152,7 +152,7 @@ class economy(commands.Cog):
 
         def check(m):
             return (
-                m.content == f"{prefix}pick {quantity}"
+                m.content.lower() == f"{prefix}pick {quantity}".lower()
                 and m.channel.id == msg.channel.id
             )
 
@@ -562,7 +562,7 @@ class economy(commands.Cog):
 
         def check(m):
             return (
-                m.content == "{ctx.prefix}pick"
+                m.content.lower() == "{ctx.prefix}pick".lower()
                 and m.channel.id == ctx.channel.id
                 and m.author.id != ctx.author.id
             )

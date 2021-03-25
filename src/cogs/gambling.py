@@ -272,10 +272,12 @@ class Gambling(commands.Cog):
 				await msg.edit(content=random_emoj)
 
 				def check2(m):
-					return (m.author.id == member.id or m.author.id == ctx.author.id) and m.channel.id == ctx.channel.id and m.content == f"{ctx.prefix}pick"
+					return (m.author.id == member.id or m.author.id == ctx.author.id) and m.channel.id == ctx.channel.id and m.content.lower() == f"{ctx.prefix}pick".lower()
 				try:
 					m = await self.bot.wait_for('message', timeout=15, check=check2)
 				except asyncio.TimeoutError:
+					ongoing_duel.remove(ctx.author.id)
+					ongoing_duel.remove(member.id)
 					await msg.edit(content=f"nobody won, breh")
 				else:
 					winner = m.author
