@@ -321,6 +321,13 @@ class Mod(commands.Cog):
         if isinstance(user, discord.Member):
             bot = ctx.guild.get_member(self.bot.user.id)
             if (
+                user.top_role.position > bot.top_role.position
+                or user.top_role.position == bot.top_role.position
+            ):
+                return await ctx.message.reply(
+                    f"Cannot ban {user.mention} as their highest role is the same as or above me."
+                )
+            if (
                 user.top_role.position > ctx.message.author.top_role.position
                 or user.top_role.position == ctx.message.author.top_role.position
             ):
@@ -328,13 +335,6 @@ class Mod(commands.Cog):
                     "You can't use me to ban someone below or at the same role level as you :)"
                 )
 
-            if (
-                user.top_role.position > bot.top_role.position
-                or user.top_role.position == bot.top_role.position
-            ):
-                return await ctx.message.reply(
-                    f"Cannot ban {user.mention} as their highest role is the same as or above me."
-                )
             try:
                 await user.send(embed=dmEmbed)
             except:
