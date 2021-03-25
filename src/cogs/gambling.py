@@ -177,6 +177,7 @@ class Gambling(commands.Cog):
 				ctx.author.avatar_url,
 				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 			))
+		item=item.lower()
 		if not member:
 			ongoing_duel.remove(ctx.author.id)
 			return await ctx.send(embed=GLE(
