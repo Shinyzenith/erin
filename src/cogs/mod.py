@@ -128,7 +128,7 @@ class Mod(commands.Cog):
 
     @commands.command(name="search", aliases=["warns"])
     @commands.guild_only()
-    async def search(self, ctx, searchUser: discord.Member):
+    async def search(self, ctx, searchUser: discord.User):
         user = await self.dbHandler.find_user(searchUser.id, ctx.message.guild.id)
         threshold = 5
         reason_chunk = [
@@ -140,7 +140,7 @@ class Mod(commands.Cog):
         embeds = []
         for chunk in reason_chunk:
             embed = discord.Embed(
-                title=f"All punishments for {searchUser.display_name}#{searchUser.discriminator}",
+                title=f"All punishments for {searchUser.name}#{searchUser.discriminator}",
                 color=11661816,
                 timestamp=ctx.message.created_at,
             )
@@ -148,9 +148,7 @@ class Mod(commands.Cog):
                 text=ctx.message.author.display_name,
                 icon_url=ctx.message.author.avatar_url,
             )
-            embed.set_author(
-                name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
-            )
+            embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
 
             for reason in chunk:
                 i = i + 1
@@ -258,6 +256,11 @@ class Mod(commands.Cog):
                 return await ctx.send(
                     f"\N{CROSS MARK} reaction recieved ...cancelling process"
                 )
+
+    # @commands.command()
+    # @commands.guild_only()
+    # @commands.has_permissions(ban_members=True)
+    # async def ban(self,ctx,user:discord.User,*,reason:str)
 
 
 def setup(bot):
