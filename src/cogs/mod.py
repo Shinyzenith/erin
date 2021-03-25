@@ -313,11 +313,11 @@ class Mod(commands.Cog):
             name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
         )
         if isinstance(user, discord.User):
+            await ctx.message.guild.ban(user, reason=reason)
             try:
                 await user.send(embed=dmEmbed)
             except:
                 pass
-            await ctx.message.guild.ban(user, reason=reason)
         if isinstance(user, discord.Member):
             bot = ctx.guild.get_member(self.bot.user.id)
             if (
@@ -335,11 +335,11 @@ class Mod(commands.Cog):
                     "You can't use me to ban someone below or at the same role level as you :)"
                 )
 
+            await ctx.message.guild.ban(user, reason=reason)
             try:
                 await user.send(embed=dmEmbed)
             except:
                 pass
-            await ctx.message.guild.ban(user, reason=reason)
 
         userData = await self.dbHandler.find_user(user.id, ctx.message.guild.id)
         userData[f"{ctx.message.author.guild.id}"].append(entryData)
