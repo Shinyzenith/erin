@@ -272,7 +272,7 @@ class Moderation(commands.Cog):
     ):
         if len(reason) > 150:
             return await ctx.message.reply(
-                "Reason paraeter exceeded 150 characters. Please write a shorter reason to continue."
+                "Reason parameter exceeded 150 characters. Please write a shorter reason to continue."
             )
         entryData = {
             "type": "Ban",
@@ -346,6 +346,41 @@ class Moderation(commands.Cog):
         # uodating user entries
         await self.dbHandler.update_user_warn(user.id, userData)
         return await ctx.message.reply(embed=channelEmbed)
+
+    @commands.command()
+    @commands.guild_only()
+    @commands.has_permissions(manage_messages=True)
+    async def rmpunish(self, ctx, user: discord.User, warn: int = None):
+        rmUser = await self.dbHandler.find_user(user.id, ctx.message.guild.id)
+        if not warn:
+            return await ctx.send(
+                f"Please mention the warn id of the reason that you want to delete from {user.mention}'s logs."
+            )
+        if warn > len(rmUser[f"{ctx.guild.id}"]):
+            return await ctx.send(f"Invalid warn id for {user.mention}")
+        removedWarn = rmUser[f"{ctx.guild.id}"].pop(warn - 1)
+        await self.dbHandler.update_user_warn(user.id, rmUser)
+
+        embed = discord.Embed(
+            title="Erin Moderation",
+            description=f"Warn removed for {user.mention}. Warn details are:",
+            color=11661816,
+            timestamp=ctx.message.created_at,
+        )
+
+        embed.add_field(name="Action", value=removedWarn["type"], inline=True)
+
+        embed.add_field(name="Reason", value=removedWarn["reason"], inline=True)
+
+        embed.add_field(name="Moderator", value=f"<@{removedWarn['mod']}>", inline=True)
+
+        embed.set_footer(
+            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+        )
+        embed.set_author(
+            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+        )
+        await ctx.reply(embed=embed)
 
 
 # TODO: 1) SOFTBAN 2) TEMPBAN 3) MUTE COMMAND 4) ADD EXPIRATION FIELD TO THE JSON OBJECT 5) rmpunish command
