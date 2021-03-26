@@ -363,7 +363,7 @@ class Moderation(commands.Cog):
 
         embed = discord.Embed(
             title="Erin Moderation",
-            description=f"Warn removed for {user.mention}. Warn details are:",
+            description=f"Warn removed for {user.mention}. Deleted warn details are:",
             color=11661816,
             timestamp=ctx.message.created_at,
         )
@@ -380,10 +380,14 @@ class Moderation(commands.Cog):
         embed.set_author(
             name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
         )
+        try:
+            await user.send(embed=embed)
+        except:
+            pass
         await ctx.reply(embed=embed)
 
 
-# TODO: 1) SOFTBAN 2) TEMPBAN 3) MUTE COMMAND 4) ADD EXPIRATION FIELD TO THE JSON OBJECT 5) rmpunish command
+# TODO: 1) SOFTBAN 2) TEMPBAN 3) MUTE COMMAND 4) ADD EXPIRATION FIELD TO THE JSON OBJECT
 
 
 def setup(bot):
