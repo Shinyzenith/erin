@@ -11,14 +11,12 @@
 <p align="center">
   
   <h2>Join our discord server (.gg/davie504) :</h2>
-  <hr>
   <div>
     <a href="https://discord.gg/davie504">
       <img src="https://discordapp.com/api/guilds/737690513876058203/widget.png?style=shield" alt="Main Discord Server">
     </a>
   </div>
   <h2>Join our support server:</h2>
-  <hr>
   <div>
     <a href="https://discord.gg/F5ey2M5GTg">
       <img src="https://discordapp.com/api/guilds/809748698123993118/widget.png?style=shield" alt="Support Discord Server">
