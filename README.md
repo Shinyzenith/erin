@@ -6,7 +6,7 @@
   <br>
 </h1>
 
-<h4 align="center">Music, Moderation, Trivia, economy.</h4>
+<h4 align="center">Music, Moderation, Trivia, Economy, Gambling, and NSFW.</h4>
 
 <p align="center">
   
@@ -35,6 +35,5 @@
       <img src="http://ForTheBadge.com/images/badges/made-with-python.svg" height =20 alt="dev badge">
   </a>
   <hr>
+<h3>Erin is currently <b>NOT</b> open source <b>but</b> i am willing to make it open source if there's enough public interest and the bot gains enough popularity.</h3>
 </p>
-
-# Loli for life bot
