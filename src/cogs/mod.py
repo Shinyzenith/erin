@@ -48,7 +48,7 @@ class dbHandler:
         await self.col.replace_one({"uid": uid}, data)
 
 
-class Mod(commands.Cog):
+class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.dbHandler = dbHandler()
@@ -352,4 +352,4 @@ class Mod(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Mod(bot))
+    bot.add_cog(Moderation(bot))

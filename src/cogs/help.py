@@ -119,7 +119,7 @@ class Help(commands.Cog):
                                 aliases = "None"
                             description = command.description or "None"
 
-                            command_list = f"{i}) ``{ctx.prefix}{command.name}``\n"
+                            command_list = f"{i}) `{ctx.prefix}{command.name}`\n"
                             embed.add_field(
                                 inline=False,
                                 name=f"{command_list}",
