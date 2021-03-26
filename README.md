@@ -32,7 +32,7 @@
   </a>
 
   <a href="https://www.python.org/downloads">
-      <img src="http://ForTheBadge.com/images/badges/made-with-python.svg" alt="dev badge">
+      <img src="http://ForTheBadge.com/images/badges/made-with-python.svg" height =20 alt="dev badge">
   </a>
   <hr>
 </p>
