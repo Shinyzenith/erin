@@ -247,7 +247,7 @@ class Utility(commands.Cog):
         return await ctx.message.reply(embed=embed)
 
     # bot owner only, sets the bot activity
-    @commands.command(aliases=["presence"])
+    @commands.command(aliases=["presence"],hidden=True)
     @commands.is_owner()
     async def activity(
         self, ctx, activity_type: str.lower, status_type: str.lower, *, message: str
@@ -331,7 +331,7 @@ class Utility(commands.Cog):
         await self.bot.change_presence(activity=activity, status=status)
         return activity, status
 
-    @commands.command(aliases=["reboot"])
+    @commands.command(aliases=["reboot"],hidden=True)
     @commands.is_owner()
     async def restart(self, ctx):
         await webhook_send(
@@ -343,7 +343,7 @@ class Utility(commands.Cog):
         )
         os.execv(sys.executable, [sys.executable] + sys.argv)
 
-    @commands.command(name="logout", description="Logout the bot")
+    @commands.command(name="logout", description="Logout the bot",hidden=True)
     @commands.is_owner()
     async def logout(self, ctx):
         await webhook_send(
@@ -377,7 +377,7 @@ class Utility(commands.Cog):
         await msg.edit(embed=embed)
 
     @commands.command(
-        name="reloadone", aliases=["r1", "rone"], description="Reload an extension"
+        name="reloadone", aliases=["r1", "rone"], description="Reload an extension",hidden=True
     )
     @commands.is_owner()
     async def reloadone(self, ctx, extension):
@@ -393,7 +393,7 @@ class Utility(commands.Cog):
                 f"**:warning: Extension `{extension}` not reloaded.**\n```py\n{full}```"
             )
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def reload(self, ctx):
         log.info("")
@@ -415,7 +415,7 @@ class Utility(commands.Cog):
         log.info("")
         return await ctx.message.reply(msg)
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def unload(self, ctx, extension):
         try:
