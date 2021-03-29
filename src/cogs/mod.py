@@ -482,7 +482,7 @@ class Moderation(commands.Cog):
 		await ctx.reply(embed=embed)
 		
 # TODO: 1) SOFTBAN 2) TEMPBAN 3) MUTE COMMAND 4) ADD EXPIRATION FIELD TO THE JSON OBJECT 5) invite lookup
-# TODO 6) unban _ 7) unban
+# TODO 6) unban
 
 def setup(bot):
 	bot.add_cog(Moderation(bot))
