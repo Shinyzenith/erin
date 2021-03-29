@@ -270,6 +270,22 @@ class Moderation(commands.Cog):
         *,
         reason: str,
     ):
+        try:
+            await ctx.guild.fetch_ban(user)
+            channelEmbed = discord.Embed(
+            description=f"{user.display_name}#{user.discriminator} is already banned from the server!",
+            color=16724787,
+            timestamp=ctx.message.created_at,
+            )
+            channelEmbed.set_footer(
+                text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            )
+            channelEmbed.set_author(
+                name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            )
+            return await ctx.send(embed=channelEmbed)
+        except discord.NotFound:
+            pass
         if len(reason) > 150:
             return await ctx.message.reply(
                 "Reason parameter exceeded 150 characters. Please write a shorter reason to continue."
