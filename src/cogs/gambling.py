@@ -267,13 +267,14 @@ class Gambling(commands.Cog):
 					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 				))
 				shop = self.load_shop()
-				random_emoj = shop[random.choice(list(shop.keys()))]["emoji"]
-				msg = await ctx.send(f"this message will change in several seconds, first to say `{ctx.prefix}pick` will win the award")
+				emoj=random.choice(list(shop.keys()))
+				random_emoj = shop[emoj]["emoji"]
+				msg = await ctx.send(f"this msg will change to an emoji, first to say the name of the emoji wins")
 				await asyncio.sleep(random.randint(7, 12))
 				await msg.edit(content=random_emoj)
 
 				def check2(m):
-					return (m.author.id == member.id or m.author.id == ctx.author.id) and m.channel.id == ctx.channel.id and m.content.lower() == f"{ctx.prefix}pick".lower()
+					return (m.author.id == member.id or m.author.id == ctx.author.id) and m.channel.id == ctx.channel.id and m.content.lower() == emoj.lower()
 				try:
 					m = await self.bot.wait_for('message', timeout=15, check=check2)
 				except asyncio.TimeoutError:
