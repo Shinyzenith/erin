@@ -140,9 +140,9 @@ class economy(commands.Cog):
                 await self.drop(message)
 
     async def drop(self, msg):
-        prefix = await self.pm.get_prefix(msg)[0]
+        prefix = (await self.pm.get_prefix(msg))[0]
         drop = random.choice(
-            list(self.load_shop().keys())
+            random.sample(list(self.load_shop().keys()),3)
             + ["erin" for i in range(len(self.load_shop()) // 2)]
         )
         embed = discord.Embed()
