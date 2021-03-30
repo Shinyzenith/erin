@@ -362,6 +362,111 @@ class Moderation(commands.Cog):
 		# uodating user entries
 		await self.dbHandler.update_user_warn(user.id, userData)
 		return await ctx.message.reply(embed=channelEmbed)
+
+	@commands.command()
+	@commands.guild_only()
+	@commands.has_permissions(ban_members=True)
+	async def softban(
+		self,
+		ctx,
+		user: typing.Union[discord.Member, discord.User],
+		*,
+		reason: str,
+	):
+		try:
+			await ctx.guild.fetch_ban(user)
+			channelEmbed = discord.Embed(
+			description=f"{user.display_name}#{user.discriminator} is already banned from the server!",
+			color=16724787,
+			timestamp=ctx.message.created_at,
+			)
+			channelEmbed.set_footer(
+				text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+			)
+			channelEmbed.set_author(
+				name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+			)
+			return await ctx.send(embed=channelEmbed)
+		except discord.NotFound:
+			pass
+		if len(reason) > 150:
+			return await ctx.message.reply(
+				"Reason parameter exceeded 150 characters. Please write a shorter reason to continue."
+			)
+		entryData = {
+			"type": "Softban",
+			"reason": reason,
+			"time": ctx.message.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"),
+			"mod": f"{ctx.message.author.id}",
+		}
+
+		channelEmbed = discord.Embed(
+			description=f"{user.mention} has been soft-banned from {ctx.guild.name}",
+			color=11661816,
+			timestamp=ctx.message.created_at,
+		)
+		channelEmbed.set_footer(
+			text=ctx.message.author.display_name,
+			icon_url=ctx.message.author.avatar_url,
+		)
+		channelEmbed.set_author(
+			name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+		)
+		dmEmbed = discord.Embed(
+			title="Erin Moderation",
+			description=f"Your punishments have been updated in {ctx.message.guild.name}.",
+			color=11661816,
+			timestamp=ctx.message.created_at,
+		)
+
+		dmEmbed.add_field(name="Action", value="Softban", inline=True)
+
+		dmEmbed.add_field(name="Reason", value=f"{reason}", inline=True)
+
+		dmEmbed.add_field(name="Moderator", value=f"<@{entryData['mod']}>", inline=True)
+
+		dmEmbed.set_footer(
+			text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+		)
+		dmEmbed.set_author(
+			name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+		)
+		if isinstance(user, discord.User):
+			await ctx.message.guild.ban(user, reason=reason,delete_message_days=7)
+			await ctx.message.guild.unban(user, reason="softban")
+			try:
+				await user.send(embed=dmEmbed)
+			except:
+				pass
+		if isinstance(user, discord.Member):
+			bot = ctx.guild.get_member(self.bot.user.id)
+			if (
+				user.top_role.position > bot.top_role.position
+				or user.top_role.position == bot.top_role.position
+			):
+				return await ctx.message.reply(
+					f"Cannot ban {user.mention} as their highest role is the same as or above me."
+				)
+			if (
+				user.top_role.position > ctx.message.author.top_role.position
+				or user.top_role.position == ctx.message.author.top_role.position
+			):
+				return await ctx.message.reply(
+					"You can't use me to ban someone below or at the same role level as you :)"
+				)
+
+			try:
+				await user.send(embed=dmEmbed)
+			except:
+				pass
+			await ctx.message.guild.ban(user, reason=reason,delete_message_days=7)
+			await ctx.message.guild.unban(user, reason="softban")								
+		userData = await self.dbHandler.find_user(user.id, ctx.message.guild.id)
+		userData[f"{ctx.message.author.guild.id}"].append(entryData)
+		# uodating user entries
+		await self.dbHandler.update_user_warn(user.id, userData)
+		return await ctx.message.reply(embed=channelEmbed)
+
 	@commands.command()
 	@commands.guild_only()
 	@commands.has_permissions(ban_members=True)
@@ -481,8 +586,8 @@ class Moderation(commands.Cog):
 			pass
 		await ctx.reply(embed=embed)
 		
-# TODO: 1) SOFTBAN 2) TEMPBAN 3) MUTE COMMAND 4) ADD EXPIRATION FIELD TO THE JSON OBJECT 5) invite lookup
-# TODO 6) unmute
+# TODO: 2) TEMPBAN 3) MUTE COMMAND 4) ADD EXPIRATION FIELD TO THE JSON OBJECT 5) invite lookup
+# TODO 6) unmute 7) MUTE HANDLER CLASS 8) tempban time regex
 
 def setup(bot):
 	bot.add_cog(Moderation(bot))
