@@ -15,6 +15,7 @@ import motor.motor_asyncio
 
 from typing import Union
 from pathlib import Path
+from discord.utils import get
 from discord.ext import commands, tasks
 from aiohttp import ClientResponseError
 from discord.ext import commands, tasks
@@ -122,12 +123,12 @@ class GuildConfigManager:
 		await self.update_guild(g, guild)
 		return True
 
-	async def remove_muted_role(self):
+	async def remove_muted_role(self,g):
 		guild = await self.register_guild(g)
 		guild.pop('muted_role')
 		await self.update_guild(g, guild)
 	
-	async def get_muted_role(self):
+	async def get_muted_role(self,g):
 		guild = await self.register_guild(g)
 		muted_role = guild['muted_role']
 		return muted_role
@@ -261,6 +262,50 @@ class Misc(commands.Cog):
 		else:
 			embed.title = "Prefix not removed"
 			embed.description = f"`{prefix}` was already in the guild prefix list"
+		return await ctx.message.reply(embed=embed)
+
+
+	@commands.group(name="muterole", case_insensitive=True)
+	@commands.cooldown(10, 120, commands.BucketType.guild)
+	@commands.has_permissions(manage_guild=True)
+	async def muterole(self, ctx):
+		if ctx.invoked_subcommand is None:
+			await ctx.message.reply(
+				"please mention a proper argument such as `add` or `remove`"
+			)
+
+	@muterole.command()
+	@commands.has_permissions(manage_guild=True)
+	async def add(self, ctx, *, muted_role:discord.Role):
+		bot = ctx.guild.get_member(self.bot.user.id)
+
+		#if the muted role is @everyone then throw badargument error
+		if muted_role.id == ctx.guild.id:
+			raise commands.errors.BadArgument(message="Role \"@everyone\" not found.")
+
+		if muted_role.position > bot.top_role.position:
+			return await ctx.send("I cannot assign the role to mute members as it is above my highest role.")
+
+		add = await self.gcm.add_muted_role(ctx.guild, muted_role.id)
+		if add:
+			return await ctx.message.reply(f"Mute role for `{ctx.guild.name}` updated.")
+	@muterole.command()
+	@commands.has_permissions(manage_guild=True)
+	async def remove(self, ctx):
+		try:
+			remove = await self.gcm.remove_muted_role(ctx.guild)
+		except KeyError:
+			return await ctx.message.reply(f"Muted role doesn't exist for `{ctx.guild.name}`")
+		return await ctx.message.reply(f"Mute role for `{ctx.guild.name}` removed.")
+	
+	@muterole.command()
+	async def show(self,ctx):
+		try:
+			muted_role_id = await self.gcm.get_muted_role(ctx.guild)
+		except KeyError:
+			return await ctx.message.reply(f"No mute role has been setup for {ctx.guild.name}")
+		muted_role = get(ctx.message.guild.roles, id=muted_role_id)
+		embed = discord.Embed(title=f"{ctx.guild.name} - muted role is:",description=f"{muted_role.mention}",timestamp= ctx.message.created_at,color = ctx.message.author.color)
 		return await ctx.message.reply(embed=embed)
 
 	@commands.cooldown(1, 3, commands.BucketType.user)
