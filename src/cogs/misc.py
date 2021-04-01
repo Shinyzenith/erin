@@ -105,25 +105,32 @@ class GuildConfigManager:
 		await self.update_guild(g, guild)
 		return True
 	
-	async def remove_ban_appeal(self):
+	async def remove_ban_appeal(self,g):
 		guild = await self.register_guild(g)
 		guild['ban_appeal'] = "No ban appeal link."
 		await self.update_guild(g, guild)
 		return True
 	
-	async def get_ban_appeal(self):
+	async def get_ban_appeal(self,g):
 		guild = await self.register_guild(g)
 		link = guild['ban_appeal']
 		return link
 
-	async def add_muted_role(self):
-		pass
+	async def add_muted_role(self,g,muted_role:int):
+		guild = await self.register_guild(g)
+		guild['muted_role'] = muted_role
+		await self.update_guild(g, guild)
+		return True
 
 	async def remove_muted_role(self):
-		pass
+		guild = await self.register_guild(g)
+		guild.pop('muted_role')
+		await self.update_guild(g, guild)
 	
 	async def get_muted_role(self):
-		pass 
+		guild = await self.register_guild(g)
+		muted_role = guild['muted_role']
+		return muted_role
 
 
 class Misc(commands.Cog):
