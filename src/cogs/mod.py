@@ -37,6 +37,33 @@ class muteHandler:
 ################# WORK IN PROGRESS ################################
 
 
+#GuildConfigManager
+class GuildConfigHandler:
+	def __init__(self):
+		self.client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("CONNECTIONURI"))
+		self.db = self.client.erin
+		self.col = self.db["config"]
+
+	async def register_guild(self, g, recheck=True):
+		if recheck:
+			guild = await self.col.find_one({"gid": g.id})
+			if not guild:
+				guild = {"gid": g.id, "prefixes": ["-"]}
+				await self.col.insert_one(guild)
+		else:
+			guild = {"gid": g.id, "prefixes": ["-"]}
+			await self.col.insert_one(guild)
+		return guild
+
+	async def get_ban_appeal(self,g):
+		guild = await self.register_guild(g)
+		link = guild['ban_appeal']
+		return link	
+	async def get_muted_role(self,g):
+		guild = await self.register_guild(g)
+		muted_role = guild['muted_role']
+		return muted_role
+
 
 # Database Handler class
 class dbHandler:
@@ -69,6 +96,7 @@ class Moderation(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 		self.dbHandler = dbHandler()
+		self.GuildConfigHandler = GuildConfigHandler()
 
 	@commands.Cog.listener()
 	async def on_ready(self):
@@ -338,6 +366,12 @@ class Moderation(commands.Cog):
 		dmEmbed.add_field(name="Reason", value=f"{reason}", inline=True)
 
 		dmEmbed.add_field(name="Moderator", value=f"<@{entryData['mod']}>", inline=True)
+
+		try:
+			ban_appeal = await self.GuildConfigHandler.get_ban_appeal(ctx.guild)
+			dmEmbed.add_field(name="Ban Appeal link:",value=ban_appeal,inline=False)
+		except KeyError:
+			pass
 
 		dmEmbed.set_footer(
 			text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
@@ -609,6 +643,6 @@ class Moderation(commands.Cog):
 # TODO: 2) TEMPBAN 3) MUTE COMMAND 4) ADD EXPIRATION FIELD TO THE JSON OBJECT 5) invite lookup
 # TODO 6) unmute 7) MUTE HANDLER CLASS 8) tempban time regex
 # @TODO ON ADD TO GUILD IT SHOULD BE LOGGED WITH MEMBER COUNT AND OWNER ID
-# @ TODO ON GUILD LEAVE SHOULD BE LOGGED
+# @ TODO ON GUILD LEAVE SHOULD BE LOGGED to a private server
 def setup(bot):
 	bot.add_cog(Moderation(bot))
