@@ -274,9 +274,9 @@ class Misc(commands.Cog):
 				"please mention a proper argument such as `add` or `remove`"
 			)
 
-	@muterole.command()
+	@muterole.command(name="add")
 	@commands.has_permissions(manage_guild=True)
-	async def add(self, ctx, *, muted_role:discord.Role):
+	async def _add(self, ctx, muted_role:discord.Role):
 		bot = ctx.guild.get_member(self.bot.user.id)
 
 		#if the muted role is @everyone then throw badargument error
@@ -289,17 +289,17 @@ class Misc(commands.Cog):
 		add = await self.gcm.add_muted_role(ctx.guild, muted_role.id)
 		if add:
 			return await ctx.message.reply(f"Mute role for `{ctx.guild.name}` updated.")
-	@muterole.command()
+	@muterole.command(name="remove")
 	@commands.has_permissions(manage_guild=True)
-	async def remove(self, ctx):
+	async def _remove(self, ctx):
 		try:
 			remove = await self.gcm.remove_muted_role(ctx.guild)
 		except KeyError:
 			return await ctx.message.reply(f"Muted role doesn't exist for `{ctx.guild.name}`")
 		return await ctx.message.reply(f"Mute role for `{ctx.guild.name}` removed.")
 	
-	@muterole.command()
-	async def show(self,ctx):
+	@muterole.command(name="show")
+	async def _show(self,ctx):
 		try:
 			muted_role_id = await self.gcm.get_muted_role(ctx.guild)
 		except KeyError:
@@ -317,23 +317,23 @@ class Misc(commands.Cog):
 				"please mention a proper argument such as `add` or `remove`"
 			)
 
-	@banappeal.command()
+	@banappeal.command(name="add")
 	@commands.has_permissions(manage_guild=True)
-	async def add(self, ctx, *, url:str):
+	async def __add(self, ctx, *, url:str):
 		ban_appeal = await self.gcm.add_ban_appeal(ctx.guild, url)
 		if ban_appeal:
 			return await ctx.message.reply(f"Ban appeal link for `{ctx.guild.name}` updated.")
-	@banappeal.command()
+	@banappeal.command(name="remove")
 	@commands.has_permissions(manage_guild=True)
-	async def remove(self, ctx):
+	async def __remove(self, ctx):
 		try:
 			remove = await self.gcm.remove_ban_appeal(ctx.guild)
 		except KeyError:
 			return await ctx.message.reply(f"Ban appeal link doesn't exist for `{ctx.guild.name}`")
 		return await ctx.message.reply(f"Ban appeal link for `{ctx.guild.name}` removed.")
 	
-	@banappeal.command()
-	async def show(self,ctx):
+	@banappeal.command(name="show")
+	async def __show(self,ctx):
 		try:
 			ban_appeal = await self.gcm.get_ban_appeal(ctx.guild)
 		except KeyError:
