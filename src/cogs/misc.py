@@ -108,7 +108,7 @@ class GuildConfigManager:
 	
 	async def remove_ban_appeal(self,g):
 		guild = await self.register_guild(g)
-		guild['ban_appeal'] = "No ban appeal link."
+		guild.pop('ban_appeal')
 		await self.update_guild(g, guild)
 		return True
 	
@@ -306,6 +306,39 @@ class Misc(commands.Cog):
 			return await ctx.message.reply(f"No mute role has been setup for {ctx.guild.name}")
 		muted_role = get(ctx.message.guild.roles, id=muted_role_id)
 		embed = discord.Embed(title=f"{ctx.guild.name} - muted role is:",description=f"{muted_role.mention}",timestamp= ctx.message.created_at,color = ctx.message.author.color)
+		return await ctx.message.reply(embed=embed)
+
+	@commands.group(name="banappeal", case_insensitive=True)
+	@commands.cooldown(10, 120, commands.BucketType.guild)
+	@commands.has_permissions(manage_guild=True)
+	async def banappeal(self, ctx):
+		if ctx.invoked_subcommand is None:
+			await ctx.message.reply(
+				"please mention a proper argument such as `add` or `remove`"
+			)
+
+	@banappeal.command()
+	@commands.has_permissions(manage_guild=True)
+	async def add(self, ctx, *, url:str):
+		ban_appeal = await self.gcm.add_ban_appeal(ctx.guild, url)
+		if ban_appeal:
+			return await ctx.message.reply(f"Ban appeal link for `{ctx.guild.name}` updated.")
+	@banappeal.command()
+	@commands.has_permissions(manage_guild=True)
+	async def remove(self, ctx):
+		try:
+			remove = await self.gcm.remove_ban_appeal(ctx.guild)
+		except KeyError:
+			return await ctx.message.reply(f"Ban appeal link doesn't exist for `{ctx.guild.name}`")
+		return await ctx.message.reply(f"Ban appeal link for `{ctx.guild.name}` removed.")
+	
+	@banappeal.command()
+	async def show(self,ctx):
+		try:
+			ban_appeal = await self.gcm.get_ban_appeal(ctx.guild)
+		except KeyError:
+			return await ctx.message.reply(f"No ban appeal link has been setup for {ctx.guild.name}")
+		embed = discord.Embed(title=f"{ctx.guild.name} - Ban appeal link:",description=f"{ban_appeal}",timestamp= ctx.message.created_at,color = ctx.message.author.color)
 		return await ctx.message.reply(embed=embed)
 
 	@commands.cooldown(1, 3, commands.BucketType.user)
