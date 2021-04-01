@@ -26,7 +26,7 @@ class PrefixManager:
     def __init__(self):
         self.client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("CONNECTIONURI"))
         self.db = self.client.erin
-        self.col = self.db["prefix"]
+        self.col = self.db["config"]
 
     async def register_guild(self, g):
         await self.col.insert_one({"gid": g.id, "prefixes": ["-"]})

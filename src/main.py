@@ -39,7 +39,7 @@ class PrefixManager:
 	def __init__(self):
 		self.client = MongoClient(os.getenv('CONNECTIONURI'))
 		self.db=self.client.erin
-		self.col=self.db["prefix"]
+		self.col=self.db["config"]
 
 	def register_guild(self, g):
 		self.col.insert_one({"gid":g.id,"prefixes":["-"]})

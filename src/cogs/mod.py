@@ -21,6 +21,23 @@ from discord.ext import commands
 log = logging.getLogger("Moderation cog")
 coloredlogs.install(logger=log)
 
+#mute handler class
+
+############ WORK IN PROGRESS #############################3
+class muteHandler:
+	def __init__(self):
+		self.client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("CONNECTIONURI"))
+		self.db = self.client.erin
+		self.col = self.db['mute']
+
+	async def add_mute(self,uid:int,gid:int,data):
+		await self.col.replace_one({"uid":uid},data)
+
+
+################# WORK IN PROGRESS ################################
+
+
+
 # Database Handler class
 class dbHandler:
 	def __init__(self):
@@ -585,9 +602,13 @@ class Moderation(commands.Cog):
 		except:
 			pass
 		await ctx.reply(embed=embed)
-		
+
+
+#TODO complete the mute handler class
+
 # TODO: 2) TEMPBAN 3) MUTE COMMAND 4) ADD EXPIRATION FIELD TO THE JSON OBJECT 5) invite lookup
 # TODO 6) unmute 7) MUTE HANDLER CLASS 8) tempban time regex
-
+# @TODO ON ADD TO GUILD IT SHOULD BE LOGGED WITH MEMBER COUNT AND OWNER ID
+# @ TODO ON GUILD LEAVE SHOULD BE LOGGED
 def setup(bot):
 	bot.add_cog(Moderation(bot))
