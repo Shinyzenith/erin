@@ -3,7 +3,7 @@ __pycache__/
 /dist
 *.py[cod]
 *$py.class
-
+node_modules
 # C extensions
 *.so
 .vscode
