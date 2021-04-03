@@ -1,19 +1,21 @@
 import express from "express";
 import path from "path";
 import dotenv from "dotenv";
+import expresshandlebars  from 'express-handlebars';
 
-dotenv.config({"path":path.join(__dirname,"../../../.env")});
+dotenv.config({"path":path.join(__dirname,"../../.env")});
 
 const app:express.Application = express();
 const port = process.env.SERVER_PORT || 8080; 
 
-// app.set( "views", path.join( __dirname, "./../html/" ) );
-// app.set( "view engine", "ejs" );
+//Handlebars middleware
+app.engine('handlebars',expresshandlebars({defaultLayout:'main'}));
+app.set('view engine','handlebars');
 
-// app.get( "/", ( req:express.Request, res:express.Response) => {
-//     res.render( "index" );
-// });
-
-app.use(express.static(path.join(__dirname,'./../../dist/')))
+app.get('/',(req:express.Request,res:express.Response)=>{
+    res.render('index',{
+        content:'OwO wot dis >~<'
+    })
+});
 
 app.listen( port, () => console.log( `Server started at http://localhost:${ port }`));
