@@ -10,8 +10,8 @@
     "raw": "yarn ts-node ./typescript/ts/index.ts",
     "prod": "python3 main.py",
     "dev": "python \"c:/Users/AAKASHAADRIZA/Desktop/Erin workspace/erin/src/main.py\"",
-    "serverprod": "forever start -a -l /home/aakash/erin/logs/website/forever.log -e err.log -c node --sourceDir /home/aakash/erin/dashboard/js/ startserver.js",
-    "serverdev": "nodemon --exec yarn node ./dashboard/js/startserver.js"
+    "serverprod": "forever start -a -l /home/aakash/erin/logs/website/forever.log -e err.log -c node --sourceDir /home/aakash/erin/dashboard/dist/js/ startserver.js",
+    "serverdev": "nodemon --exec yarn node ./dashboard/dist/js/startserver.js"
   },
   "dependencies": {
     "@types/express": "^4.17.11",
