@@ -10,7 +10,9 @@ const port = process.env.SERVER_PORT || 8080;
 
 //Handlebars middleware
 app.engine('handlebars',expresshandlebars({defaultLayout:'main'}));
+
 app.set('view engine','handlebars');
+app.set( "views", path.join( __dirname, "./views" ) );
 
 app.get('/',(req:express.Request,res:express.Response)=>{
     res.render('index',{
@@ -25,5 +27,6 @@ app.get('/alt',(req:express.Request,res:express.Response)=>{
         content:'OwO wot dis >~<'
     })
 });
+app.use(express.static(path.join(__dirname + "./../dist")));
 //@TODO: SETUP ./routes instead of this one dirty huge ass file for all the routes > ~ <
 app.listen( port, () => console.log( `Server started at http://localhost:${ port }`));
