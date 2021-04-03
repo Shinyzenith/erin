@@ -544,7 +544,7 @@ class Highlight(commands.Cog):
         name="block",
         description="Block a user or channel",
         usage="<user or channel>",
-        aliases=["ignore", "mute"],
+        aliases=["ignore"],
     )
     async def block(
         self, ctx, *, user: typing.Union[UserConverter, discord.TextChannel]

@@ -636,6 +636,14 @@ class Moderation(commands.Cog):
 		except:
 			pass
 		await ctx.reply(embed=embed)
+	
+	@commands.command()
+	@commands.has_guild_permissions(mute_members=True)
+	async def mute(self,ctx,member:discord.Member,time:str,*,reason:str):
+		try:
+			muted_role = await self.GuildConfigHandler.get_muted_role(ctx.guild)
+		except KeyError:
+			return await ctx.message.reply("No muted role has been setup for the server. Make a muted role before running the mute command.")
 
 
 #TODO complete the mute handler class
