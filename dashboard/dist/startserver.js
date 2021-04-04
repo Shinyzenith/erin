@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 app.get('/alt', (req, res) => {
     res.render('index', {
         layout: 'test',
-        content: 'OwO wot dis >~<'
+        content: 'OwO UwU >~<'
     });
 });
 //@TODO: SETUP ./routes instead of this one dirty huge ass file for all the routes > ~ <

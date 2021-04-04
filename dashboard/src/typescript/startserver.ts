@@ -24,7 +24,7 @@ app.get('/',(req:express.Request,res:express.Response)=>{
 app.get('/alt',(req:express.Request,res:express.Response)=>{
     res.render('index',{
         layout:'test',
-        content:'OwO wot dis >~<'
+        content:'OwO UwU >~<'
     })
 });
 
