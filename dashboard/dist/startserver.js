@@ -8,10 +8,13 @@ const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const express_handlebars_1 = __importDefault(require("express-handlebars"));
-//importing the routes into const's
+//importing the website routes into const's
 const indexPage = require('./routes/index');
-const secondPage = require('./routes/second');
+const secondPage = require('./routes/second'); // alr
 const formPage = require('./routes/formpage');
+//api endpoint imports
+const updateEndpoint = require('./routes/api/update');
+const fetchEndpoint = require('./routes/api/fetch');
 //project config
 dotenv_1.default.config({ "path": path_1.default.join(__dirname, "../../.env") }); //dotenv config
 const app = express_1.default(); //express app const

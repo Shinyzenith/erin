@@ -4,7 +4,7 @@ const router = Express.Router();
 router.get('/',(req:Express.Request,res:Express.Response)=>{
     res.render('index',{
         layout:'homepage',
-        content:'OwO denc >~<'
+        content:'OwO wot dis >~<'
     })
 });
 

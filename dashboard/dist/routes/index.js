@@ -8,7 +8,7 @@ const router = express_1.default.Router();
 router.get('/', (req, res) => {
     res.render('index', {
         layout: 'homepage',
-        content: 'OwO denc >~<'
+        content: 'OwO wot dis >~<'
     });
 });
 module.exports = router;

@@ -4,10 +4,14 @@ import path from "path";
 import dotenv from "dotenv";
 import expresshandlebars  from 'express-handlebars';
 
-//importing the routes into const's
+//importing the website routes into const's
 const indexPage:express.Router = require('./routes/index');
-const secondPage:express.Router = require('./routes/second');
-const formPage:express.Router = require('./routes/formpage')
+const secondPage:express.Router = require('./routes/second'); // alr
+const formPage:express.Router = require('./routes/formpage');
+
+//api endpoint imports
+const updateEndpoint:express.Router = require('./routes/api/update');
+const fetchEndpoint:express.Router = require('./routes/api/fetch');
 //project config
 dotenv.config({"path":path.join(__dirname,"../../.env")}); //dotenv config
 const app:express.Application = express(); //express app const
