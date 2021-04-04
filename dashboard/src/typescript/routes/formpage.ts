@@ -3,8 +3,8 @@ const router = Express.Router();
 
 router.get('/',(req:Express.Request,res:Express.Response) => {
     res.render('index',{
-        layout:'homepage',
-        content:'OwO send feet pics >~<'
+        layout:'formpage',
+        content:'OwO dis da form page >~<'
     })
 });
 

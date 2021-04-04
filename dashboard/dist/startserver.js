@@ -11,6 +11,7 @@ const express_handlebars_1 = __importDefault(require("express-handlebars"));
 //importing the routes into const's
 const indexPage = require('./routes/index');
 const secondPage = require('./routes/second');
+const formPage = require('./routes/formpage');
 //project config
 dotenv_1.default.config({ "path": path_1.default.join(__dirname, "../../.env") }); //dotenv config
 const app = express_1.default(); //express app const
@@ -23,5 +24,6 @@ app.use(express_1.default.static(path_1.default.join(__dirname + "./../dist/asse
 //setting up the routes
 app.use('/', indexPage);
 app.use('/owo', secondPage);
+app.use('/dashboard', formPage);
 //Running the files
 app.listen(port, () => console.log(`Server started at http://localhost:${port}`));
