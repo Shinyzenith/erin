@@ -9,7 +9,7 @@ const app:express.Application = express();
 const port = process.env.SERVER_PORT || 8080; 
 
 //Handlebars middleware
-app.engine('handlebars',expresshandlebars({defaultLayout:'main'}));
+app.engine('handlebars',expresshandlebars({defaultLayout:'homepage'}));
 
 app.set('view engine','handlebars');
 app.set( "views", path.join( __dirname, "./views" ) );
@@ -17,7 +17,6 @@ app.use(express.static(path.join(__dirname + "./../dist/assets")));
 
 app.get('/',(req:express.Request,res:express.Response)=>{
     res.render('index',{
-        layout:'homepage',
         content:'OwO wot dis >~<'
     })
 });
