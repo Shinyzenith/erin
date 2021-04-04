@@ -28,5 +28,7 @@ app.use(express_1.default.static(path_1.default.join(__dirname + "./../dist/asse
 app.use('/', indexPage);
 app.use('/owo', secondPage);
 app.use('/dashboard', formPage);
+app.use('/api/fetch', fetchEndpoint);
+app.use('/api/update', updateEndpoint);
 //Running the files
 app.listen(port, () => console.log(`Server started at http://localhost:${port}`));

@@ -6,6 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 router.get('/', (req, res) => {
-    //will add logic soon
+    res.send({ 'msg': 'fetch api endpoint is still in prod' });
 });
 module.exports = router;

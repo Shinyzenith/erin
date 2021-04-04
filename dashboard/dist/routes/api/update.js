@@ -19,6 +19,6 @@ function fetchData(gid) {
     });
 }
 router.get('/', (req, res) => {
-    //will add logic soon
+    res.send({ 'msg': 'update api endpoint is still in prod' });
 });
 module.exports = router;
