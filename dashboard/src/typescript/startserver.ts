@@ -11,7 +11,7 @@ const secondPage:express.Router = require('./routes/second');
 //project config
 dotenv.config({"path":path.join(__dirname,"../../.env")}); //dotenv config
 const app:express.Application = express(); //express app const
-const port = process.env.SERVER_PORT || 8080; //express port constant 
+const port = process.env.SERVER_PORT || 80; //express port constant 
 
 //initializing the express app 
 app.engine('handlebars',expresshandlebars({defaultLayout:'homepage'})); //Handlebars middleware
