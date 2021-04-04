@@ -3,7 +3,7 @@ const router = Express.Router();
 
 router.get('/',(req:Express.Request,res:Express.Response) => {
     res.render('index',{
-        content:'OwO second page >~<'
+        content:'OwO send feet pics >~<'
     })
 });
 

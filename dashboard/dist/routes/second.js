@@ -7,7 +7,7 @@ const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 router.get('/', (req, res) => {
     res.render('index', {
-        content: 'OwO second page >~<'
+        content: 'OwO send feet pics >~<'
     });
 });
 module.exports = router;
