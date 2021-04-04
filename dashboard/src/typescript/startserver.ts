@@ -1,33 +1,27 @@
+//imports
 import express from "express";
 import path from "path";
 import dotenv from "dotenv";
 import expresshandlebars  from 'express-handlebars';
 
-dotenv.config({"path":path.join(__dirname,"../../.env")});
+//importing the routes into const's
+const indexPage:express.Router = require('./routes/index');
+const secondPage:express.Router = require('./routes/second');
 
-const app:express.Application = express();
-const port = process.env.SERVER_PORT || 8080; 
+//project config
+dotenv.config({"path":path.join(__dirname,"../../.env")}); //dotenv config
+const app:express.Application = express(); //express app const
+const port = process.env.SERVER_PORT || 8080; //express port constant 
 
-//Handlebars middleware
-app.engine('handlebars',expresshandlebars({defaultLayout:'homepage'}));
+//initializing the express app 
+app.engine('handlebars',expresshandlebars({defaultLayout:'homepage'})); //Handlebars middleware
+app.set('view engine','handlebars'); // setting the view engine aka the template renderer
+app.set( "views", path.join( __dirname, "./views" ) ); // overwriting the default view folder path
+app.use(express.static(path.join(__dirname + "./../dist/assets"))); //setting the assets folder as static so the handlebar files can import the css and js as needed
 
-app.set('view engine','handlebars');
-app.set( "views", path.join( __dirname, "./views" ) );
-app.use(express.static(path.join(__dirname + "./../dist/assets")));
+//setting up the routes
+app.use('/',indexPage);
+app.use('/owo',secondPage);
 
-app.get('/',(req:express.Request,res:express.Response)=>{
-    res.render('index',{
-        content:'OwO wot dis >~<'
-    })
-});
-
-app.get('/alt',(req:express.Request,res:express.Response)=>{
-    res.render('index',{
-        layout:'test',
-        content:'OwO UwU >~<'
-    })
-});
-
-
-//@TODO: SETUP ./routes instead of this one dirty huge ass file for all the routes > ~ <
+//Running the files
 app.listen( port, () => console.log( `Server started at http://localhost:${ port }`));
