@@ -14,9 +14,10 @@ const port = process.env.SERVER_PORT || 8080;
 app.engine('handlebars', express_handlebars_1.default({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 app.set("views", path_1.default.join(__dirname, "./views"));
+app.use(express_1.default.static(path_1.default.join(__dirname + "./../dist/assets")));
 app.get('/', (req, res) => {
     res.render('index', {
-        layout: 'home',
+        layout: 'homepage',
         content: 'OwO wot dis >~<'
     });
 });
@@ -26,6 +27,5 @@ app.get('/alt', (req, res) => {
         content: 'OwO wot dis >~<'
     });
 });
-app.use(express_1.default.static(path_1.default.join(__dirname + "./../dist")));
 //@TODO: SETUP ./routes instead of this one dirty huge ass file for all the routes > ~ <
 app.listen(port, () => console.log(`Server started at http://localhost:${port}`));
