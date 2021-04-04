@@ -10,7 +10,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const express_handlebars_1 = __importDefault(require("express-handlebars"));
 //importing the website routes into const's
 const indexPage = require('./routes/index');
-const secondPage = require('./routes/second'); // alr
+const secondPage = require('./routes/second');
 const formPage = require('./routes/formpage');
 //api endpoint imports
 const updateEndpoint = require('./routes/api/update');

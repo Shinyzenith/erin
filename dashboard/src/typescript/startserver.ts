@@ -6,7 +6,7 @@ import expresshandlebars  from 'express-handlebars';
 
 //importing the website routes into const's
 const indexPage:express.Router = require('./routes/index');
-const secondPage:express.Router = require('./routes/second'); // alr
+const secondPage:express.Router = require('./routes/second');
 const formPage:express.Router = require('./routes/formpage');
 
 //api endpoint imports
