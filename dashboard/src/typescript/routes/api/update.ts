@@ -9,7 +9,14 @@ dotenv.config({"path":path.join(__dirname,"../../../../.env")});
 const router:express.Router = express.Router();             //express router constamt
 const connection_uri = process.env.CONNECTION_URI           //mongodb connection uri constant
 
+//setting up static assets dir
+router.use(express.static(path.join(__dirname + "./../../../dist/assets")));
+
 //api routes
+router.get('/',(req:express.Request,res:express.Response)=>{
+    res.status(400).json({ 'message':'This is the update data endpoint, pass gid in the request body to interact with me.' })
+});
+
 router.post('/', async function(req:express.Request, res:express.Response){
     const body = {...req.body}
     const guildID:number = body.gid;

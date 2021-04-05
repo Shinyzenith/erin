@@ -27,20 +27,8 @@ const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config({ "path": path_1.default.join(__dirname, "../../../../.env") });
 const router = express.Router();
-const connection_uri = process.env.CONNECTION_URI;
 router.use(express.static(path_1.default.join(__dirname + "./../../../dist/assets")));
 router.get('/', (req, res) => {
-    res.status(400).json({ 'message': 'This is the update data endpoint, pass gid in the request body to interact with me.' });
-});
-router.post('/', async function (req, res) {
-    const body = { ...req.body };
-    const guildID = body.gid;
-    if (typeof (guildID) === "undefined") {
-        return res.status(400).json({ 'message': 'GuildID not found in request body' });
-    }
-    if (typeof (guildID) === "string") {
-        return res.status(400).json({ 'message': 'GuildID should be of type number' });
-    }
-    return res.status(200).json({ 'message': 'successful', 'gid': `recieved guild id ${guildID}` });
+    res.status(400).json({ 'baseURL': '/api/v1', 'endpoints': 'fetch, update' });
 });
 module.exports = router;
