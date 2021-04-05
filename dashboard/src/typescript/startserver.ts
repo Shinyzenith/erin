@@ -6,7 +6,6 @@ import expresshandlebars  from 'express-handlebars';
 
 //importing the website routes into const's
 const indexPage:express.Router = require('./routes/index');
-const secondPage:express.Router = require('./routes/second');
 const formPage:express.Router = require('./routes/formpage');
 
 //api endpoint imports
@@ -25,7 +24,6 @@ app.use(express.static(path.join(__dirname + "./../dist/assets"))); //setting th
 
 //setting up the routes
 app.use('/',indexPage);
-app.use('/owo',secondPage);
 app.use('/dashboard',formPage);
 app.use('/api/fetch',fetchEndpoint);
 app.use('/api/update',updateEndpoint);

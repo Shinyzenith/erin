@@ -10,7 +10,6 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const express_handlebars_1 = __importDefault(require("express-handlebars"));
 //importing the website routes into const's
 const indexPage = require('./routes/index');
-const secondPage = require('./routes/second');
 const formPage = require('./routes/formpage');
 //api endpoint imports
 const updateEndpoint = require('./routes/api/update');
@@ -26,7 +25,6 @@ app.set("views", path_1.default.join(__dirname, "./views")); // overwriting the 
 app.use(express_1.default.static(path_1.default.join(__dirname + "./../dist/assets"))); //setting the assets folder as static so the handlebar files can import the css and js as needed
 //setting up the routes
 app.use('/', indexPage);
-app.use('/owo', secondPage);
 app.use('/dashboard', formPage);
 app.use('/api/fetch', fetchEndpoint);
 app.use('/api/update', updateEndpoint);
