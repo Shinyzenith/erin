@@ -12,6 +12,7 @@ const formPage = require('./routes/formpage');
 const updateEndpoint = require('./routes/api/update');
 const fetchEndpoint = require('./routes/api/fetch');
 const apiIndexPage = require('./routes/api/index');
+const middleware404 = require('./routes/404page');
 dotenv_1.default.config({ "path": path_1.default.join(__dirname, "../../.env") });
 const app = express_1.default();
 const port = process.env.SERVER_PORT || 80;
@@ -26,16 +27,5 @@ app.use('/dashboard', formPage);
 app.use('/api/v1', apiIndexPage);
 app.use('/api/v1/fetch', fetchEndpoint);
 app.use('/api/v1/update', updateEndpoint);
-app.use(function (req, res, next) {
-    res.status(404);
-    if (req.accepts('html')) {
-        res.status(400).render('NotFound');
-        return;
-    }
-    if (req.accepts('json')) {
-        res.json({ error: 'Not found' });
-        return;
-    }
-    res.type('txt').send('Not found');
-});
+app.use(middleware404);
 app.listen(port, () => console.log(`Server started at http://localhost:${port}`));

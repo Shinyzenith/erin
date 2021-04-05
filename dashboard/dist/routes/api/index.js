@@ -27,7 +27,6 @@ const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config({ "path": path_1.default.join(__dirname, "../../../../.env") });
 const router = express.Router();
-router.use(express.static(path_1.default.join(__dirname + "./../../../dist/assets")));
 router.get('/', (req, res) => {
     res.status(400).json({ 'baseURL': '/api/v1', 'endpoints': 'fetch, update' });
 });

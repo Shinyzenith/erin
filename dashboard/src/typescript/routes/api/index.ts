@@ -8,9 +8,6 @@ dotenv.config({"path":path.join(__dirname,"../../../../.env")});
 //Required constants
 const router:express.Router = express.Router();             //express router constant
 
-//setting up static assets dir
-router.use(express.static(path.join(__dirname + "./../../../dist/assets")));
-
 //api routes
 router.get('/',(req:express.Request,res:express.Response)=>{
     res.status(400).json({ 'baseURL':'/api/v1','endpoints':'fetch, update' });

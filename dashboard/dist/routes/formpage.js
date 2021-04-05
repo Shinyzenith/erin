@@ -24,7 +24,7 @@ const router = express.Router();
 router.get('/', (req, res) => {
     res.render('index', {
         layout: 'formpage',
-        content: 'OwO dis da form page >~<'
+        content: 'OwO form page >~<'
     });
 });
 module.exports = router;

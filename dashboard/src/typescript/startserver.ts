@@ -4,6 +4,9 @@ import path from "path";
 import dotenv from "dotenv";
 import expresshandlebars  from 'express-handlebars';
 
+//custom types
+type middleware404function=(req:express.Request,res:express.Response)=>void;
+
 //importing the website routes into const's
 const indexPage:express.Router = require('./routes/index');
 const formPage:express.Router = require('./routes/formpage');
@@ -12,6 +15,7 @@ const formPage:express.Router = require('./routes/formpage');
 const updateEndpoint:express.Router = require('./routes/api/update');
 const fetchEndpoint:express.Router = require('./routes/api/fetch');
 const apiIndexPage:express.Router =  require('./routes/api/index')
+const middleware404:middleware404function = require('./routes/404page');
 
 //project config
 dotenv.config({"path":path.join(__dirname,"../../.env")});                  //dotenv config
@@ -35,24 +39,8 @@ app.use('/api/v1',apiIndexPage)
 app.use('/api/v1/fetch',fetchEndpoint);
 app.use('/api/v1/update',updateEndpoint);
 
-//setting up 404 page
-app.use(function(req:express.Request,res:express.Response,next:express.NextFunction){
-    res.status(404)
-    // respond with html page
-    if (req.accepts('html')) {
-        res.status(400).render('NotFound')
-        return;
-    }
-
-    // respond with json
-    if (req.accepts('json')) {
-        res.json({ error: 'Not found' });
-        return;
-    }
-
-    // default to plain-text. send()
-    res.type('txt').send('Not found');
-});
+// //setting up 404 page middleware
+app.use(middleware404);
 
 //Running the files
 app.listen( port, () => console.log( `Server started at http://localhost:${ port }`));
