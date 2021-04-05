@@ -22,11 +22,14 @@ app.set( "views", path.join( __dirname, "./views" ) );                      // o
 app.use(express.static(path.join(__dirname + "./../dist/assets")));         //setting the assets folder as static so the handlebar files can import the css and js as needed
 app.use(express.json());                                                    //converts it to json using the default express body-parser
 app.use(express.urlencoded({ extended: false }));                           //bodyparser middleware
-//setting up the routes
+
+//setting up the website routes
 app.use('/',indexPage);
 app.use('/dashboard',formPage);
-app.use('/api/fetch',fetchEndpoint);
-app.use('/api/update',updateEndpoint);
+
+//setting up the api routes
+app.use('/api/v1/fetch',fetchEndpoint);
+app.use('/api/v1/update',updateEndpoint);
 
 //Running the files
 app.listen( port, () => console.log( `Server started at http://localhost:${ port }`));

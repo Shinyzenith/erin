@@ -1,7 +1,15 @@
 import * as express from 'express';
-const router:express.Router = express.Router();
+import path from 'path';
+import dotenv from "dotenv";
 
+//configuring dotenv module to point to .env
+dotenv.config({"path":path.join(__dirname,"../../../../.env")});
 
+//Required constants
+const router:express.Router = express.Router();             //express router constamt
+const connection_uri = process.env.CONNECTION_URI           //mongodb connection uri constant
+
+//api routes
 router.post('/', async function(req:express.Request, res:express.Response){
     const body = {...req.body}
     const guildID:number = body.gid;

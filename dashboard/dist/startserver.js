@@ -22,6 +22,6 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use('/', indexPage);
 app.use('/dashboard', formPage);
-app.use('/api/fetch', fetchEndpoint);
-app.use('/api/update', updateEndpoint);
+app.use('/api/v1/fetch', fetchEndpoint);
+app.use('/api/v1/update', updateEndpoint);
 app.listen(port, () => console.log(`Server started at http://localhost:${port}`));
