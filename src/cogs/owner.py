@@ -225,6 +225,6 @@ class Owner(commands.Cog):
 		log.warn(
 			f"Bot logout command issued by {ctx.message.author.display_name}#{ctx.message.author.discriminator}  -  {ctx.message.author.id}"
 		)
-		await self.bot.logout()
+		await self.bot.close()
 def setup(bot):
 	bot.add_cog(Owner(bot))

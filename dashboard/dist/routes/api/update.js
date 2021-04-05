@@ -28,7 +28,6 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config({ "path": path_1.default.join(__dirname, "../../../../.env") });
 const router = express.Router();
 const connection_uri = process.env.CONNECTION_URI;
-router.use(express.static(path_1.default.join(__dirname + "./../../../dist/assets")));
 router.get('/', (req, res) => {
     res.status(400).json({ 'message': 'This is the update data endpoint, pass gid in the request body to interact with me.' });
 });
