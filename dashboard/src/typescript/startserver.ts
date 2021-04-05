@@ -3,7 +3,6 @@ import express from "express";
 import path from "path";
 import dotenv from "dotenv";
 import expresshandlebars  from 'express-handlebars';
-
 //importing the website routes into const's
 const indexPage:express.Router = require('./routes/index');
 const formPage:express.Router = require('./routes/formpage');
@@ -21,7 +20,8 @@ app.engine('handlebars',expresshandlebars({defaultLayout:'homepage'}));     //Ha
 app.set('view engine','handlebars');                                        // setting the view engine aka the template renderer
 app.set( "views", path.join( __dirname, "./views" ) );                      // overwriting the default view folder path
 app.use(express.static(path.join(__dirname + "./../dist/assets")));         //setting the assets folder as static so the handlebar files can import the css and js as needed
-
+app.use(express.json());                                                    //converts it to json using the default express body-parser
+app.use(express.urlencoded({ extended: false }));                           //bodyparser middleware
 //setting up the routes
 app.use('/',indexPage);
 app.use('/dashboard',formPage);

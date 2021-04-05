@@ -21,7 +21,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = __importStar(require("express"));
 const router = express.Router();
-router.get('/', (req, res) => {
-    res.send({ 'msg': 'fetch api endpoint is still in prod' });
+router.post('/', async function (req, res) {
+    const body = { ...req.body };
+    const guildID = body.gid;
+    if (typeof (guildID) === "undefined") {
+        return res.status(400).json({ 'message': 'GuildID not found in request body' });
+    }
+    if (typeof (guildID) === "string") {
+        return res.status(400).json({ 'message': 'GuildID should be of type number' });
+    }
+    return res.status(200).json({ 'message': 'successful', 'gid': `recieved guild id ${guildID}` });
 });
 module.exports = router;

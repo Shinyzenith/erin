@@ -18,6 +18,8 @@ app.engine('handlebars', express_handlebars_1.default({ defaultLayout: 'homepage
 app.set('view engine', 'handlebars');
 app.set("views", path_1.default.join(__dirname, "./views"));
 app.use(express_1.default.static(path_1.default.join(__dirname + "./../dist/assets")));
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: false }));
 app.use('/', indexPage);
 app.use('/dashboard', formPage);
 app.use('/api/fetch', fetchEndpoint);
