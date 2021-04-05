@@ -2,7 +2,6 @@ import * as express from 'express';
 import { type } from 'node:os';
 const router:express.Router = express.Router();
 
-
 router.post('/', async function(req:express.Request, res:express.Response){
     const body = {...req.body}
     const guildID:number = body.gid;
