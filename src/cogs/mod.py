@@ -77,14 +77,14 @@ class dbHandler:
 		if not user:
 			user = await self.register_user(uid, gid)
 		try:
-			user[f"{gid}"]
+			user['gid'][f"{gid}"]
 		except KeyError:
-			user[f"{gid}"] = []
+			user['gid'][f"{gid}"] = []
 		finally:
 			return user
 
 	async def register_user(self, uid: int, gid: int):
-		data = {"uid": uid, f"{str(gid)}": []}
+		data = {"uid": uid, "gid":{f"{str(gid)}": []}}
 		await self.col.insert_one(data)
 		return data
 
@@ -131,7 +131,7 @@ class Moderation(commands.Cog):
 			"mod": f"{ctx.message.author.id}",
 		}
 		userData = await self.dbHandler.find_user(user.id, ctx.message.guild.id)
-		userData[f"{ctx.message.author.guild.id}"].append(entryData)
+		userData['gid'][f"{ctx.message.author.guild.id}"].append(entryData)
 
 		# uodating user entries
 		await self.dbHandler.update_user_warn(user.id, userData)
@@ -180,8 +180,8 @@ class Moderation(commands.Cog):
 		user = await self.dbHandler.find_user(searchUser.id, ctx.message.guild.id)
 		threshold = 5
 		reason_chunk = [
-			user[f"{ctx.message.guild.id}"][i : i + threshold]
-			for i in range(0, len(user[f"{ctx.message.guild.id}"]), threshold)
+			user['gid'][f"{ctx.message.guild.id}"][i : i + threshold]
+			for i in range(0, len(user['gid'][f"{ctx.message.guild.id}"]), threshold)
 		]
 
 		i = 0
@@ -279,7 +279,7 @@ class Moderation(commands.Cog):
 				await request.clear_reaction("\N{CROSS MARK}")
 			except:
 				pass
-			delUser.pop(f"{ctx.message.guild.id}")
+			delUser['gid'].pop(f"{ctx.message.guild.id}")
 			await self.dbHandler.update_user_warn(user.id, delUser)
 			try:
 				return await request.edit(
@@ -409,7 +409,7 @@ class Moderation(commands.Cog):
 			await ctx.message.guild.ban(user, reason=reason)
 
 		userData = await self.dbHandler.find_user(user.id, ctx.message.guild.id)
-		userData[f"{ctx.message.author.guild.id}"].append(entryData)
+		userData['gid'][f"{ctx.message.author.guild.id}"].append(entryData)
 		# uodating user entries
 		await self.dbHandler.update_user_warn(user.id, userData)
 		return await ctx.message.reply(embed=channelEmbed)
@@ -513,7 +513,7 @@ class Moderation(commands.Cog):
 			await ctx.message.guild.ban(user, reason=reason,delete_message_days=7)
 			await ctx.message.guild.unban(user, reason="softban")								
 		userData = await self.dbHandler.find_user(user.id, ctx.message.guild.id)
-		userData[f"{ctx.message.author.guild.id}"].append(entryData)
+		userData['gid'][f"{ctx.message.author.guild.id}"].append(entryData)
 		# uodating user entries
 		await self.dbHandler.update_user_warn(user.id, userData)
 		return await ctx.message.reply(embed=channelEmbed)
@@ -579,7 +579,7 @@ class Moderation(commands.Cog):
 				pass
 
 			userData = await self.dbHandler.find_user(user.id, ctx.message.guild.id)
-			userData[f"{ctx.message.author.guild.id}"].append(entryData)
+			userData['gid'][f"{ctx.message.author.guild.id}"].append(entryData)
 			# uodating user entries
 			await self.dbHandler.update_user_warn(user.id, userData)
 			return await ctx.message.reply(embed=channelEmbed)
@@ -607,9 +607,9 @@ class Moderation(commands.Cog):
 			return await ctx.send(
 				f"Please mention the warn id of the reason that you want to delete from {user.mention}'s logs."
 			)
-		if warn > len(rmUser[f"{ctx.guild.id}"]):
+		if warn > len(rmUser['gid'][f"{ctx.guild.id}"]):
 			return await ctx.send(f"Invalid warn id for {user.mention}")
-		removedWarn = rmUser[f"{ctx.guild.id}"].pop(warn - 1)
+		removedWarn = rmUser['gid'][f"{ctx.guild.id}"].pop(warn - 1)
 		await self.dbHandler.update_user_warn(user.id, rmUser)
 
 		embed = discord.Embed(
