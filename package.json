@@ -10,7 +10,7 @@
     "raw": "yarn ts-node ./dashboard/src/typescript/startserver.ts",
     "dev": "python ./src/main.py",
     "prod": "python3 ./src/main.py",
-    "serverprod": "forever start -a -l /home/aakash/erin/logs/website/forever.log -e err.log -c node --sourceDir /home/aakash/erin/dashboard/dist/ startserver.js",
+    "serverprod": "forever start -a -l ./logs/website/forever.log -e err.log -c node --sourceDir ./dashboard/dist/ startserver.js",
     "serverdev": "nodemon --exec node ./dashboard/dist/startserver.js"
   },
   "dependencies": {
@@ -22,7 +22,8 @@
     "express-handlebars": "^5.3.0",
     "lodash": "^4.17.21",
     "mongodb": "^3.6.5",
-    "mongoose": "^5.12.3"
+    "mongoose": "^5.12.3",
+    "snappy": "^6.3.5"
   },
   "devDependencies": {
     "@types/express": "^4.17.11",
