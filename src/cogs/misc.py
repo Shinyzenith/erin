@@ -271,7 +271,7 @@ class Misc(commands.Cog):
 	async def muterole(self, ctx):
 		if ctx.invoked_subcommand is None:
 			await ctx.message.reply(
-				"please mention a proper argument such as `add` or `remove`"
+				"please mention a proper argument such as `add`, `remove` or `show`"
 			)
 
 	@muterole.command(name="add")
@@ -314,7 +314,7 @@ class Misc(commands.Cog):
 	async def banappeal(self, ctx):
 		if ctx.invoked_subcommand is None:
 			await ctx.message.reply(
-				"please mention a proper argument such as `add` or `remove`"
+				"please mention a proper argument such as `add`, `remove` or `show`"
 			)
 
 	@banappeal.command(name="add")
