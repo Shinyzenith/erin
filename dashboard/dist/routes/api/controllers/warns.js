@@ -17,16 +17,24 @@ mongoose_1.default.connect(connectionUri, (err) => {
     }
 });
 async function insertWarn(record, res) {
-    const response = await warns.create(record, (err) => {
-        if (err) {
-            res.status(500).json({ 'message': 'databse entry failed', err });
-            return;
+    try {
+        await warns.create(record, (err) => {
+            if (err) {
+                return res.status(500).json({ 'message': 'databse entry failed', err });
+            }
+        });
+        try {
+            return res.status(200).json({ 'message': 'successfully created object.', record });
         }
-    });
+        catch (err) { }
+    }
+    catch (err) {
+        return res.status(500).json({ 'message': 'databse entry failed', err });
+    }
 }
 ;
 async function fetchWarns(userID, guildID, res) {
-    let searchDocument = { uid: userID };
+    const searchDocument = { uid: userID };
     const records = await warns.findOne(searchDocument, (err) => {
         if (err) {
             res.status(500).json({ 'message': 'fetchWarn function failed with status code 500', err });

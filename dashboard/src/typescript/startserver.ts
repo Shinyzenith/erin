@@ -13,7 +13,7 @@ const formPage:express.Router = require('./routes/formpage');
 
 //api endpoint imports
 const updateEndpoint:express.Router = require('./routes/api/update');
-const fetchEndpoint:express.Router = require('./routes/api/fetchWarns');
+const fetchEndpoint:express.Router = require('./routes/api/warns');
 const apiIndexPage:express.Router =  require('./routes/api/index')
 const middleware404:middleware404function = require('./routes/404page');
 

@@ -27,22 +27,33 @@ interface  warnSchema{
     mod:string;
 }
 
-interface userWarnSchema{ 
+export interface userWarnSchema{ 
     uid:string;
     gid:[warnSchema];
 }
 
+//@ts-ignore
 async function insertWarn(record:userWarnSchema,res:express.Response){
-    const response = await warns.create(record,(err:mongoose.Error)=>{
-        if(err){
-            res.status(500).json({ 'message':'databse entry failed',err });
-            return;
+    try{
+        //@ts-ignore
+        await warns.create(record,(err:mongoose.Error)=>{
+            if(err){
+                return res.status(500).json({ 'message':'databse entry failed',err });
+                
+            }
+        });
+        try{
+            return res.status(200).json({ 'message':'successfully created object.',record })
         }
-    });
+        catch(err){}
+    }
+    catch(err){
+        return res.status(500).json({ 'message':'databse entry failed',err });
+    }
 };
 
 async function fetchWarns(userID:string,guildID:string,res:express.Response){
-    let searchDocument:object ={ uid:userID};
+    const searchDocument:object ={ uid:userID};
     const records = await warns.findOne(searchDocument,(err:mongoose.Error)=>{
         if(err){
             res.status(500).json({ 'message':'fetchWarn function failed with status code 500',err });
