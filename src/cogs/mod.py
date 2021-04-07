@@ -72,7 +72,7 @@ class dbHandler:
 		self.db = self.client.erin
 		self.col = self.db["warns"]
 
-	async def find_user(self, uid: int, gid: int):
+	async def find_user(self, uid:str, gid: int):
 		user = await self.col.find_one({"uid": uid})
 		if not user:
 			user = await self.register_user(uid, gid)
@@ -83,13 +83,13 @@ class dbHandler:
 		finally:
 			return user
 
-	async def register_user(self, uid: int, gid: int):
-		data = {"uid": uid, "gid":{f"{str(gid)}": []}}
+	async def register_user(self, uid: str, gid: int):
+		data = {"uid": f"{uid}", "gid":{f"{str(gid)}": []}}
 		await self.col.insert_one(data)
 		return data
 
-	async def update_user_warn(self, uid: int, data):
-		await self.col.replace_one({"uid": uid}, data)
+	async def update_user_warn(self, uid: str, data):
+		await self.col.replace_one({"uid": f"{uid}"}, data)
 
 
 class Moderation(commands.Cog):
@@ -130,11 +130,11 @@ class Moderation(commands.Cog):
 			"time": ctx.message.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"),
 			"mod": f"{ctx.message.author.id}",
 		}
-		userData = await self.dbHandler.find_user(user.id, ctx.message.guild.id)
+		userData = await self.dbHandler.find_user(str(user.id), ctx.message.guild.id)
 		userData['gid'][f"{ctx.message.author.guild.id}"].append(entryData)
 
 		# uodating user entries
-		await self.dbHandler.update_user_warn(user.id, userData)
+		await self.dbHandler.update_user_warn(str(user.id), userData)
 
 		# building the embed
 		channel = discord.Embed(
@@ -177,7 +177,7 @@ class Moderation(commands.Cog):
 	@commands.command(name="search", aliases=["warns"])
 	@commands.guild_only()
 	async def search(self, ctx, searchUser: discord.User):
-		user = await self.dbHandler.find_user(searchUser.id, ctx.message.guild.id)
+		user = await self.dbHandler.find_user(str(searchUser.id), ctx.message.guild.id)
 		threshold = 5
 		reason_chunk = [
 			user['gid'][f"{ctx.message.guild.id}"][i : i + threshold]
@@ -247,7 +247,7 @@ class Moderation(commands.Cog):
 	@commands.guild_only()
 	@commands.has_permissions(administrator=True)
 	async def delpunishments(self, ctx, user: discord.User):
-		delUser = await self.dbHandler.find_user(user.id, ctx.message.guild.id)
+		delUser = await self.dbHandler.find_user(str(user.id), ctx.message.guild.id)
 		request = await ctx.message.reply(
 			f"**This will delete ALL punishments that the {user.mention} has.** Do you want to continue?"
 		)
@@ -280,7 +280,7 @@ class Moderation(commands.Cog):
 			except:
 				pass
 			delUser['gid'].pop(f"{ctx.message.guild.id}")
-			await self.dbHandler.update_user_warn(user.id, delUser)
+			await self.dbHandler.update_user_warn(str(user.id), delUser)
 			try:
 				return await request.edit(
 					content=f"All records of {user.mention} have been deleted"
@@ -408,10 +408,10 @@ class Moderation(commands.Cog):
 				pass
 			await ctx.message.guild.ban(user, reason=reason)
 
-		userData = await self.dbHandler.find_user(user.id, ctx.message.guild.id)
+		userData = await self.dbHandler.find_user(str(user.id), ctx.message.guild.id)
 		userData['gid'][f"{ctx.message.author.guild.id}"].append(entryData)
 		# uodating user entries
-		await self.dbHandler.update_user_warn(user.id, userData)
+		await self.dbHandler.update_user_warn(str(user.id), userData)
 		return await ctx.message.reply(embed=channelEmbed)
 
 	@commands.command()
@@ -512,10 +512,10 @@ class Moderation(commands.Cog):
 				pass
 			await ctx.message.guild.ban(user, reason=reason,delete_message_days=7)
 			await ctx.message.guild.unban(user, reason="softban")								
-		userData = await self.dbHandler.find_user(user.id, ctx.message.guild.id)
+		userData = await self.dbHandler.find_user(str(user.id), ctx.message.guild.id)
 		userData['gid'][f"{ctx.message.author.guild.id}"].append(entryData)
 		# uodating user entries
-		await self.dbHandler.update_user_warn(user.id, userData)
+		await self.dbHandler.update_user_warn(str(user.id), userData)
 		return await ctx.message.reply(embed=channelEmbed)
 
 	@commands.command()
@@ -578,10 +578,10 @@ class Moderation(commands.Cog):
 			except:
 				pass
 
-			userData = await self.dbHandler.find_user(user.id, ctx.message.guild.id)
+			userData = await self.dbHandler.find_user(str(user.id), ctx.message.guild.id)
 			userData['gid'][f"{ctx.message.author.guild.id}"].append(entryData)
 			# uodating user entries
-			await self.dbHandler.update_user_warn(user.id, userData)
+			await self.dbHandler.update_user_warn(str(user.id), userData)
 			return await ctx.message.reply(embed=channelEmbed)
 
 		except discord.NotFound:
@@ -602,7 +602,7 @@ class Moderation(commands.Cog):
 	@commands.guild_only()
 	@commands.has_permissions(manage_messages=True)
 	async def rmpunish(self, ctx, user: discord.User, warn: int = None):
-		rmUser = await self.dbHandler.find_user(user.id, ctx.message.guild.id)
+		rmUser = await self.dbHandler.find_user(str(user.id), ctx.message.guild.id)
 		if not warn:
 			return await ctx.send(
 				f"Please mention the warn id of the reason that you want to delete from {user.mention}'s logs."
@@ -610,7 +610,7 @@ class Moderation(commands.Cog):
 		if warn > len(rmUser['gid'][f"{ctx.guild.id}"]):
 			return await ctx.send(f"Invalid warn id for {user.mention}")
 		removedWarn = rmUser['gid'][f"{ctx.guild.id}"].pop(warn - 1)
-		await self.dbHandler.update_user_warn(user.id, rmUser)
+		await self.dbHandler.update_user_warn(str(user.id), rmUser)
 
 		embed = discord.Embed(
 			title="Erin Moderation",
@@ -647,7 +647,7 @@ class Moderation(commands.Cog):
 
 
 #TODO complete the mute handler class
-
+#TODO ability to add a mod log channel and write an async handler to webhook the data to the channel.
 # TODO: 2) TEMPBAN 3) MUTE COMMAND 4) ADD EXPIRATION FIELD TO THE JSON OBJECT 5) invite lookup
 # TODO 6) unmute 7) MUTE HANDLER CLASS 8) tempban time regex
 # @TODO ON ADD TO GUILD IT SHOULD BE LOGGED WITH MEMBER COUNT AND OWNER ID

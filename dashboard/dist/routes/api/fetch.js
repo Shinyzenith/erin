@@ -18,18 +18,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = __importStar(require("express"));
-const path_1 = __importDefault(require("path"));
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config({ "path": path_1.default.join(__dirname, "../../../../.env") });
 const router = express.Router();
-const connection_uri = process.env.CONNECTION_URI;
 router.get('/', (req, res) => {
-    res.status(400).json({ 'message': 'This is the fetch data endpoint, pass gid in the request body to interact with me.' });
+    res.status(400).json({ 'message': 'This is the fetch data endpoint, pass gid in the request body to interact with it.' });
 });
 router.post('/', (req, res) => {
     const body = { ...req.body };
