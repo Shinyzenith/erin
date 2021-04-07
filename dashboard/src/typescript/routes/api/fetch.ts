@@ -1,17 +1,11 @@
 import * as express from 'express';
-import path from 'path';
-import dotenv from "dotenv";
-
-//configuring dotenv module to point to .env
-dotenv.config({"path":path.join(__dirname,"../../../../.env")});
 
 //Required constants
 const router:express.Router = express.Router();             //express router constamt
-const connection_uri = process.env.CONNECTION_URI           //mongodb connection uri constant
 
 //api routes
 router.get('/',(req:express.Request,res:express.Response)=>{
-    res.status(400).json({ 'message':'This is the fetch data endpoint, pass gid in the request body to interact with me.' })
+    res.status(400).json({ 'message':'This is the fetch data endpoint, pass gid in the request body to interact with it.' })
 });
 
 router.post('/', (req:express.Request, res:express.Response)=>{
