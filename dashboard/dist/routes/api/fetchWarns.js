@@ -20,19 +20,22 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = __importStar(require("express"));
+const warns_1 = require("./controllers/warns");
 const router = express.Router();
 router.get('/', (req, res) => {
-    res.status(400).json({ 'message': 'This is the fetch data endpoint, pass gid in the request body to interact with it.' });
+    res.status(400).json({ 'message': 'This is the fetch data endpoint, pass gid and uid in the request body to interact with it.' });
 });
 router.post('/', (req, res) => {
     const body = { ...req.body };
     const guildID = body.gid;
-    if (typeof (guildID) === "undefined") {
-        return res.status(400).json({ 'message': 'GuildID not found in request body' });
+    const userID = body.uid;
+    if (typeof (guildID) === "undefined" || typeof (userID) === "undefined") {
+        return res.status(400).json({ 'message': 'GuildID or UserID not found in request body' });
     }
-    if (typeof (guildID) === "string") {
-        return res.status(400).json({ 'message': 'GuildID should be of type number' });
+    if (typeof (guildID) !== "string" || typeof (userID) !== "string") {
+        return res.status(400).json({ 'message': 'GuildID and UserID should be of type string' });
     }
-    return res.status(200).json({ 'message': 'successful', 'gid': `recieved guild id ${guildID}` });
+    const warns = warns_1.fetchWarns(userID, guildID, res);
+    return true;
 });
 module.exports = router;

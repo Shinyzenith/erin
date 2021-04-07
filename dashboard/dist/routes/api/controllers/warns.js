@@ -33,20 +33,17 @@ async function fetchWarns(userID, guildID, res) {
         }
     });
     try {
-        const warns = records.records.gid[guildID];
+        const warns = records.gid[guildID];
         if (typeof (warns) === "undefined") {
-            res.status(500).json({ 'message': 'No entry found.' });
-            return;
+            return res.status(500).json({ 'message': 'No entry found.' });
         }
         else {
-            console.log(warns);
-            return;
+            return res.status(200).json(warns);
         }
     }
     catch {
-        res.status(500).json({ 'message': 'No entry found.' });
+        return res.status(500).json({ 'message': 'No entry found' });
     }
 }
 ;
-fetchWarns("751485005993213995", "820125704649572373");
 module.exports = { insertWarn, fetchWarns };

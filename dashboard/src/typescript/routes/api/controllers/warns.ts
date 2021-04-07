@@ -41,7 +41,7 @@ async function insertWarn(record:userWarnSchema,res:express.Response){
     });
 };
 
-async function fetchWarns(userID:string,guildID:string,res?:express.Response){
+async function fetchWarns(userID:string,guildID:string,res:express.Response){
     let searchDocument:object ={ uid:userID};
     const records = await warns.findOne(searchDocument,(err:mongoose.Error)=>{
         if(err){
@@ -49,18 +49,15 @@ async function fetchWarns(userID:string,guildID:string,res?:express.Response){
         }
     })
     try{
-        const warns = records.records.gid[guildID]
+        const warns = records.gid[guildID]
         if (typeof(warns)==="undefined"){
-            res.status(500).json({ 'message':'No entry found.'});
-            return;    
+            return res.status(500).json({ 'message':'No entry found.'});    
         }
         else{
-            console.log(warns);
-            return;
+            return res.status(200).json(warns);
         }
     } catch {
-        res.status(500).json({ 'message':'No entry found.'});
+        return res.status(500).json({ 'message':'No entry found' });
     }
 };
-fetchWarns("751485005993213995","820125704649572373")
-module.exports = {insertWarn, fetchWarns};
+module.exports = {insertWarn, fetchWarns}

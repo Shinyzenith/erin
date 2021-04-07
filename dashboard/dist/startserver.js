@@ -10,7 +10,7 @@ const express_handlebars_1 = __importDefault(require("express-handlebars"));
 const indexPage = require('./routes/index');
 const formPage = require('./routes/formpage');
 const updateEndpoint = require('./routes/api/update');
-const fetchEndpoint = require('./routes/api/fetch');
+const fetchEndpoint = require('./routes/api/fetchWarns');
 const apiIndexPage = require('./routes/api/index');
 const middleware404 = require('./routes/404page');
 dotenv_1.default.config({ "path": path_1.default.join(__dirname, "../../.env") });
