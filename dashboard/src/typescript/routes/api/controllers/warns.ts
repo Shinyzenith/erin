@@ -9,7 +9,7 @@ const warns = require('./../models/warns')
 dotenv.config({"path":path.join(__dirname,"../../../../../.env")});
 
 // const connectionUri:string = process.env.CONNECTION_URI;
-const connectionUri:string = 'mongodb://127.0.0.1:27017/erin?compressors=snappy'
+const connectionUri:string = 'mongodb://127.0.0.1:27017/erin?compressors=zlib'
 
 //connecting to the database
 mongoose.set('useNewUrlParser', true);

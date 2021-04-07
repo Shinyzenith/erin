@@ -8,7 +8,7 @@ const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const warns = require('./../models/warns');
 dotenv_1.default.config({ "path": path_1.default.join(__dirname, "../../../../../.env") });
-const connectionUri = 'mongodb://127.0.0.1:27017/erin?compressors=snappy';
+const connectionUri = 'mongodb://127.0.0.1:27017/erin?compressors=zlib';
 mongoose_1.default.set('useNewUrlParser', true);
 mongoose_1.default.set('useUnifiedTopology', true);
 mongoose_1.default.connect(connectionUri, (err) => {
