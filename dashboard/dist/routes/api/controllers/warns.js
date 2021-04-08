@@ -62,13 +62,18 @@ async function insertWarn(record, res) {
     else {
         const guildID = Object.keys(record.gid)[0];
         const newWarn = record.gid[guildID][0];
-        updateUser.gid[guildID].push(newWarn);
+        if (!Object.keys(updateUser.gid).includes(guildID)) {
+            Object.assign(updateUser.gid, record.gid);
+        }
+        else {
+            updateUser.gid[guildID].push(newWarn);
+        }
         await warns.updateOne({ uid: record.uid.toString() }, updateUser, (err) => {
             if (err) {
                 return res.status(500).json({ 'message': 'databse entry failed', err });
             }
         });
-        return res.status(500).json({ 'message': 'User object already exists. Updating user values.' });
+        return res.status(500).json({ 'message': 'User object already exists. Updating user values.', 'updated record': updateUser });
     }
 }
 ;

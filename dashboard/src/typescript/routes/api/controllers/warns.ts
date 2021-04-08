@@ -84,15 +84,18 @@ async function insertWarn(record:userWarnSchema,res:express.Response){
     } else {
         const guildID:string = Object.keys(record.gid)[0];
         const newWarn:object = record.gid[guildID][0];
-        updateUser.gid[guildID].push(newWarn)
+        if(!Object.keys(updateUser.gid).includes(guildID)){
+            Object.assign(updateUser.gid,record.gid);
+        } else {
+            updateUser.gid[guildID].push(newWarn);
+        }
         //@ts-ignore
         await warns.updateOne({ uid:record.uid.toString() },updateUser,(err:mongoose.Error)=>{
             if(err){
                 return res.status(500).json({ 'message':'databse entry failed',err });
-                
             }
         });
-        return res.status(500).json({ 'message':'User object already exists. Updating user values.' })
+        return res.status(500).json({ 'message':'User object already exists. Updating user values.' ,'updated record':updateUser})
     }
 };
 
