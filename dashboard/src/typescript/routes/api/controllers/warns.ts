@@ -109,6 +109,9 @@ async function fetchWarns(userID:string,guildID:string,res:express.Response){
             return res.status(500).json({ 'message':'No entry found.'});    
         }
         else{
+            if(warns.length == 0 ){
+                return res.status(500).json({ 'message':'No warn found.'});
+            }
             return res.status(200).json(warns);
         }
     } catch {
