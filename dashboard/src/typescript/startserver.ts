@@ -6,16 +6,17 @@ import expresshandlebars  from 'express-handlebars';
 
 //custom types
 type middleware404function=(req:express.Request,res:express.Response)=>void;
+type invalidRequestBodyfunction=(error:any,req:express.Request,res:express.Response)=>void;
 
 //importing the website routes into const's
 const indexPage:express.Router = require('./routes/index');
 const formPage:express.Router = require('./routes/formpage');
 
 //api endpoint imports
-const updateEndpoint:express.Router = require('./routes/api/update');
-const fetchEndpoint:express.Router = require('./routes/api/warns');
+const warnEndpoint:express.Router = require('./routes/api/warns');
 const apiIndexPage:express.Router =  require('./routes/api/index')
 const middleware404:middleware404function = require('./routes/404page');
+const invalidRequestBody:invalidRequestBodyfunction = require('./routes/invalidRequestBody');
 
 //project config
 dotenv.config({"path":path.join(__dirname,"../../.env")});                  //dotenv config
@@ -36,11 +37,11 @@ app.use('/dashboard',formPage);
 
 //setting up the api routes
 app.use('/api/v1',apiIndexPage)
-app.use('/api/v1/fetch',fetchEndpoint);
-app.use('/api/v1/update',updateEndpoint);
+app.use('/api/v1/warn',warnEndpoint);
 
-// //setting up 404 page middleware
-app.use(middleware404);
+// //setting middleware
+app.use(middleware404);                                                     //404 page middleware
+app.use(invalidRequestBody);
 
 //Running the files
 app.listen( port, () => console.log( `Server started at http://localhost:${ port }`));

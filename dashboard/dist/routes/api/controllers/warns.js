@@ -16,20 +16,59 @@ mongoose_1.default.connect(connectionUri, (err) => {
         console.log(err);
     }
 });
+async function deleteWarn(index, uid, gid, res) {
+    const updateUser = await warns.findOne({ uid: uid }, (err) => {
+        if (err) {
+            return res.status(500).json({ 'message': 'Unable to delete record', err });
+        }
+    });
+    if (typeof (updateUser) === "undefined" || updateUser === null) {
+        return res.status(500).json({ 'message': 'User doesn\'t exist' });
+    }
+    const userWarns = Object.keys(updateUser.gid[gid]);
+    if (index > userWarns.length) {
+        return res.status(500).json({ 'message': 'index not found.' });
+    }
+    const deletedWarn = updateUser.gid[gid].pop(index - 1);
+    await warns.updateOne({ uid: uid }, updateUser, (err) => {
+        if (err) {
+            return res.status(500).json({ 'message': 'databse delete', err });
+        }
+    });
+    return res.status(500).json({ 'message': 'Deleted warning.', deletedWarn });
+}
 async function insertWarn(record, res) {
-    try {
-        await warns.create(record, (err) => {
+    const updateUser = await warns.findOne({ uid: record.uid.toString() }, (err) => {
+        if (err) {
+            return res.status(500).json({ 'message': 'Unable to fetch data for uid checking before insert', err });
+        }
+    });
+    if (typeof (updateUser) === "undefined" || updateUser === null) {
+        try {
+            await warns.create(record, (err) => {
+                if (err) {
+                    return res.status(500).json({ 'message': 'databse entry failed', err });
+                }
+            });
+            try {
+                return res.status(200).json({ 'message': 'successfully created object.', record });
+            }
+            catch (err) { }
+        }
+        catch (err) {
+            return res.status(500).json({ 'message': 'databse entry failed', err });
+        }
+    }
+    else {
+        const guildID = Object.keys(record.gid)[0];
+        const newWarn = record.gid[guildID][0];
+        updateUser.gid[guildID].push(newWarn);
+        await warns.updateOne({ uid: record.uid.toString() }, updateUser, (err) => {
             if (err) {
                 return res.status(500).json({ 'message': 'databse entry failed', err });
             }
         });
-        try {
-            return res.status(200).json({ 'message': 'successfully created object.', record });
-        }
-        catch (err) { }
-    }
-    catch (err) {
-        return res.status(500).json({ 'message': 'databse entry failed', err });
+        return res.status(500).json({ 'message': 'User object already exists. Updating user values.' });
     }
 }
 ;
@@ -54,4 +93,4 @@ async function fetchWarns(userID, guildID, res) {
     }
 }
 ;
-module.exports = { insertWarn, fetchWarns };
+module.exports = { insertWarn, fetchWarns, deleteWarn };
