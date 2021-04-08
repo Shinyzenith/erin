@@ -18,14 +18,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = __importStar(require("express"));
-const path_1 = __importDefault(require("path"));
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config({ "path": path_1.default.join(__dirname, "../../../../.env") });
 const router = express.Router();
 const routes = {
     "baseURL": "/api/v1",
@@ -48,6 +42,6 @@ const routes = {
     }
 };
 router.get('/', (req, res) => {
-    res.status(200).send(JSON.stringify(routes, null, '\t'));
+    res.status(200).type('json').send(JSON.stringify(routes, null, "\t"));
 });
 module.exports = router;
