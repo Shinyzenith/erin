@@ -645,7 +645,7 @@ class Moderation(commands.Cog):
 		except KeyError:
 			return await ctx.message.reply("No muted role has been setup for the server. Make a muted role before running the mute command.")
 
-
+#implement a simple is_banned command 
 #TODO complete the mute handler class
 #TODO ability to add a mod log channel and write an async handler to webhook the data to the channel.
 # TODO: 2) TEMPBAN 3) MUTE COMMAND 4) ADD EXPIRATION FIELD TO THE JSON OBJECT 5) invite lookup
