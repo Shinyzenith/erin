@@ -23,8 +23,7 @@ const express = __importStar(require("express"));
 const router = express.Router();
 router.get('/', (req, res) => {
     res.render('index', {
-        layout: 'homepage',
-        content: 'OwO wot dis >~<'
+        layout: 'homepage'
     });
 });
 module.exports = router;
