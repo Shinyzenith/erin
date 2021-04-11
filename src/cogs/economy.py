@@ -137,7 +137,10 @@ class economy(commands.Cog):
         gid = str(message.guild.id)
         if not message.author.bot:
             if self.activity.update(gid, message):
-                await self.drop(message)
+                try:
+                    await self.drop(message)
+                except:
+                    pass
 
     async def drop(self, msg):
         prefix = (await self.pm.get_prefix(msg))[0]
