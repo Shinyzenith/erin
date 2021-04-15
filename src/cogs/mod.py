@@ -704,6 +704,8 @@ class Moderation(commands.Cog):
             str(member.id), muteExpireTime, mutedAt, ctx.message.guild.id, reason
         )
         mutedRole = ctx.message.guild.get_role(muted_role)
+        if mutedRole in member.roles:
+            return await ctx.message.reply(f"{member.mention} is already muted :((")
         if not mutedRole:
             return await ctx.message.reply(
                 "Muted role not found. Please ask an admin to reset the muted role for the server."
@@ -724,8 +726,6 @@ class Moderation(commands.Cog):
                 "You can't use me to mute someone above or at the same role level as you :)"
             )
         try:
-            if mutedRole in member.roles:
-                return await ctx.message.reply(f"{member.mention} is already muted :((")
             await member.add_roles(
                 mutedRole,
                 reason=f"{self.bot.user.display_name} mute function triggered.",
@@ -779,6 +779,7 @@ class Moderation(commands.Cog):
             await member.send(embed=dmEmbed)
         except:
             pass
+        await self.muteHandler.unmute_loaded_mutes()
 
 
 # implement a simple is_banned command
