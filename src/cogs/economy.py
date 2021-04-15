@@ -15,6 +15,7 @@ import datetime as dt
 
 from datetime import datetime
 from discord.ext import commands
+
 log = logging.getLogger("Economy cog")
 coloredlogs.install(logger=log)
 global ongoing_duel
@@ -23,8 +24,7 @@ ongoing_duel = []
 
 class PrefixManager:
     def __init__(self):
-        self.client = motor.motor_asyncio.AsyncIOMotorClient(
-            os.getenv("CONNECTIONURI"))
+        self.client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("CONNECTIONURI"))
         self.db = self.client.erin
         self.col = self.db["config"]
 
@@ -64,8 +64,7 @@ def SFR(
 
 class EconomyHandler:
     def __init__(self):
-        self.client = motor.motor_asyncio.AsyncIOMotorClient(
-            os.getenv("CONNECTIONURI"))
+        self.client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("CONNECTIONURI"))
         self.db = self.client.erin
         self.col = self.db["economy"]
 
@@ -95,7 +94,7 @@ def mean_difference(times):
 
 
 def divide_chunks(l, n):
-    return [l[i * n: (i + 1) * n] for i in range((len(l) + n - 1) // n)]
+    return [l[i * n : (i + 1) * n] for i in range((len(l) + n - 1) // n)]
 
 
 class ActivityRecorder:
@@ -122,31 +121,26 @@ class ActivityRecorder:
 
 class IsThisSupposedToWorkHere:
     def __init__(self):
-        self.client = motor.motor_asyncio.AsyncIOMotorClient(
-            os.getenv("CONNECTIONURI"))
+        self.client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("CONNECTIONURI"))
         self.db = self.client.erin
-        self.col = self.db["whitelist"]
-        self.cache = {}
+        self.col = self.db["config"]
+
+    async def get_currency_channel(self, g):
+        guild = await self.col.find_one({"gid": g})
+        currencyChannnel = guild["channel"]
+        return currencyChannnel
 
     async def is_it_thonk(self, channel):
-        gid = str(channel.guild.id)
-        cid = str(channel.id)
-        if self.cache == {}:
-            cursor = self.col.find({})
-            guilds = await cursor.to_list(length=99999999)
-            for guild in guilds:
-                if "channels" in guild:
-                    self.cache[guild["gid"]] = guild["channels"]
-        if not gid in self.cache:
-            self.cache[gid] = []
-            await self.col.insert_one({"gid": gid, "channels": []})
-        if self.cache[gid] != []:
-            if cid in self.cache[gid]:
-                return True
-            else:
-                return False
-        else:
+        gid = channel.guild.id
+        cid = channel.id
+        try:
+            currencyGenChannel = await self.get_currency_channel(gid)
+        except:
+            return False
+        if cid == currencyGenChannel:
             return True
+        else:
+            return False
 
 
 class economy(commands.Cog):
@@ -167,7 +161,7 @@ class economy(commands.Cog):
             return
         gid = str(message.guild.id)
         if not message.author.bot:
-            if (await self.itstwh.is_it_thonk(message.channel)):
+            if await self.itstwh.is_it_thonk(message.channel):
                 if self.activity.update(gid, message):
                     try:
                         await self.drop(message)
@@ -282,11 +276,9 @@ class economy(commands.Cog):
             paginator.add_reaction(
                 "\N{Black Left-Pointing Double Triangle with Vertical Bar}", "first"
             )
-            paginator.add_reaction(
-                "\N{Black Left-Pointing Double Triangle}", "back")
+            paginator.add_reaction("\N{Black Left-Pointing Double Triangle}", "back")
             paginator.add_reaction("\N{CROSS MARK}", "lock")
-            paginator.add_reaction(
-                "\N{Black Right-Pointing Double Triangle}", "next")
+            paginator.add_reaction("\N{Black Right-Pointing Double Triangle}", "next")
             paginator.add_reaction(
                 "\N{Black Right-Pointing Double Triangle with Vertical Bar}", "last"
             )
@@ -305,8 +297,7 @@ class economy(commands.Cog):
                     if key in shop
                     else "<:erin:820473033700671569> " + key
                 )
-                embed.add_field(name=name.capitalize(),
-                                value=f"{value}", inline=False)
+                embed.add_field(name=name.capitalize(), value=f"{value}", inline=False)
             return await ctx.send(embed=embed)
 
     @commands.command()
@@ -333,11 +324,9 @@ class economy(commands.Cog):
         paginator.add_reaction(
             "\N{Black Left-Pointing Double Triangle with Vertical Bar}", "first"
         )
-        paginator.add_reaction(
-            "\N{Black Left-Pointing Double Triangle}", "back")
+        paginator.add_reaction("\N{Black Left-Pointing Double Triangle}", "back")
         paginator.add_reaction("\N{CROSS MARK}", "lock")
-        paginator.add_reaction(
-            "\N{Black Right-Pointing Double Triangle}", "next")
+        paginator.add_reaction("\N{Black Right-Pointing Double Triangle}", "next")
         paginator.add_reaction(
             "\N{Black Right-Pointing Double Triangle with Vertical Bar}", "last"
         )

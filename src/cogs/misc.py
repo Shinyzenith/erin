@@ -133,6 +133,22 @@ class GuildConfigManager:
         muted_role = guild["muted_role"]
         return muted_role
 
+    async def update_currency_channel(self, g, channelID: int):
+        guild = await self.register_guild(g)
+        guild["channel"] = channelID
+        await self.update_guild(g, guild)
+        return True
+
+    async def remove_currency_channel(self, g):
+        guild = await self.register_guild(g)
+        guild.pop("channel")
+        await self.update_guild(g, guild)
+
+    async def get_currency_channel(self, g):
+        guild = await self.register_guild(g)
+        currencyChannnel = guild["channel"]
+        return currencyChannnel
+
 
 class Misc(commands.Cog):
     def __init__(self, bot):
@@ -366,6 +382,57 @@ class Misc(commands.Cog):
         embed = discord.Embed(
             title=f"{ctx.guild.name} - Ban appeal link:",
             description=f"{ban_appeal}",
+            timestamp=ctx.message.created_at,
+            color=ctx.message.author.color,
+        )
+        return await ctx.message.reply(embed=embed)
+
+    @commands.group(name="currencygen", case_insensitive=True)
+    @commands.cooldown(10, 120, commands.BucketType.guild)
+    @commands.has_permissions(manage_guild=True)
+    async def currencygen(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.message.reply(
+                "please mention a proper argument such as `add`, `remove` or `show`"
+            )
+
+    @currencygen.command(name="add")
+    @commands.has_permissions(manage_guild=True)
+    async def ___add(self, ctx, *, channel: discord.TextChannel):
+        currencyChannel = await self.gcm.update_currency_channel(ctx.guild, channel.id)
+        if currencyChannel:
+            return await ctx.message.reply(
+                f"Currency generation channel for `{ctx.guild.name}` has been updated."
+            )
+
+    @currencygen.command(name="remove")
+    @commands.has_permissions(manage_guild=True)
+    async def ___remove(self, ctx):
+        try:
+            await self.gcm.remove_currency_channel(ctx.guild)
+        except KeyError:
+            return await ctx.message.reply(
+                f"Currency generation channel config doesn't exist for `{ctx.guild.name}`"
+            )
+        return await ctx.message.reply(
+            f"Currency generation channel for `{ctx.guild.name}` removed."
+        )
+
+    @currencygen.command(name="show")
+    async def ___show(self, ctx):
+        try:
+            currencyChannel = await self.gcm.get_currency_channel(ctx.guild)
+        except KeyError:
+            return await ctx.message.reply(
+                f"No currency generation channel has been setup for {ctx.guild.name}"
+            )
+        if not ctx.guild.get_channel(currencyChannel):
+            return await ctx.message.reply(
+                f"No currency generation channel has been setup for {ctx.guild.name}"
+            )
+        embed = discord.Embed(
+            title=f"{ctx.guild.name} - Currency generation channel:",
+            description=f"{ctx.guild.get_channel(currencyChannel).mention}",
             timestamp=ctx.message.created_at,
             color=ctx.message.author.color,
         )

@@ -360,13 +360,9 @@ class Highlight(commands.Cog):
         elif f"<@!{self.bot.user.id}>" in word:
             await ctx.send(":x: Your highlight word can't mention me")
         elif len(word) < 2:
-            await ctx.send(
-                ":x: Your word must be at least 2 characters"
-            )
+            await ctx.send(":x: Your word must be at least 2 characters")
         elif len(word) > 20:
-            await ctx.send(
-                ":x: Your word cannot be bigger than 20 characters"
-            )
+            await ctx.send(":x: Your word cannot be bigger than 20 characters")
         else:
             try:
                 query = f"""SELECT * FROM words WHERE user_id ={ctx.author.id} AND guild_id={ctx.guild.id} """
@@ -424,9 +420,7 @@ class Highlight(commands.Cog):
 				"""
         result = await self.bot.db.execute(query, ctx.author.id, ctx.guild.id)
 
-        await ctx.send(
-            f":white_check_mark: Your highlight list has been cleared"
-        )
+        await ctx.send(f":white_check_mark: Your highlight list has been cleared")
 
         try:
             await ctx.message.delete()
@@ -463,13 +457,9 @@ class Highlight(commands.Cog):
 					"""
 
             await self.bot.db.execute(query, to_transfer)
-            await ctx.send(
-                ":white_check_mark: Your highlight list has been imported"
-            )
+            await ctx.send(":white_check_mark: Your highlight list has been imported")
         else:
-            await ctx.send(
-                ":x: You have no words to transfer from this server"
-            )
+            await ctx.send(":x: You have no words to transfer from this server")
 
         try:
             await ctx.message.delete()
@@ -565,9 +555,7 @@ class Highlight(commands.Cog):
                     await self.bot.db.execute(
                         query, settings["blocked_users"], ctx.author.id
                     )
-                    await ctx.send(
-                        f":no_entry_sign: Blocked `{user.display_name}`"
-                    )
+                    await ctx.send(f":no_entry_sign: Blocked `{user.display_name}`")
             else:
                 query = """INSERT INTO settings (user_id, disabled, timezone, blocked_users, blocked_channels)
 						   VALUES ($1, $2, $3, $4, $5);
@@ -576,9 +564,7 @@ class Highlight(commands.Cog):
         else:
             if settings:
                 if user.id in settings["blocked_channels"]:
-                    await ctx.send(
-                        ":x: This channel is already blocked"
-                    )
+                    await ctx.send(":x: This channel is already blocked")
                 else:
                     settings["blocked_channels"].append(user.id)
                     query = """UPDATE settings
@@ -588,9 +574,7 @@ class Highlight(commands.Cog):
                     await self.bot.db.execute(
                         query, settings["blocked_channels"], ctx.author.id
                     )
-                    await ctx.send(
-                        f":no_entry_sign: Blocked {user.mention}"
-                    )
+                    await ctx.send(f":no_entry_sign: Blocked {user.mention}")
             else:
                 query = """INSERT INTO settings (user_id, disabled, timezone, blocked_users, blocked_channels)
 						   VALUES ($1, $2, $3, $4, $5);
@@ -606,7 +590,6 @@ class Highlight(commands.Cog):
         name="unblock",
         description="Unblock a user or channel",
         usage="<user or channel>",
-        aliases=["unmute"],
     )
     async def unblock(
         self, ctx, *, user: typing.Union[UserConverter, discord.TextChannel]
@@ -651,9 +634,7 @@ class Highlight(commands.Cog):
                     await self.bot.db.execute(
                         query, settings["blocked_channels"], ctx.author.id
                     )
-                    await ctx.send(
-                        f":white_check_mark: Unblocked {user.mention}"
-                    )
+                    await ctx.send(f":white_check_mark: Unblocked {user.mention}")
             else:
                 await ctx.send(":x: This channel is not blocked")
 
@@ -774,9 +755,7 @@ class Highlight(commands.Cog):
 					"""
 
             await self.bot.db.execute(query, ctx.author.id, False, timezone, [], [])
-            await ctx.send(
-                f":white_check_mark: Timezone set to `{timezone}`"
-            )
+            await ctx.send(f":white_check_mark: Timezone set to `{timezone}`")
 
         else:
             query = """SELECT *
@@ -785,9 +764,7 @@ class Highlight(commands.Cog):
 					"""
             settings = await self.bot.db.fetchrow(query, ctx.author.id)
             if settings:
-                await ctx.send(
-                    f"Your current timezone is `{settings['timezone']}`"
-                )
+                await ctx.send(f"Your current timezone is `{settings['timezone']}`")
             else:
                 await ctx.send(f"Your current timezone is `{0}`")
 

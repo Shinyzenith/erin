@@ -67,10 +67,7 @@ class muteHandler:
         MemberMutes = await cursor.to_list(
             length=99999999999999999999999999999999999999999999
         )
-        if len(MemberMutes) >= 1:
-            return True
-        else:
-            return False
+        return MemberMutes
 
     async def register_mute(
         self, uid: str, muteExpiration: int, muteAssignedAt: int, gid: int, reason: str
@@ -194,8 +191,8 @@ class Moderation(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member):
         guild = member.guild
-        is_muted = await self.muteHandler.fetch_user_mutes(member.id, guild.id)
-        if is_muted == False:
+        userMutes = await self.muteHandler.fetch_user_mutes(member.id, guild.id)
+        if len(userMutes) == 0:
             return
         try:
             muteRoleID = await self.GuildConfigHandler.get_muted_role(guild)
@@ -213,7 +210,7 @@ class Moderation(commands.Cog):
             pass
 
         entryData = {
-            "type": "strike",
+            "type": "mute",
             "reason": "User left and rejoined guild while muted.",
             "time": datetime.utcnow().strftime("%a, %#d %B %Y, %I:%M %p UTC"),
             "mod": f"{self.bot.user.id}",
@@ -531,11 +528,14 @@ class Moderation(commands.Cog):
                 await user.send(embed=dmEmbed)
             except:
                 pass
-            await ctx.message.guild.ban(user, reason=reason)
-
+            try:
+                await ctx.message.guild.ban(user, reason=reason)
+            except discord.errors.Forbidden:
+                return await ctx.message.reply(
+                    f"Unable to ban {user.mention}. Make sure i have `Ban members` permission enabled."
+                )
         userData = await self.dbHandler.find_user(str(user.id), ctx.message.guild.id)
         userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
-        # uodating user entries
         await self.dbHandler.update_user_warn(str(user.id), userData)
         return await ctx.message.reply(embed=channelEmbed)
 
@@ -636,8 +636,13 @@ class Moderation(commands.Cog):
                 await user.send(embed=dmEmbed)
             except:
                 pass
-            await ctx.message.guild.ban(user, reason=reason, delete_message_days=7)
-            await ctx.message.guild.unban(user, reason="softban")
+            try:
+                await ctx.message.guild.ban(user, reason=reason, delete_message_days=7)
+                await ctx.message.guild.unban(user, reason="softban")
+            except discord.errors.Forbidden:
+                return await ctx.message.reply(
+                    f"Unable to soft ban {user.mention}. Make sure i have `Ban Members` permission enabled."
+                )
         userData = await self.dbHandler.find_user(str(user.id), ctx.message.guild.id)
         userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
         # uodating user entries
@@ -701,7 +706,12 @@ class Moderation(commands.Cog):
             dmEmbed.set_author(
                 name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
             )
-            await ctx.message.guild.unban(user, reason=reason)
+            try:
+                await ctx.message.guild.unban(user, reason=reason)
+            except discord.errors.Forbidden:
+                return await ctx.message.reply(
+                    f"Unable to unban {user.mention}. Make sure i have `Ban Members` permission enabled."
+                )
             try:
                 await user.send(embed=dmEmbed)
             except:
@@ -825,6 +835,7 @@ class Moderation(commands.Cog):
         }
         userData = await self.dbHandler.find_user(str(member.id), ctx.message.guild.id)
         userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
+        await self.dbHandler.update_user_warn(str(member.id), userData)
         channel = discord.Embed(
             description=f"Punishment(s) for {member.display_name}#{member.discriminator} submitted successfully.",
             color=11661816,
@@ -871,12 +882,189 @@ class Moderation(commands.Cog):
             str(member.id), mutedExpireTime, mutedAt, ctx.message.guild.id, reason
         )
 
+    @commands.command()
+    @commands.has_guild_permissions(mute_members=True)
+    async def unmute(self, ctx, member: discord.Member, *, reason: str):
+        if len(reason) > 150:
+            return await ctx.message.reply(
+                "Reason parameter exceeded 150 characters. Please write a shorter reason to continue."
+            )
+        mutes = await self.muteHandler.fetch_user_mutes(member.id, ctx.message.guild.id)
+        if len(mutes) == 0:
+            return await ctx.message.reply(
+                f"*uhhhhhhh awkward moment* {member.mention} is not muted"
+            )
+        for mute in mutes:
+            await self.muteHandler.delete_mute_entry(mute)
+        try:
+            mutedRoleID = await self.GuildConfigHandler.get_muted_role(ctx.guild)
+        except:
+            return await ctx.message.reply(
+                f"Unable to unmute {member.mention} as the guild muted role has not been setup in my config >:(("
+            )
+        mutedRole = ctx.message.guild.get_role(mutedRoleID)
+        if not mutedRole:
+            return await ctx.message.reply(
+                f"Unable to unmute {member.mention} as the guild muted role was not found."
+            )
+        try:
+            await member.remove_roles(
+                mutedRole,
+                reason=f"{self.bot.user.display_name} unmute function triggered",
+            )
+        except discord.errors.Forbidden:
+            return ctx.message.reply(
+                f"Unable to unmute {member.mention} make sure i have `manage roles` permission and their highest role is not above my highest role"
+            )
+        entryData = {
+            "type": "unmute",
+            "reason": reason,
+            "time": ctx.message.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"),
+            "mod": f"{ctx.message.author.id}",
+        }
+        userData = await self.dbHandler.find_user(str(member.id), ctx.message.guild.id)
+        userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
+        await self.dbHandler.update_user_warn(str(member.id), userData)
+        channel = discord.Embed(
+            description=f"{member.display_name}#{member.discriminator} unmuted successfully.",
+            color=11661816,
+            timestamp=ctx.message.created_at,
+        )
+        channel.set_footer(
+            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+        )
+        channel.set_author(
+            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+        )
 
-# implement a simple is_banned command
-# TODO complete the mute handler class
+        dmEmbed = discord.Embed(
+            title="Erin Moderation",
+            description=f"Your punishments have been updated in {ctx.message.guild.name}.",
+            color=11661816,
+            timestamp=ctx.message.created_at,
+        )
+
+        dmEmbed.add_field(name="Action", value=f"{entryData['type']}", inline=True)
+
+        dmEmbed.add_field(name="Reason", value=f"{entryData['reason']}", inline=True)
+
+        dmEmbed.add_field(name="Moderator", value=f"<@{entryData['mod']}>", inline=True)
+
+        dmEmbed.set_footer(
+            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+        )
+        dmEmbed.set_author(
+            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+        )
+        await ctx.message.reply(embed=channel)
+        try:
+            await member.send(embed=dmEmbed)
+        except:
+            pass
+
+    @commands.command()
+    @commands.guild_only()
+    @commands.has_guild_permissions(kick_members=True)
+    async def kick(
+        self,
+        ctx,
+        user: discord.Member,
+        *,
+        reason: str,
+    ):
+        if len(reason) > 150:
+            return await ctx.message.reply(
+                "Reason parameter exceeded 150 characters. Please write a shorter reason to continue."
+            )
+
+        bot = ctx.guild.get_member(self.bot.user.id)
+        if (
+            user.top_role.position > bot.top_role.position
+            or user.top_role.position == bot.top_role.position
+        ):
+            return await ctx.message.reply(
+                f"Cannot kick {user.mention} as their highest role is the same as or above me."
+            )
+        if (
+            user.top_role.position > ctx.message.author.top_role.position
+            or user.top_role.position == ctx.message.author.top_role.position
+        ):
+            return await ctx.message.reply(
+                "You can't use me to kick someone above or at the same role level as you :)"
+            )
+        entryData = {
+            "type": "kick",
+            "reason": reason,
+            "time": ctx.message.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"),
+            "mod": f"{ctx.message.author.id}",
+        }
+
+        channelEmbed = discord.Embed(
+            description=f"{user.mention} has been kicked from {ctx.guild.name}",
+            color=11661816,
+            timestamp=ctx.message.created_at,
+        )
+        channelEmbed.set_footer(
+            text=ctx.message.author.display_name,
+            icon_url=ctx.message.author.avatar_url,
+        )
+        channelEmbed.set_author(
+            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+        )
+        dmEmbed = discord.Embed(
+            title="Erin Moderation",
+            description=f"Your punishments have been updated in {ctx.message.guild.name}.",
+            color=11661816,
+            timestamp=ctx.message.created_at,
+        )
+
+        dmEmbed.add_field(name="Action", value=f"{entryData['type']}", inline=True)
+
+        dmEmbed.add_field(name="Reason", value=f"{reason}", inline=True)
+
+        dmEmbed.add_field(name="Moderator", value=f"<@{entryData['mod']}>", inline=True)
+
+        dmEmbed.set_footer(
+            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+        )
+        dmEmbed.set_author(
+            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+        )
+
+        try:
+            await user.send(embed=dmEmbed)
+        except:
+            pass
+
+        try:
+            await ctx.message.guild.kick(user, reason=reason)
+        except discord.errors.Forbidden:
+            return await ctx.message.reply(
+                f"Unable to kick {user.mention}. Make sure i have `Kick members` permission enabled."
+            )
+        userData = await self.dbHandler.find_user(str(user.id), ctx.message.guild.id)
+        userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
+        await self.dbHandler.update_user_warn(str(user.id), userData)
+        return await ctx.message.reply(embed=channelEmbed)
+
+    @commands.command()
+    @commands.guild_only()
+    @commands.has_guild_permissions(ban_members=True)
+    async def isbanned(self, ctx, user: discord.User):
+        try:
+            await ctx.guild.fetch_ban(user)
+            return await ctx.message.reply(
+                f"{user.mention} is banned from {ctx.message.guild.name}"
+            )
+        except discord.NotFound:
+            return await ctx.message.reply(
+                f"{user.mention} is not banned from {ctx.message.guild.name}"
+            )
+
+
+# TODO implement a simple is_banned command
 # TODO ability to add a mod log channel and write an async handler to webhook the data to the channel.
-# TODO: 2) TEMPBAN 4) ADD EXPIRATION FIELD TO THE JSON OBJECT 5) invite lookup
-# TODO 6) unmute
+# TODO: 2) TEMPBAN 5) invite lookup
 # @TODO ON ADD TO GUILD IT SHOULD BE LOGGED WITH MEMBER COUNT AND OWNER ID
 # @ TODO ON GUILD LEAVE SHOULD BE LOGGED to a private server
 def setup(bot):
