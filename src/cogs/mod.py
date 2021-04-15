@@ -55,6 +55,23 @@ class muteHandler:
         self.gch = GuildConfigHandler()
         self.col = self.db["mute"]
 
+    async def fetch_user_mutes(self, uid: int, gid: int):
+        current_time = time()
+        cursor = self.col.find(
+            {
+                "uid": str(uid),
+                "me": {"$gte": current_time},
+                "gid": gid,
+            }
+        )
+        MemberMutes = await cursor.to_list(
+            length=99999999999999999999999999999999999999999999
+        )
+        if len(MemberMutes) >= 1:
+            return True
+        else:
+            return False
+
     async def register_mute(
         self, uid: str, muteExpiration: int, muteAssignedAt: int, gid: int, reason: str
     ):
@@ -173,6 +190,37 @@ class Moderation(commands.Cog):
     async def _autounmute(self):
         await self.bot.wait_until_ready()
         await self.muteHandler.unmute_loaded_mutes(self.bot)
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        guild = member.guild
+        is_muted = await self.muteHandler.fetch_user_mutes(member.id, guild.id)
+        if is_muted == False:
+            return
+        try:
+            muteRoleID = await self.GuildConfigHandler.get_muted_role(guild)
+        except:
+            return
+        mutedRole = guild.get_role(muteRoleID)
+        if not mutedRole:
+            return
+        try:
+            await member.add_roles(
+                mutedRole,
+                reason=f"{self.bot.user.display_name} auto unmute function triggered.",
+            )
+        except:
+            pass
+
+        entryData = {
+            "type": "strike",
+            "reason": "User left and rejoined guild while muted.",
+            "time": datetime.utcnow().strftime("%a, %#d %B %Y, %I:%M %p UTC"),
+            "mod": f"{self.bot.user.id}",
+        }
+        userData = await self.dbHandler.find_user(str(member.id), guild.id)
+        userData["gid"][f"{guild.id}"].append(entryData)
+        await self.dbHandler.update_user_warn(str(member.id), userData)
 
     @commands.Cog.listener()
     async def on_ready(self):
