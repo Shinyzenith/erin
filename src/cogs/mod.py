@@ -78,7 +78,7 @@ class muteHandler:
         data = {"uid": mute["uid"], "me": mute["me"], "gid": mute["gid"]}
         await self.col.delete_one(data)
 
-    async def unmute_loaded_mutes(self, ctx, bot):
+    async def unmute_loaded_mutes(self, bot):
         mute_list = await self.load_mutes()
         for mute in mute_list:
             guild = bot.get_guild(mute["gid"])
@@ -86,7 +86,7 @@ class muteHandler:
                 return await self.delete_mute_entry(mute)
             else:
                 try:
-                    muteRoleID = await self.gch.get_muted_role(ctx.guild)
+                    muteRoleID = await self.gch.get_muted_role(guild)
                     mutedMember = guild.get_member(int(mute["uid"]))
 
                 except:
@@ -168,6 +168,11 @@ class Moderation(commands.Cog):
         self.dbHandler = dbHandler()
         self.TimeConverter = TimeConverter()
         self.GuildConfigHandler = GuildConfigHandler()
+
+    @tasks.loop(seconds=2)
+    async def _autounmute(self):
+        await self.bot.wait_until_ready()
+        await self.muteHandler.unmute_loaded_mutes(self.bot)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -817,11 +822,6 @@ class Moderation(commands.Cog):
         await self.muteHandler.register_mute(
             str(member.id), mutedExpireTime, mutedAt, ctx.message.guild.id, reason
         )
-
-    @tasks.loop(seconds=2)
-    async def _autounmute(self):
-        print("Task running")
-        await self.muteHandler.unmute_loaded_mutes()
 
 
 # implement a simple is_banned command
