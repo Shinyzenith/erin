@@ -823,10 +823,6 @@ class Moderation(commands.Cog):
         print("Task running")
         await self.muteHandler.unmute_loaded_mutes()
 
-    @_autounmute.before_loop
-    async def before_my_task(self):
-        await self.wait_until_ready()
-
 
 # implement a simple is_banned command
 # TODO complete the mute handler class
