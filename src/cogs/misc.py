@@ -300,7 +300,7 @@ class Misc(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def _remove(self, ctx):
         try:
-            remove = await self.gcm.remove_muted_role(ctx.guild)
+            await self.gcm.remove_muted_role(ctx.guild)
         except KeyError:
             return await ctx.message.reply(
                 f"Muted role doesn't exist for `{ctx.guild.name}`"
@@ -346,7 +346,7 @@ class Misc(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def __remove(self, ctx):
         try:
-            remove = await self.gcm.remove_ban_appeal(ctx.guild)
+            await self.gcm.remove_ban_appeal(ctx.guild)
         except KeyError:
             return await ctx.message.reply(
                 f"Ban appeal link doesn't exist for `{ctx.guild.name}`"
@@ -425,7 +425,7 @@ class Misc(commands.Cog):
     @commands.command(name="uptime", description="Check my uptime")
     async def uptime(self, ctx):
         delta = datetime.datetime.utcnow() - self.bot.startup_time
-        await ctx.send(f"I started up {humanize.naturaldelta(delta)} ago")
+        await ctx.send(f"I started up {humanize.precisedelta(delta)} ago")
 
     @commands.command(
         name="invite", description="Get a invite link to add me to your server"
