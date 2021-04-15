@@ -6,19 +6,22 @@ import aiohttp
 import logging
 import traceback
 import coloredlogs
-
+from io import StringIO
 from discord.ext import commands
 
 
 log = logging.getLogger("errorhandler cog")
 coloredlogs.install(logger=log)
-async def webhook_send(url, message, username="Erin error Logs",avatar="https://media.discordapp.net/attachments/769824167188889600/820197487238184960/Erin.jpeg"):
+async def webhook_send(url, message, username="Erin error Logs",avatar="https://media.discordapp.net/attachments/769824167188889600/820197487238184960/Erin.jpeg", f=None):
 	async with aiohttp.ClientSession() as session:
 		webhook = discord.Webhook.from_url(url, adapter=discord.AsyncWebhookAdapter(session))
-		if isinstance(message, discord.Embed):
-			await webhook.send(embed=message, username=username,avatar_url=avatar)
+		if not f:
+			if isinstance(message, discord.Embed):
+				await webhook.send(embed=message, username=username,avatar_url=avatar)
+			else:
+				await webhook.send(message, username=username,avatar_url=avatar)
 		else:
-			await webhook.send(message, username=username,avatar_url=avatar)
+			await webhook.send("Error Log", file=f)
 async def export_exception(ctx, error):
 		embed=discord.Embed()
 		embed.title="Server Level exception"
@@ -38,6 +41,11 @@ async def export_exception(ctx, error):
 			on channel `{ctx.channel.id}` with name `{ctx.channel.name}`
 			on message `{ctx.message.id}`
 		"""
+		if len(embed.description)>1500:
+			buf=StringIO()
+			buf.write(embed.description)
+			buf.seek(0)
+			return await webhook_send(os.getenv("WARNLOG"), "error log", f=discord.File(fp=buf, filename="error.log"))
 		await webhook_send(os.getenv("WARNLOG"), embed)
 		embed=discord.Embed()
 		embed.title="An error occured"
