@@ -82,6 +82,8 @@ class ErinBot(commands.Bot):
 
 	#runs the instance of the bot class.
 	def run(self):
+		if not os.getenv("TOKEN") or os.getenv("TOKEN")=="":
+			return log.error("No .env file setup with proper token paramter.")
 		super().run(os.getenv("TOKEN"))
 
 
