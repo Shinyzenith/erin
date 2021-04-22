@@ -8,6 +8,7 @@ node_modules
 .vscode
 # Distribution / packaging
 .Python
+logs
 build/
 develop-eggs/
 downloads/
