@@ -24,7 +24,8 @@ ongoing_duel = []
 
 class PrefixManager:
     def __init__(self):
-        self.client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("CONNECTIONURI"))
+        self.client = motor.motor_asyncio.AsyncIOMotorClient(
+            os.getenv("CONNECTIONURI"))
         self.db = self.client.erin
         self.col = self.db["config"]
 
@@ -43,7 +44,7 @@ class PrefixManager:
 
 
 def GLE(
-    title=None, description=None, author=None, footer=None, thumbnail=None
+        title=None, description=None, author=None, footer=None, thumbnail=None
 ):  # Good Looking Error
     embed = discord.Embed(
         title=title, description=description, colour=discord.Color.red()
@@ -53,7 +54,7 @@ def GLE(
 
 
 def SFR(
-    title=None, description=None, author=None, footer=None, thumbnail=None
+        title=None, description=None, author=None, footer=None, thumbnail=None
 ):  # SatisFactory Response
     embed = discord.Embed(
         title=title, description=description, colour=discord.Color.green()
@@ -64,7 +65,8 @@ def SFR(
 
 class EconomyHandler:
     def __init__(self):
-        self.client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("CONNECTIONURI"))
+        self.client = motor.motor_asyncio.AsyncIOMotorClient(
+            os.getenv("CONNECTIONURI"))
         self.db = self.client.erin
         self.col = self.db["economy"]
 
@@ -94,7 +96,7 @@ def mean_difference(times):
 
 
 def divide_chunks(l, n):
-    return [l[i * n : (i + 1) * n] for i in range((len(l) + n - 1) // n)]
+    return [l[i * n: (i + 1) * n] for i in range((len(l) + n - 1) // n)]
 
 
 class ActivityRecorder:
@@ -121,7 +123,8 @@ class ActivityRecorder:
 
 class IsThisSupposedToWorkHere:
     def __init__(self):
-        self.client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("CONNECTIONURI"))
+        self.client = motor.motor_asyncio.AsyncIOMotorClient(
+            os.getenv("CONNECTIONURI"))
         self.db = self.client.erin
         self.col = self.db["config"]
 
@@ -203,11 +206,6 @@ class economy(commands.Cog):
             embed.description = f"`{winner.name}` got the drop"
             await award.edit(embed=embed)
 
-    # @commands.command()
-    # async def pick(self, ctx):
-    #     await ctx.message.delete()
-    #     pass
-
     def load_codes(self):
         codes = json.load(open("./json/promo.json", "r"))
         return codes
@@ -276,9 +274,11 @@ class economy(commands.Cog):
             paginator.add_reaction(
                 "\N{Black Left-Pointing Double Triangle with Vertical Bar}", "first"
             )
-            paginator.add_reaction("\N{Black Left-Pointing Double Triangle}", "back")
+            paginator.add_reaction(
+                "\N{Black Left-Pointing Double Triangle}", "back")
             paginator.add_reaction("\N{CROSS MARK}", "lock")
-            paginator.add_reaction("\N{Black Right-Pointing Double Triangle}", "next")
+            paginator.add_reaction(
+                "\N{Black Right-Pointing Double Triangle}", "next")
             paginator.add_reaction(
                 "\N{Black Right-Pointing Double Triangle with Vertical Bar}", "last"
             )
@@ -297,7 +297,8 @@ class economy(commands.Cog):
                     if key in shop
                     else "<:erin:820473033700671569> " + key
                 )
-                embed.add_field(name=name.capitalize(), value=f"{value}", inline=False)
+                embed.add_field(name=name.capitalize(),
+                                value=f"{value}", inline=False)
             return await ctx.send(embed=embed)
 
     @commands.command()
@@ -324,9 +325,11 @@ class economy(commands.Cog):
         paginator.add_reaction(
             "\N{Black Left-Pointing Double Triangle with Vertical Bar}", "first"
         )
-        paginator.add_reaction("\N{Black Left-Pointing Double Triangle}", "back")
+        paginator.add_reaction(
+            "\N{Black Left-Pointing Double Triangle}", "back")
         paginator.add_reaction("\N{CROSS MARK}", "lock")
-        paginator.add_reaction("\N{Black Right-Pointing Double Triangle}", "next")
+        paginator.add_reaction(
+            "\N{Black Right-Pointing Double Triangle}", "next")
         paginator.add_reaction(
             "\N{Black Right-Pointing Double Triangle with Vertical Bar}", "last"
         )
@@ -421,8 +424,8 @@ class economy(commands.Cog):
         if item in shop:
             if shop[item]["price"]["item"] in user:
                 if (
-                    user[shop[item]["price"]["item"]]
-                    >= shop[item]["price"]["quantity"] * quantity
+                        user[shop[item]["price"]["item"]]
+                        >= shop[item]["price"]["quantity"] * quantity
                 ):
                     user[shop[item]["price"]["item"]] -= (
                         shop[item]["price"]["quantity"] * quantity
@@ -531,6 +534,11 @@ class economy(commands.Cog):
                 u2[item] += quantity
                 await self.eh.update_user(uid, u1)
                 await self.eh.update_user(tid, u2)
+                user.send(embed=SFR(
+                    None,
+                    description=f"`{ctx.author.name}#{ctx.author.discriminator}` sent you {quantity} {item}",
+                    footer=f"{ctx.author.name}#{ctx.author.discriminator}"
+                ))
                 return await ctx.send(
                     embed=SFR(
                         None,
@@ -674,10 +682,10 @@ class economy(commands.Cog):
         def check(m):
             condition = False
             if (
-                m.content.lower() == "y"
-                or m.content.lower() == "yes"
-                or m.content.lower() == "n"
-                or m.content.lower() == "no"
+                    m.content.lower() == "y"
+                    or m.content.lower() == "yes"
+                    or m.content.lower() == "n"
+                    or m.content.lower() == "no"
             ):
                 condition = True
             return (
