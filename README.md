@@ -6,7 +6,7 @@
   <br>
 </h1>
 
-<h4 align="center">Music, Moderation, Trivia, Economy, Gambling, and NSFW.</h4>
+<h4 align="center">Music, Moderation, Trivia, Economy, Gambling, and NSFW commands!</h4>
 
 <p align="center">
   
