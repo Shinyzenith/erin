@@ -8,7 +8,6 @@ import discord
 import logging
 import humanize
 import datetime
-import aiosqlite
 import traceback
 import coloredlogs
 import motor.motor_asyncio
