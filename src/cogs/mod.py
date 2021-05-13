@@ -1083,10 +1083,10 @@ class Moderation(commands.Cog):
 		deleted = await ctx.channel.purge(limit=100, check=check)
 		embed = discord.Embed(title="Ban",description=f"Notified via direct messages.",color=ctx.message.author.color,timestamp=ctx.message.created_at)
 		embed.set_author(
-			name=f"{ctx.message.author.display_name}", icon_url=ctx.message.author.avatar_url
+			name=f"{ctx.message.author.name}", icon_url=ctx.message.author.avatar_url
 		)
 		embed.set_footer(
-			text=f"{member.display_name}#{member.discriminator} has been banned", icon_url=member.avatar_url
+			text=f"{member.name}#{member.discriminator} has been banned", icon_url=member.avatar_url
 		)
 		embed.add_field(name="Responsible Moderator:",value=f"{ctx.message.author.mention}",inline=False)
 		embed.add_field(name="Reason:",value=reason,inline=False)
