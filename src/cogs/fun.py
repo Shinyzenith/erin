@@ -170,5 +170,26 @@ class Fun(commands.Cog):
 
 		await ctx.send(embed = embed)
 		
+	@commands.command(aliases=['e'])
+	@commands.cooldown(3, 7, commands.BucketType.user)
+	@commands.has_guild_permissions(manage_messages=True)
+	async def modecho(self,ctx,member: discord.Member,*,content):
+		await ctx.message.delete()
+		current_webhooks = await ctx.message.channel.webhooks()
+		new_webhook=''
+		webhook_count=[]
+		for webhook in current_webhooks:
+			if webhook.name=="Davie bot webhook":
+				webhook_count.append(webhook)
+		if(len(webhook_count)>1):
+			new_webhook = await ctx.message.channel.create_webhook(name='Davie bot webhook',reason="Bot webhook")
+			for webhook in webhook_count:
+				await webhook.delete()
+		elif len(webhook_count)==0:
+			new_webhook=await ctx.message.channel.create_webhook(name='Davie bot webhook',reason="Bot webhook")
+		elif len(webhook_count)==1:
+			for webhook in webhook_count:
+				new_webhook=webhook
+		await webhook.send(content=content,username=member.display_name,avatar_url=member.avatar_url)
 def setup(bot):
 	bot.add_cog(Fun(bot))
