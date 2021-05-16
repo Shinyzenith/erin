@@ -22,6 +22,9 @@ async def api_call(call_uri,state=True):
 				return response
 
 class Fun(commands.Cog):
+	"""
+	Random fun commands <:LMAO:843365384064204801>
+	"""
 	def __init__(self, bot):
 		self.bot = bot
 

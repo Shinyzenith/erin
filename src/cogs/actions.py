@@ -21,6 +21,9 @@ async def api_call(call_uri,state=True):
 				return response
 
 class Actions(commands.Cog):
+	"""
+	Action commands such as lick, kiss and hug
+	"""
 	def __init__(self, client):
 		self.client = client
 

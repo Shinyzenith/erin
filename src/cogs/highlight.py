@@ -121,6 +121,9 @@ coloredlogs.install(logger=log)
 
 
 class Highlight(commands.Cog):
+    """
+    Highlight commands
+    """
     def __init__(self, bot):
         self.bot = bot
         self._highlight_batch = []

@@ -85,6 +85,9 @@ class Help(commands.Cog):
 			return await send_embed(ctx, emb)
 
 		else:
+			if input.lower()=="nsfw":
+				if not ctx.channel.is_nsfw():
+					return await ctx.send("Ehhhh this commands works in nsfw channels only <a:awkwardkid:843361776619618304>")
 			pages = []
 
 			def make_embed():

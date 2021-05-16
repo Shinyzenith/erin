@@ -30,7 +30,7 @@ async def api_call(call_uri, returnObj=False):
 
 class NSFW(commands.Cog):
 	"""
-	NSFW COG :))))
+	Meme commands <a:awkwardkid:843361776619618304> ~~There's a slight possibility that they aren't memes~~
 	"""
 
 	def __init__(self, bot):

@@ -74,6 +74,9 @@ class EconomyHandler:
 
 
 class Gambling(commands.Cog):
+	"""
+	I think this section is pretty self explanatory <:LMAO:843365384064204801>
+	"""
 	def __init__(self, bot):
 		self.bot = bot
 		self.eh = EconomyHandler()

@@ -176,6 +176,9 @@ class dbHandler:
 
 
 class Moderation(commands.Cog):
+	"""
+	Basic moderation commands (autmod coming soon!)
+	"""
 	def __init__(self, bot):
 		self.bot = bot
 		self._autounmute.start()
