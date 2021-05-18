@@ -47,7 +47,8 @@ class plural:
 
 class GuildConfigManager:
 	def __init__(self):
-		self.client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("CONNECTIONURI"))
+		self.client = motor.motor_asyncio.AsyncIOMotorClient(
+			os.getenv("CONNECTIONURI"))
 		self.db = self.client.erin
 		self.col = self.db["config"]
 
@@ -153,6 +154,7 @@ class Config(commands.Cog):
 	"""
 	Configuration commands for the server admins!
 	"""
+
 	def __init__(self, bot):
 		self.bot = bot
 		self.gcm = GuildConfigManager()
@@ -181,11 +183,17 @@ class Config(commands.Cog):
 			return
 		if not message.guild:
 			return
-		prefixes = await self.gcm.get_prefix(message.guild)
-		if len(message.mentions) > 0:
+		if len(message.mentions) == 1:
 			if message.mentions[0] == self.bot.user:
-				reply_message = "".join([f"\n`{prefix}`" for prefix in prefixes])
-				await message.reply(f"My prefixes in this server are:{reply_message}")
+				message_content = message.content.split()
+				try:
+					if message_content[1].lower() == "prefix":
+						prefixes = await self.gcm.get_prefix(message.guild)
+						reply_message = "".join(
+							[f"\n`{prefix}`" for prefix in prefixes])
+						await message.reply(f"My prefixes in this server are:{reply_message}")
+				except:
+					pass
 
 	# prefix manager sub command
 	@commands.group(name="prefix", aliases=["setprefix"], case_insensitive=True)
@@ -298,7 +306,8 @@ class Config(commands.Cog):
 
 		# if the muted role is @everyone then throw badargument error
 		if muted_role.id == ctx.guild.id:
-			raise commands.errors.BadArgument(message='Role "@everyone" not found.')
+			raise commands.errors.BadArgument(
+				message='Role "@everyone" not found.')
 
 		if muted_role.managed == True:
 			raise commands.errors.BadArgument(
@@ -486,7 +495,8 @@ class Config(commands.Cog):
 			name="Server info:",
 			value=f"Discord.py Version: **{discord.__version__}**\nPython verion: **{sys.version}**\nVerion info: **{sys.version_info}**\n\nCPU: **{psutil.cpu_percent()}% used with {plural(psutil.cpu_count()):CPU}**\nMemory: **{humanize.naturalsize(mem.used)}/{humanize.naturalsize(mem.total)} ({mem.percent}% used)**\nDisk Space: **{humanize.naturalsize(disk.used)}/{humanize.naturalsize(disk.total)} ({disk.percent}% used)**",
 		)
-		em.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
+		em.set_author(name=self.bot.user.name,
+					  icon_url=self.bot.user.avatar_url)
 		em.set_thumbnail(url=ctx.message.author.avatar_url)
 		em.set_footer(text=f"Requested by {ctx.author}")
 		await ctx.send(embed=em)
