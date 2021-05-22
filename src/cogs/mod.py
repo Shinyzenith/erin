@@ -72,7 +72,7 @@ class muteHandler:
         return MemberMutes
 
     async def register_mute(
-            self, uid: str, muteExpiration: int, muteAssignedAt: int, gid: int, reason: str
+        self, uid: str, muteExpiration: int, muteAssignedAt: int, gid: int, reason: str
     ):
         data = {
             "uid": uid,
@@ -244,16 +244,16 @@ class Moderation(commands.Cog):
                 "Reason parameter exceeded 150 characters. Please write a shorter reason to continue"
             )
         if (
-                user.top_role.position > ctx.message.author.top_role.position
-                or user.top_role.position == ctx.message.author.top_role.position
+            user.top_role.position > ctx.message.author.top_role.position
+            or user.top_role.position == ctx.message.author.top_role.position
         ):
             return await ctx.message.reply(
                 "You can't use me to warn someone above or at the same role level as you :)"
             )
 
         if (
-                user.top_role.position > ctx.message.author.top_role.position
-                or user.top_role.position == ctx.message.author.top_role.position
+            user.top_role.position > ctx.message.author.top_role.position
+            or user.top_role.position == ctx.message.author.top_role.position
         ):
             return await ctx.message.reply(
                 f"Cannot warn {user.mention} as their highest role is the same as or above your highest role."
@@ -510,11 +510,11 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     async def ban(
-            self,
-            ctx,
-            user: typing.Union[discord.Member, discord.User],
-            *,
-            reason: str,
+        self,
+        ctx,
+        user: typing.Union[discord.Member, discord.User],
+        *,
+        reason: str,
     ):
         try:
             await ctx.guild.fetch_ban(user)
@@ -592,15 +592,15 @@ class Moderation(commands.Cog):
         if isinstance(user, discord.Member):
             bot = ctx.guild.get_member(self.bot.user.id)
             if (
-                    user.top_role.position > bot.top_role.position
-                    or user.top_role.position == bot.top_role.position
+                user.top_role.position > bot.top_role.position
+                or user.top_role.position == bot.top_role.position
             ):
                 return await ctx.message.reply(
                     f"Cannot ban {user.mention} as their highest role is the same as or above me."
                 )
             if (
-                    user.top_role.position > ctx.message.author.top_role.position
-                    or user.top_role.position == ctx.message.author.top_role.position
+                user.top_role.position > ctx.message.author.top_role.position
+                or user.top_role.position == ctx.message.author.top_role.position
             ):
                 return await ctx.message.reply(
                     "You can't use me to ban someone above or at the same role level as you :)"
@@ -625,11 +625,11 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     async def softban(
-            self,
-            ctx,
-            user: typing.Union[discord.Member, discord.User],
-            *,
-            reason: str,
+        self,
+        ctx,
+        user: typing.Union[discord.Member, discord.User],
+        *,
+        reason: str,
     ):
         try:
             await ctx.guild.fetch_ban(user)
@@ -701,15 +701,15 @@ class Moderation(commands.Cog):
         if isinstance(user, discord.Member):
             bot = ctx.guild.get_member(self.bot.user.id)
             if (
-                    user.top_role.position > bot.top_role.position
-                    or user.top_role.position == bot.top_role.position
+                user.top_role.position > bot.top_role.position
+                or user.top_role.position == bot.top_role.position
             ):
                 return await ctx.message.reply(
                     f"Cannot ban {user.mention} as their highest role is the same as or above me."
                 )
             if (
-                    user.top_role.position > ctx.message.author.top_role.position
-                    or user.top_role.position == ctx.message.author.top_role.position
+                user.top_role.position > ctx.message.author.top_role.position
+                or user.top_role.position == ctx.message.author.top_role.position
             ):
                 return await ctx.message.reply(
                     "You can't use me to soft-ban someone above or at the same role level as you :)"
@@ -736,11 +736,11 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     async def unban(
-            self,
-            ctx,
-            user: discord.User,
-            *,
-            reason: str,
+        self,
+        ctx,
+        user: discord.User,
+        *,
+        reason: str,
     ):
         try:
             await ctx.guild.fetch_ban(user)
@@ -887,27 +887,20 @@ class Moderation(commands.Cog):
             return await ctx.message.reply(
                 "Muted role not found. Please ask an admin to reset the muted role for the server."
             )
+        bot = ctx.guild.get_member(self.bot.user.id)
         if (
-            user.top_role.position > ctx.message.author.top_role.position
-            or user.top_role.position == ctx.message.author.top_role.position
+            member.top_role.position > ctx.message.author.top_role.position
+            or member.top_role.position == ctx.message.author.top_role.position
         ):
             return await ctx.message.reply(
                 "You can't use me to mute someone above or at the same role level as you :)"
             )
-        bot = ctx.guild.get_member(self.bot.user.id)
         if (
-                member.top_role.position > bot.top_role.position
-                or member.top_role.position == bot.top_role.position
+            member.top_role.position > bot.top_role.position
+            or member.top_role.position == bot.top_role.position
         ):
             return await ctx.message.reply(
                 f"Cannot mute {member.mention} as their highest role is the same as or above me."
-            )
-        if (
-                member.top_role.position > ctx.message.author.top_role.position
-                or member.top_role.position == ctx.message.author.top_role.position
-        ):
-            return await ctx.message.reply(
-                "You can't use me to mute someone above or at the same role level as you :)"
             )
         try:
             await member.add_roles(
@@ -1064,11 +1057,11 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.has_guild_permissions(kick_members=True)
     async def kick(
-            self,
-            ctx,
-            user: discord.Member,
-            *,
-            reason: str,
+        self,
+        ctx,
+        user: discord.Member,
+        *,
+        reason: str,
     ):
         if len(reason) > 150:
             return await ctx.message.reply(
@@ -1077,15 +1070,15 @@ class Moderation(commands.Cog):
 
         bot = ctx.guild.get_member(self.bot.user.id)
         if (
-                user.top_role.position > bot.top_role.position
-                or user.top_role.position == bot.top_role.position
+            user.top_role.position > bot.top_role.position
+            or user.top_role.position == bot.top_role.position
         ):
             return await ctx.message.reply(
                 f"Cannot kick {user.mention} as their highest role is the same as or above me."
             )
         if (
-                user.top_role.position > ctx.message.author.top_role.position
-                or user.top_role.position == ctx.message.author.top_role.position
+            user.top_role.position > ctx.message.author.top_role.position
+            or user.top_role.position == ctx.message.author.top_role.position
         ):
             return await ctx.message.reply(
                 "You can't use me to kick someone above or at the same role level as you :)"
