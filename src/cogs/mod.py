@@ -1326,7 +1326,25 @@ class Moderation(commands.Cog):
                         value=f'Role was created at **{role.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC")}**\nRole was created **{role_created_days} days ago**')
         embed.add_field(inline=False, name="Permission info:",
                         value=f'Role Permission Integer: `{role.permissions.value}`\n\nPermissions: **{permissions}**')
-        nd(embed=embed)
+        await ctx.send(embed=embed)
+
+    @commands.command(name='prune')
+    async def prune(self, ctx, amount: int = 1000):
+        user = self.bot.user
+        global counter
+        counter = 0
+
+        def check(m):
+            global counter
+            if counter >= amount:
+                return False
+
+            if m.author.id == user.id:
+                counter += 1
+                return True
+            else:
+                return False
+        deleted = await ctx.channel.purge(limit=100, check=check)
 # TODO if bot if offline and they're muted with lets say something like another bot and then they're meant to be unmuted with erin then we don't have the log in mutes collection so we need to make sure that if they have the role then we'll just try to remove it and add a warn owo
 # TODO ability to add a mod log channel and write an async handler to webhook the data to the channel.
 # TODO: 2) TEMPBAN 5) invite lookup
