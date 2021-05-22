@@ -243,6 +243,13 @@ class Moderation(commands.Cog):
             return await ctx.message.reply(
                 "Reason parameter exceeded 150 characters. Please write a shorter reason to continue"
             )
+        if (
+                user.top_role.position > ctx.message.author.top_role.position
+                or user.top_role.position == ctx.message.author.top_role.position
+        ):
+            return await ctx.message.reply(
+                "You can't use me to warn someone above or at the same role level as you :)"
+            )
 
         if (
                 user.top_role.position > ctx.message.author.top_role.position
@@ -705,7 +712,7 @@ class Moderation(commands.Cog):
                     or user.top_role.position == ctx.message.author.top_role.position
             ):
                 return await ctx.message.reply(
-                    "You can't use me to ban someone above or at the same role level as you :)"
+                    "You can't use me to soft-ban someone above or at the same role level as you :)"
                 )
 
             try:
@@ -879,6 +886,13 @@ class Moderation(commands.Cog):
         if not mutedRole:
             return await ctx.message.reply(
                 "Muted role not found. Please ask an admin to reset the muted role for the server."
+            )
+        if (
+            user.top_role.position > ctx.message.author.top_role.position
+            or user.top_role.position == ctx.message.author.top_role.position
+        ):
+            return await ctx.message.reply(
+                "You can't use me to mute someone above or at the same role level as you :)"
             )
         bot = ctx.guild.get_member(self.bot.user.id)
         if (
