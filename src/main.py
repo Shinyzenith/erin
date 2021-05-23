@@ -28,7 +28,7 @@ logging.basicConfig(level=logging.INFO, format="(%(asctime)s) %(levelname)s %(me
 # webhook function
 
 
-async def webhook_send(url, message, username="Erin uptime Logs", avatar="https://media.discordapp.net/attachments/769824167188889600/820197487238184960/Erin.jpeg"):
+async def webhook_send(url, message, username="Erin uptime Logs", avatar="https://raw.githubusercontent.com/AakashSharma7269/erin/main/erin.png?token=AOP54YUJCVK5WQY5LQ6AK5TAWOXYK"):
     async with aiohttp.ClientSession() as session:
         webhook = discord.Webhook.from_url(
             url, adapter=discord.AsyncWebhookAdapter(session))
