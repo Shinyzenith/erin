@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://github.com/AakashSharma7269/erin.git"><img src="https://pbs.twimg.com/profile_images/1019888863701975040/DKPlnkL7.jpg" alt="Erin. - Discord Bot"></a>
+  <a href="https://github.com/AakashSharma7269/erin.git"><img src="https://raw.githubusercontent.com/AakashSharma7269/erin/main/erin.png?token=AOP54YUJCVK5WQY5LQ6AK5TAWOXYK" alt="Erin. - Discord Bot"></a>
   <br>
   Erin. Discord Bot
   <br>
