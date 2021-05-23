@@ -180,7 +180,7 @@ class dbHandler:
 
 class Moderation(commands.Cog):
     """
-    Basic moderation commands (autmod coming soon!)
+    Basic moderation commands (automod coming soon!)
     """
 
     def __init__(self, bot):
