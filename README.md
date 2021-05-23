@@ -35,5 +35,9 @@
       <img src="http://ForTheBadge.com/images/badges/made-with-python.svg" height =20 alt="dev badge">
   </a>
   <hr>
-<h3>Erin is currently <b>NOT</b> open source <b>but</b> i am willing to make it open source if there's enough public interest and the bot gains enough popularity.</h3>
+  <h3>Feel free to use erin to learn how to make a bot! make a github issue if you want a new feature to be added to erin.<br>Make sure to link the github page of erin or credit erin if u do decide to fork erin or host a local instance of erin!</h3>
+  <hr>
+<h3>fill out demo.env with your values and then rename it to .env to use it!</h3>
+<hr>
+<h3>A short message from the dev team:<br>Hey! we're certainly not pros when it comes to bot making and yea the bot does have some very clunky parts when it comes to caching and general code quality. We are working around the clock to make it better. We appreciate any support we can get from the community, including patreon donations (coming soon!) and/or github PR's with code quality fixes!!!<br><br>Note: The API & dashboard are still under development!</h3>
 </p>

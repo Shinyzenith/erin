@@ -2,7 +2,6 @@ discord
 numpy 
 coloredlogs 
 pymongo 
-asyncpg 
 motor 
 discordUtils 
 python-dotenv
