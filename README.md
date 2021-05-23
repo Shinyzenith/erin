@@ -7,7 +7,7 @@
 </h1>
 
 <h4 align="center">Music, Moderation, Trivia, Economy, Gambling, and NSFW commands!</h4>
-<h5>Erin bot TOS: https://gist.github.com/actualdankcoder/d837174c5397101268d77bf573a7434f</h5>
+<h5 align="center">Erin bot TOS: https://gist.github.com/actualdankcoder/d837174c5397101268d77bf573a7434f</h5>
 
 <p align="center">
   
