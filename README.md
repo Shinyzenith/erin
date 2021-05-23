@@ -40,5 +40,5 @@
   <hr>
 <h3>Fill out demo.env with your values and then rename it to .env to use it!</h3>
 <hr>
-<h3>A short message from the dev team:<br>Hey! we're certainly not pros when it comes to bot making and yea the bot does have some very clunky parts when it comes to caching and general code quality. We are working around the clock to make it better. We appreciate any support we can get from the community, including patreon donations (coming soon!) and/or github PR's with code quality fixes!!!<br><br>Note: The API & dashboard are still under development!</h3>
+<h3>A short message from the dev team:<br>Hey! we're certainly not pros when it comes to bot making and yea the bot does have some very clunky parts when it comes to caching and general code quality. We are working around the clock to make it better. We appreciate any support we can get from the community, including patreon donations (coming soon!) and/or github PR's with code quality fixes!!!<br><br>Note: The API & dashboard are still under development! and credits to https://nekos.life for the nsfw image API</h3>
 </p>
