@@ -24,10 +24,10 @@ from collections import OrderedDict, deque, Counter
 
 
 async def webhook_send(
-        url,
-        message,
-        username="Erin Logs",
-        avatar="https://raw.githubusercontent.com/AakashSharma7269/erin/main/erin.png?token=AOP54YUJCVK5WQY5LQ6AK5TAWOXYK",
+    url,
+    message,
+    username="Erin Logs",
+    avatar="https://raw.githubusercontent.com/AakashSharma7269/erin/main/erin.png?token=AOP54YUJCVK5WQY5LQ6AK5TAWOXYK",
 ):
     async with aiohttp.ClientSession() as session:
         webhook = discord.Webhook.from_url(
@@ -532,13 +532,35 @@ class Config(commands.Cog):
 
     @commands.command(name="stats", aliases=["status"], description="View system stats")
     async def stats(self, ctx):
+        mem = psutil.virtual_memory()
+        disk = psutil.disk_usage("/")
+        cpupercent = psutil.cpu_percent()
+
+        async def round(n):
+            if not n == 100:
+                a = (n // 10) * 10
+                b = a + 10
+                return (b if n - a > b - n else a)
+            else:
+                return 100
+
+        async def make_bar(n):
+            full = '█'
+            empty = '░'
+            bar = ""
+            for i in range(1, (int(n/10)+1)):
+                bar = bar+full
+            for i in range(1, ((10-(int(n/10)))+1)):
+                bar = bar+empty
+            return bar
+        membar = await round(int(mem.percent))
+        membar = await make_bar(membar)
+        cpubar = await round(int(cpupercent))
+        cpubar = await make_bar(cpubar)
         channel_types = Counter(
             isinstance(c, discord.TextChannel) for c in self.bot.get_all_channels()
         )
         text = channel_types[True]
-
-        mem = psutil.virtual_memory()
-        disk = psutil.disk_usage("/")
 
         em = discord.Embed(title="Bot Stats", color=discord.Color.blurple())
         em.add_field(
@@ -553,7 +575,7 @@ class Config(commands.Cog):
         )
         em.add_field(
             name="Server info:",
-            value=f"Discord.py Version: **{discord.__version__}**\nPython verion: **{sys.version}**\nVerion info: **{sys.version_info}**\n\nCPU: **{psutil.cpu_percent()}% used with {plural(psutil.cpu_count()):CPU}**\nMemory: **{humanize.naturalsize(mem.used)}/{humanize.naturalsize(mem.total)} ({mem.percent}% used)**\nDisk Space: **{humanize.naturalsize(disk.used)}/{humanize.naturalsize(disk.total)} ({disk.percent}% used)**",
+            value=f"Discord.py Version: **{discord.__version__}**\nPython verion: **{sys.version}**\nVerion info: **{sys.version_info}**\n\nCPU: **{cpupercent}% used with {plural(psutil.cpu_count()):CPU} \n{cpubar}**\n\nMemory: **{humanize.naturalsize(mem.used)}/{humanize.naturalsize(mem.total)} \n{membar} ({mem.percent}% used)**\n\nDisk Space: **{humanize.naturalsize(disk.used)}/{humanize.naturalsize(disk.total)} ({disk.percent}% used)**",
         )
         em.set_author(name=self.bot.user.name,
                       icon_url=self.bot.user.avatar_url)
