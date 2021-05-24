@@ -1142,7 +1142,6 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @commands.has_guild_permissions(ban_members=True)
     async def isbanned(self, ctx, user: discord.User):
         try:
             await ctx.guild.fetch_ban(user)
