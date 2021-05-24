@@ -557,6 +557,8 @@ class Config(commands.Cog):
         membar = await make_bar(membar)
         cpubar = await round(int(cpupercent))
         cpubar = await make_bar(cpubar)
+        diskbar = await round(int(disk.percent))
+        diskbar = await make_bar(diskbar)
         channel_types = Counter(
             isinstance(c, discord.TextChannel) for c in self.bot.get_all_channels()
         )
@@ -575,7 +577,7 @@ class Config(commands.Cog):
         )
         em.add_field(
             name="Server info:",
-            value=f"Discord.py Version: **{discord.__version__}**\nPython verion: **{sys.version}**\nVerion info: **{sys.version_info}**\n\nCPU: **{cpupercent}% used with {plural(psutil.cpu_count()):CPU} \n{cpubar}**\n\nMemory: **{humanize.naturalsize(mem.used)}/{humanize.naturalsize(mem.total)} \n{membar} ({mem.percent}% used)**\n\nDisk Space: **{humanize.naturalsize(disk.used)}/{humanize.naturalsize(disk.total)} ({disk.percent}% used)**",
+            value=f"Discord.py Version: **{discord.__version__}**\nPython verion: **{sys.version}**\nVerion info: **{sys.version_info}**\n\nCPU: **{cpupercent}% used with {plural(psutil.cpu_count()):CPU} \n{cpubar}**\n\nMemory: **{humanize.naturalsize(mem.used)}/{humanize.naturalsize(mem.total)} \n{membar} ({mem.percent}% used)**\n\nDisk Space: **{humanize.naturalsize(disk.used)}/{humanize.naturalsize(disk.total)}\n{diskbar} ({disk.percent}% used)**",
         )
         em.set_author(name=self.bot.user.name,
                       icon_url=self.bot.user.avatar_url)
