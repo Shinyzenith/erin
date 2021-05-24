@@ -238,7 +238,7 @@ class Economy(commands.Cog):
 	def utc_time(self):
 		return int(datetime.now().timestamp())
 
-	@commands.command()
+	@commands.command(name="inv" , description="Shows your inventory")
 	async def inv(self, ctx, member: discord.Member = None):
 		if not member:
 			member = ctx.message.author
@@ -304,7 +304,7 @@ class Economy(commands.Cog):
 								value=f"{value}", inline=False)
 			return await ctx.send(embed=embed)
 
-	@commands.command()
+	@commands.command(name="shop" , description="Shows the shop")
 	async def shop(self, ctx):
 		shop = self.load_shop()
 		embeds = []
@@ -338,7 +338,7 @@ class Economy(commands.Cog):
 		)
 		await paginator.run(embeds)
 
-	@commands.command()
+	@commands.command(name="claim" , description="Claim an item :flushed:")
 	async def claim(self, ctx, code):
 		c = ctx.author.id
 		claims = self.fetch_claims(c)["claimed"]
@@ -419,7 +419,7 @@ class Economy(commands.Cog):
 				)
 			)
 
-	@commands.command(aliases=["buy"])
+	@commands.command(aliases=["buy"], description="Buy an item from the shop :flushed:")
 	async def craft(self, ctx, quantity: int = 1, item="kanna"):
 		uid = ctx.author.id
 		user = await self.eh.find_user(uid)
@@ -473,7 +473,7 @@ class Economy(commands.Cog):
 				)
 			)
 
-	@commands.command(aliases=["destroy", "sell", "uncraft"])
+	@commands.command(aliases=["destroy", "sell", "uncraft"],  description="Sells an item :pensive:")
 	async def disintegrate(self, ctx, amount: int = 5, item="kanna"):
 		shop = self.load_shop()
 		user = await self.eh.find_user(ctx.author.id)
@@ -505,7 +505,7 @@ class Economy(commands.Cog):
 				)
 			)
 
-	@commands.command()
+	@commands.command(description=":flushed: sends money/items")
 	async def send(self, ctx, user: discord.Member, quantity: int, item: str):
 		if quantity <= 0:
 			return await ctx.send(
@@ -569,7 +569,7 @@ class Economy(commands.Cog):
 				)
 			)
 
-	@commands.command()
+	@commands.command(description="Makes a drop in chat for others to get!")
 	async def plant(self, ctx, amount: int = 4, item="kanna"):
 		shop = self.load_shop()
 		if not item in shop:
@@ -627,7 +627,7 @@ class Economy(commands.Cog):
 			embed.description = f"`{winner.name}` got the drop"
 			await award.edit(embed=embed)
 
-	@commands.command()
+	@commands.command(description="Shows the crafting recipe of items ~~minecraft moment~~")
 	async def recipe(self, ctx, item, quantity: int = 1):
 		shop = self.load_shop()
 		if not item in shop:
@@ -668,7 +668,7 @@ class Economy(commands.Cog):
 		embed.description += "```"
 		return await ctx.send(embed=embed)
 
-	@commands.command()
+	@commands.command(description="Resets all your items big F")
 	async def reset(self, ctx):
 		embed = discord.Embed(color=ctx.author.color)
 		embed.title = f"Are you sure that you wish to reset your progress? (y/n)"
