@@ -5,7 +5,7 @@
             "item": "erin",
             "quantity": 15000
         },
-        "uses": 5,
+        "uses": 6,
         "cooldown": 9999,
         "per_person": 1
     },
@@ -15,8 +15,18 @@
             "item": "kanna",
             "quantity": 300
         },
-        "uses": 12,
+        "uses": 13,
         "cooldown": 86400,
+        "per_person": 9999
+    },
+    "hourly": {
+        "active": true,
+        "award": {
+            "item": "hana",
+            "quantity": 1
+        },
+        "uses": 14,
+        "cooldown": 3600,
         "per_person": 9999
     },
     "monthly": {
@@ -25,7 +35,7 @@
             "item": "amelia",
             "quantity": 125
         },
-        "uses": 12,
+        "uses": 13,
         "cooldown": 2592000,
         "per_person": 9999
     }
