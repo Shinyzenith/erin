@@ -1328,7 +1328,8 @@ class Moderation(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command(name='prune')
-    async def prune(self, ctx, amount: int = 1000):
+    async def prune(self, ctx, amount: int = 50):
+        await ctx.message.delete()
         user = self.bot.user
         global counter
         counter = 0
@@ -1343,12 +1344,10 @@ class Moderation(commands.Cog):
                 return True
             else:
                 return False
-        deleted = await ctx.channel.purge(limit=100, check=check)
+        deleted = await ctx.channel.purge(limit=amount, check=check)
 # TODO if bot if offline and they're muted with lets say something like another bot and then they're meant to be unmuted with erin then we don't have the log in mutes collection so we need to make sure that if they have the role then we'll just try to remove it and add a warn owo
 # TODO ability to add a mod log channel and write an async handler to webhook the data to the channel.
 # TODO: 2) TEMPBAN 5) invite lookup
-# TODO ON ADD TO GUILD IT SHOULD BE LOGGED WITH MEMBER COUNT AND OWNER ID
-# TODO ON GUILD LEAVE SHOULD BE LOGGED to a private server
 # TODO add logging features such as member log, vc log, ban log, unban log, kick log, and so on and so forth
 
 
