@@ -69,7 +69,7 @@ class EconomyHandler:
 			os.getenv("CONNECTIONURI"))
 		self.db = self.client.erin
 		self.col = self.db["economy"]
-
+		self.claims=self.db["claims"]
 	async def all_users(self):
 		users = self.col.find({})
 		return await users.to_list(length=100)
@@ -88,7 +88,19 @@ class EconomyHandler:
 	async def update_user(self, uid: int, data):
 		await self.col.replace_one({"uid": uid}, data)
 
-
+	async def fetch_claims(self, c, code):
+		claims=await self.claims.find_one({"uid":c,"code":code})
+		if not claims:
+			claims = {"uid": c, "code": code, "uses":0, "last_used":0}
+			await self.claims.insert_one(claims)		
+		return claims
+	async def save_claims(self, c, code, data):
+		claims=await self.claims.find_one({"uid":c,"code":code})
+		if not claims:
+			await self.claims.insert_one(data)		
+		else:
+			await self.claims.replace_one({"uid":c,"code":code}, data)
+			
 def mean_difference(times):
 	times = np.diff(times)
 	times = np.mean(times)
@@ -258,8 +270,6 @@ class Economy(commands.Cog):
 				for key, value in chunk:
 					if key == "_id" or key == "uid":
 						continue
-					if value == 0 and key != "erin":
-						continue
 					name = (
 						shop[key]["emoji"] + " " + shop[key]["name"]
 						if key in shop
@@ -341,15 +351,13 @@ class Economy(commands.Cog):
 	@commands.command()
 	async def claim(self, ctx, code):
 		c = ctx.author.id
-		claims = self.fetch_claims(c)["claimed"]
 		codes = self.load_codes()
 		if code in codes:
+			claims = await self.eh.fetch_claims(c, code)
 			if codes[code]["active"]:
-				if code not in claims:
-					claims[code] = {"uses": 0, "last_used": 0}
-				if claims[code]["uses"] < codes[code]["per_person"]:
+				if claims["uses"] < codes[code]["per_person"]:
 					if codes[code]["cooldown"]:
-						evaluated = self.utc_time() - claims[code]["last_used"]
+						evaluated = self.utc_time() - claims["last_used"]
 						if evaluated >= codes[code]["cooldown"]:
 							allowed = True
 						else:
@@ -377,10 +385,10 @@ class Economy(commands.Cog):
 							user[award] = 0
 						user[award] += quantity
 						codes[code]["uses"] += 1
-						claims[code]["uses"] += 1
-						claims[code]["last_used"] = self.utc_time()
+						claims["uses"] += 1
+						claims["last_used"] = self.utc_time()
 						await self.eh.update_user(c, user)
-						self.save_claims(c, claims)
+						await self.eh.save_claims(c, code, claims)
 						self.update_code(code, codes[code])
 						return await ctx.send(
 							embed=SFR(
