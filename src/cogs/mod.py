@@ -1144,9 +1144,10 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     async def isbanned(self, ctx, user: discord.User):
         try:
-            await ctx.guild.fetch_ban(user)
+            ban = await ctx.guild.fetch_ban(user)
+            reason = ("No Reason" if not ban.reason else ban.reason)
             return await ctx.message.reply(
-                f"{user.mention} is banned from {ctx.message.guild.name}"
+                f"{user.mention} is banned from {ctx.message.guild.name} with reason: `{reason}`"
             )
         except discord.NotFound:
             return await ctx.message.reply(
