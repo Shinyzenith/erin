@@ -620,7 +620,10 @@ class Economy(commands.Cog):
 		except asyncio.TimeoutError:
 			embed.title = ""
 			embed.description = f"nobody picked the juicy drop :("
-			await award.edit(embed=embed)
+			try:
+				await award.edit(embed=embed)
+			except: 
+				pass
 			pass
 		else:
 			winner = m.author
