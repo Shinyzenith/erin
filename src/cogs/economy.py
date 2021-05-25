@@ -609,11 +609,12 @@ class Economy(commands.Cog):
 		award = await ctx.channel.send(embed=embed)
 
 		def check(m):
-			return (
-				m.content.lower() == "{ctx.prefix}pick".lower()
+			x=(
+				m.content.lower() == f"{ctx.prefix}pick".lower()
 				and m.channel.id == ctx.channel.id
 				and m.author.id != ctx.author.id
 			)
+			return x
 
 		try:
 			m = await self.bot.wait_for("message", timeout=120.0, check=check)
