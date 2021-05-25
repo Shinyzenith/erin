@@ -611,7 +611,7 @@ class Moderation(commands.Cog):
             except:
                 pass
             try:
-                await ctx.message.guild.ban(user, reason=reason)
+                await ctx.message.guild.ban(user, reason=reason, delete_message_days=0)
             except discord.errors.Forbidden:
                 return await ctx.message.reply(
                     f"Unable to ban {user.mention}. Make sure i have `Ban members` permission enabled."
