@@ -429,6 +429,15 @@ class Economy(commands.Cog):
 
 	@commands.command(aliases=["buy"])
 	async def craft(self, ctx, quantity: int = 1, item="kanna"):
+		if quantity <= 0:
+			return await ctx.send(
+				embed=GLE(
+					None,
+					"You cannot craft negative amounts",
+					author=ctx.author.avatar_url,
+					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+				)
+			)
 		uid = ctx.author.id
 		user = await self.eh.find_user(uid)
 		shop = self.load_shop()
@@ -483,6 +492,15 @@ class Economy(commands.Cog):
 
 	@commands.command(aliases=["destroy", "sell", "uncraft"])
 	async def disintegrate(self, ctx, amount: int = 5, item="kanna"):
+		if amount <= 0:
+			return await ctx.send(
+				embed=GLE(
+					None,
+					"You cannot disintegrate negative amounts",
+					author=ctx.author.avatar_url,
+					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+				)
+			)
 		shop = self.load_shop()
 		user = await self.eh.find_user(ctx.author.id)
 		if item in user and item in shop:
@@ -545,11 +563,14 @@ class Economy(commands.Cog):
 				u2[item] += quantity
 				await self.eh.update_user(uid, u1)
 				await self.eh.update_user(tid, u2)
-				user.send(embed=SFR(
-					None,
-					description=f"`{ctx.author.name}#{ctx.author.discriminator}` sent you {quantity} {item}",
-					footer=f"{ctx.author.name}#{ctx.author.discriminator}"
-				))
+				try:
+					await user.send(embed=SFR(
+						None,
+						description=f"`{ctx.author.name}#{ctx.author.discriminator}` sent you {quantity} {item}",
+						footer=f"{ctx.author.name}#{ctx.author.discriminator}"
+					))
+				except:
+					pass
 				return await ctx.send(
 					embed=SFR(
 						None,
@@ -579,6 +600,15 @@ class Economy(commands.Cog):
 
 	@commands.command()
 	async def plant(self, ctx, amount: int = 4, item="kanna"):
+		if amount <= 0:
+			return await ctx.send(
+				embed=GLE(
+					None,
+					"You cannot plant negative amounts",
+					author=ctx.author.avatar_url,
+					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+				)
+			)
 		shop = self.load_shop()
 		if not item in shop:
 			return await ctx.send(
@@ -638,9 +668,38 @@ class Economy(commands.Cog):
 			embed.title = ""
 			embed.description = f"`{winner.name}` got the drop"
 			await award.edit(embed=embed)
-
+	@commands.command()
+	@commands.is_owner()
+	async def getself(self, ctx, quantity: int=5, item: str="kanna"):
+		if quantity <= 0:
+			return await ctx.send(
+				embed=GLE(
+					None,
+					"You cannot get negative amounts",
+					author=ctx.author.avatar_url,
+					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+				)
+			)
+		shop=self.load_shop()
+		if item not in shop:
+			return await ctx.send("this item is not in the shop")
+		user=await self.eh.find_user(ctx.author.id)
+		if item not in user:
+			user[item]=0
+		user[item]+=quantity
+		await self.eh.update_user(ctx.author.id, user)
+		return await ctx.send("added item")
 	@commands.command()
 	async def recipe(self, ctx, item, quantity: int = 1):
+		if quantity <= 0:
+			return await ctx.send(
+				embed=GLE(
+					None,
+					"You cannot check recipe's for negative amouts",
+					author=ctx.author.avatar_url,
+					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+				)
+			)
 		shop = self.load_shop()
 		if not item in shop:
 			return await ctx.send(
