@@ -47,7 +47,7 @@ class Fun(commands.Cog):
         return await ctx.send(response['owo'])
 
     @commands.cooldown(5, 10, commands.BucketType.user)
-    @commands.command(name="8ball")
+    @commands.command(name="8ball", description="Let the 8ball decide your fate 😈😈")
     async def ball(self, ctx, question: str):
         response = await api_call(f"https://nekos.life/api/v2/8ball", False)
         embed = discord.Embed(
@@ -64,7 +64,7 @@ class Fun(commands.Cog):
         await ctx.message.reply(embed=embed)
 
     @commands.cooldown(1, 3, commands.BucketType.user)
-    @commands.command()
+    @commands.command(name="coffe", description="Shows a picture of coffee :smirk:")
     async def coffee(self, ctx):
         response = await api_call("https://coffee.alexflipnote.dev/random.json", False)
         embed = discord.Embed(
@@ -81,7 +81,7 @@ class Fun(commands.Cog):
         await ctx.message.reply(embed=embed)
 
     @commands.cooldown(1, 5, commands.BucketType.user)
-    @commands.command(aliases=['random_name'])
+    @commands.command(aliases=['random_name'], description="Random name generator")
     async def randomname(self, ctx):
         response = await api_call("https://nekos.life/api/v2/name", False)
         await ctx.message.reply(response['name'])
@@ -101,7 +101,7 @@ class Fun(commands.Cog):
         await ctx.message.reply(f"\"{content}\" - {author}")
 
     @commands.cooldown(1, 5, commands.BucketType.user)
-    @commands.command(aliases=['meow', 'simba', 'cats'])
+    @commands.command(aliases=['meow', 'simba', 'cats'], description="Cats!!! ~~dogs are better~~")
     async def cat(self, ctx):
         response = await api_call("http://aws.random.cat/meow", False)
         embed = discord.Embed(title="Cute catto! <a:ConfusedCat:820562537971449886>",
@@ -114,7 +114,7 @@ class Fun(commands.Cog):
         await ctx.message.reply(embed=embed)
 
     @commands.cooldown(1, 5, commands.BucketType.user)
-    @commands.command()
+    @commands.command(name="advice", description="Gives you some advice :heart:")
     async def advice(self, ctx):
         response = ""
         async with aiohttp.ClientSession() as session:
@@ -155,7 +155,7 @@ class Fun(commands.Cog):
         return await ctx.message.reply(response['fact'])
 
     @commands.cooldown(5, 7, commands.BucketType.user)
-    @commands.command(name="goose")
+    @commands.command(name="goose", description="Shows a picture of a goose")
     async def goose(self, ctx):
         embed = discord.Embed(
             title="",
@@ -185,7 +185,7 @@ class Fun(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['e'])
+    @commands.command(aliases=['e'], description="Cause hell with this! Basically a sudo command")
     @commands.cooldown(3, 7, commands.BucketType.user)
     @commands.has_guild_permissions(manage_messages=True)
     async def modecho(self, ctx, member: discord.Member, *, content):
