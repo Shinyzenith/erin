@@ -4,12 +4,15 @@
   "main": "./dist/music.js",
   "repository": "https://github.com/AakashSharma7269/erin",
   "author": "AakashSharma7269 <aakashsensharma04@gmail.com>",
+  "type": "module",
   "license": "MIT",
   "scripts": {
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "run": "nodemon ."
   },
   "dependencies": {
-    "discord.js": "^12.5.3"
+    "discord.js": "^12.5.3",
+    "dotenv": "^10.0.0"
   },
   "devDependencies": {
     "@types/node": "^15.6.1",

@@ -13,7 +13,7 @@ coloredlogs.install(logger=log)
 
 async def send_embed(ctx, embed):
     try:
-        await ctx.message.reply(embed=embed)
+        await ctx.send(embed=embed)
     except Forbidden:
         try:
             await ctx.author.send(
@@ -70,10 +70,8 @@ class Help(commands.Cog):
                         hidden_count += 1
                 if hidden_count == len(commands):
                     continue
-                cogs_desc += f"**{cog}** {self.bot.cogs[cog].__doc__}"
-
-            emb.add_field(name="Modules:", value=cogs_desc, inline=False)
-
+                emb.add_field(
+                    name=f"{cog}", value=self.bot.cogs[cog].__doc__, inline=False)
             commands_desc = ""
             for command in self.bot.walk_commands():
                 if not command.cog_name and not command.hidden:
