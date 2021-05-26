@@ -573,7 +573,7 @@ class Config(commands.Cog):
         em.add_field(
             name="Developers:",
             inline=False,
-            value="<@633967275090771971> (Shinyzenith#6969)\n<@488688724948025357>(DankCoder#9983)",
+            value="<@633967275090771971> (Shinyzenith#6969)\n<@488688724948025357> (DankCoder#9983)\n<@758991567695642644> (Idli_#0001)",
         )
         em.add_field(
             name="Server info:",
