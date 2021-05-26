@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "./dist/music.js",
   "repository": "https://github.com/AakashSharma7269/erin",
-  "author": "AakashSharma7269 <aakashsensharma04@gmail.com>",
+  "author": "AakashSharma7269 <aakashsensharma@gmail.com>",
   "type": "module",
   "license": "MIT",
   "scripts": {

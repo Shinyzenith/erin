@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "./dashboard/dist/startserver.js",
   "repository": "https://github.com/AakashSharma7269/erin",
-  "author": "AakashSharma7269 <aakashsensharma04@gmail.com>",
+  "author": "AakashSharma7269 <aakashsensharma@gmail.com>",
   "license": "MIT",
   "scripts": {
     "watch": "tsc -w",
