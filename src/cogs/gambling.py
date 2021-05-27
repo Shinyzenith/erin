@@ -160,7 +160,7 @@ class Gambling(commands.Cog):
 		if amount<=0:
 			return await ctx.send(embed=GLE(
 				None,
-				"You cannot duel for negative amounts",
+				"You cannot duel for negative amounts <:taiga:820332735762530366>",
 				author=ctx.author.avatar_url,
 				footer=f"{ctx.author.name}#{ctx.author.discriminator}"
 			))
@@ -168,7 +168,7 @@ class Gambling(commands.Cog):
 		if ctx.author.id in ongoing_duel:
 			return await ctx.send(embed=GLE(
 				None,
-				f"You cannot start another duel while being in one",
+				f"You cannot start another duel while being in one <:taiga:820332735762530366> ",
 				ctx.author.avatar_url,
 				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 			))
@@ -177,7 +177,7 @@ class Gambling(commands.Cog):
 			ongoing_duel.remove(ctx.author.id)
 			return await ctx.send(embed=GLE(
 				None,
-				f"pls mention the bet for this battle",
+				f"please mention the bet for this battle <:kofuku:820337881074761758>",
 				ctx.author.avatar_url,
 				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 			))
@@ -186,7 +186,7 @@ class Gambling(commands.Cog):
 			ongoing_duel.remove(ctx.author.id)
 			return await ctx.send(embed=GLE(
 				None,
-				f"pls mention a user",
+				f"please mention a user <:kofuku:820337881074761758>",
 				ctx.author.avatar_url,
 				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 			))		

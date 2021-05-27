@@ -3,6 +3,8 @@ import time
 import json
 import random
 import asyncio
+from typing import OrderedDict
+from operator import getitem
 import discord
 import logging
 import humanize
@@ -258,7 +260,12 @@ class Economy(commands.Cog):
 		shop = self.load_shop()
 		user = await self.eh.find_user(member.id)
 		values = list(user.items())
-
+		for v in values.copy():
+			if v[1]==0 and v[0]!="erin":
+				values.remove(v)
+			if v[0]!="erin" and v[0] not in shop:
+				values.remove(v)
+		
 		chunks = divide_chunks(values, 5)
 		if len(chunks) > 1:
 			embeds = []
@@ -318,6 +325,9 @@ class Economy(commands.Cog):
 	async def shop(self, ctx):
 		shop = self.load_shop()
 		embeds = []
+		shop=OrderedDict(
+			sorted(shop.items(), key=lambda x: getitem(x[1], "raw_price"))
+		)
 		chunks = divide_chunks(list(shop.keys()), 5)
 		i = 0
 		for chunk in list(chunks):
