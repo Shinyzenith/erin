@@ -15,3 +15,5 @@ share/python-wheels/
 *.log
 # Environments
 .env
+# Mongo DB
+/mdbcluster
