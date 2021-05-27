@@ -15,6 +15,7 @@ share/python-wheels/
 *.log
 # Environments
 .env
-update.sh
-# mongo folder
+# Mongo DB
 /mdbcluster
+#your update script
+update.sh
