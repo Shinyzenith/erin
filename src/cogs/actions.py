@@ -32,7 +32,7 @@ class Actions(commands.Cog):
 		log.warn(f"{self.__class__.__name__} Cog has been loaded")
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
-	@commands.command(name="hug" , description="Hug someone UwU")
+	@commands.command(name="hug", description="Hug someone UwU")
 	async def hug(self, ctx, user: commands.Greedy[discord.Member] = None):
 		if user == None:
 			await ctx.message.reply(f"Mention someone you wanna hug ;)")
@@ -48,7 +48,7 @@ class Actions(commands.Cog):
 		await ctx.send(", ".join([users.mention for users in user]),embed = embed)
 	
 	@commands.cooldown(3, 5, commands.BucketType.user)
-	@commands.command(name="laugh" , description="LMFAO <:KEKW:791927881319448606>")
+	@commands.command(name="laugh", description="LMFAO <:KEKW:791927881319448606>")
 	async def laugh(self, ctx, user: commands.Greedy[discord.Member] = None):
 		if user == None:
 			await ctx.message.reply(f"Mention someone you wanna laugh at ;)")
@@ -65,7 +65,7 @@ class Actions(commands.Cog):
 		await ctx.send(", ".join([users.mention for users in user]),embed = embed)
 	
 	@commands.cooldown(3, 5, commands.BucketType.user)
-	@commands.command(name="lick" , description="<a:lick:828297410458550322>")
+	@commands.command(name="lick", description="<a:lick:828297410458550322>")
 	async def lick(self, ctx, user: commands.Greedy[discord.Member] = None):
 		if user == None:
 			await ctx.message.reply(f"Mention someone you wanna lick ;)")
@@ -82,7 +82,7 @@ class Actions(commands.Cog):
 		await ctx.send(", ".join([users.mention for users in user]),embed = embed)
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
-	@commands.command(name="cry" , description=":pensive: :((")
+	@commands.command(name="cry", description=":pensive: :((")
 	async def cry(self, ctx):
 		embed = discord.Embed(
 			title = "<a:KannaCry:822716843440734218><a:KannaCry:822716843440734218><a:KannaCry:822716843440734218>",
@@ -94,7 +94,7 @@ class Actions(commands.Cog):
 		await ctx.send(embed = embed)
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
-	@commands.command(name="cuddle" , description="Cuddle someone <a:pandaheart:828307130914177024>")
+	@commands.command(name="cuddle", description="Cuddle someone <a:pandaheart:828307130914177024>")
 	async def cuddle(self, ctx, user: commands.Greedy[discord.Member] = None):
 		if user == None:
 			await ctx.message.reply(f"Mention someone you wanna cuddle ;)")
@@ -110,7 +110,7 @@ class Actions(commands.Cog):
 		await ctx.send(", ".join([users.mention for users in user]),embed = embed)
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
-	@commands.command(name="kiss" , description="OwO Kiss someone :flushed:")
+	@commands.command(name="kiss", description="OwO Kiss someone :flushed:")
 	async def kiss(self, ctx, user: commands.Greedy[discord.Member] = None):
 		if user == None:
 			await ctx.message.reply(f"Mention someone you wanna kiss ;)")
@@ -130,7 +130,7 @@ class Actions(commands.Cog):
 		await ctx.send(", ".join([users.mention for users in user]),embed=embed)
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
-	@commands.command(name="pat" , description="Pat someone <:worrypat:828215349710684170>")
+	@commands.command(name="pat", description="Pat someone <:worrypat:828215349710684170>")
 	async def pat(self, ctx, user: commands.Greedy[discord.Member] = None):
 		if user == None:
 			await ctx.message.reply(f"Mention someone you wanna pat ;)")
@@ -150,7 +150,7 @@ class Actions(commands.Cog):
 		await ctx.send(", ".join([users.mention for users in user]),embed=embed)
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
-	@commands.command(name="poke" , description="Get poked!11!!")
+	@commands.command(name="poke", description="Get poked!11!!")
 	async def poke(self, ctx, user: commands.Greedy[discord.Member] = None):
 		if user == None:
 			await ctx.message.reply(f"Why are you so lonely? Mention someone that you wanna poke, you can't poke yourself :(")
@@ -170,7 +170,7 @@ class Actions(commands.Cog):
 		await ctx.send(", ".join([users.mention for users in user]),embed=embed)
 	
 	@commands.cooldown(3, 5, commands.BucketType.user)
-	@commands.command(name="baka" , description="YOU ARE A BAKA!!!!")
+	@commands.command(name="baka", description="YOU ARE A BAKA!!!!")
 	async def baka(self, ctx, user: commands.Greedy[discord.Member] = None):
 		if user == None:
 			await ctx.message.reply(f"Who tf are you calling a baka?")
@@ -186,7 +186,7 @@ class Actions(commands.Cog):
 		await ctx.send(", ".join([users.mention for users in user]),embed=embed)
 	
 	@commands.cooldown(3, 5, commands.BucketType.user)
-	@commands.command(name="feed" , description="gib me food plz")
+	@commands.command(name="feed", description="gib me food plz")
 	async def feed(self, ctx, user: commands.Greedy[discord.Member] = None):
 		if user == None:
 			await ctx.message.reply(f"Who tf are you feeding?")
@@ -202,7 +202,7 @@ class Actions(commands.Cog):
 		await ctx.send(", ".join([users.mention for users in user]),embed=embed)
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
-	@commands.command(name="smug" , description="Smug moment <:Davie_Smug:773399926650175488>")
+	@commands.command(name="smug", description="Smug moment <:Davie_Smug:773399926650175488>")
 	async def smug(self, ctx):
 		
 		embed = discord.Embed(
@@ -214,7 +214,7 @@ class Actions(commands.Cog):
 		await ctx.send(embed=embed)
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
-	@commands.command(name="slap" , description="Bitch slap moment <:slap:500660862110138369>")
+	@commands.command(name="slap", description="Bitch slap moment <:slap:500660862110138369>")
 	async def slap(self, ctx, user: commands.Greedy[discord.Member] = None):
 		if user == None:
 			await ctx.message.reply(f"Mention someone you wanna slap ;)")
@@ -234,7 +234,7 @@ class Actions(commands.Cog):
 		await ctx.send(", ".join([users.mention for users in user]),embed=embed)
 
 	@commands.cooldown(3, 5, commands.BucketType.user)
-	@commands.command(name="tickle" , description="Tickle someone!")
+	@commands.command(name="tickle", description="Tickle someone!")
 	async def tickle(self, ctx, user: commands.Greedy[discord.Member] = None):
 		if user == None:
 			await ctx.message.reply(f"Mention someone you wanna tickle ;)")
