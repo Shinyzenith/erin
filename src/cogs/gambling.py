@@ -104,7 +104,7 @@ class Gambling(commands.Cog):
 	async def on_ready(self):
 		log.warn(f"{self.__class__.__name__} Cog has been loaded")
 
-	@commands.command()
+	@commands.command(name="gamble" , description="Gambling addiction go brrrrrr")
 	@commands.cooldown(5, 300, commands.BucketType.user)
 	async def gamble(self, ctx, quantity: int = 10):
 		if quantity<=0:
@@ -153,7 +153,7 @@ class Gambling(commands.Cog):
 				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 			))
 
-	@commands.command()
+	@commands.command(name="duel" , description="Duel someone for items 😈😈")
 	@commands.cooldown(5, 180, commands.BucketType.user)
 	async def duel(self, ctx, member: discord.Member = None, amount=1, item=None):
 		if amount<=0:
@@ -298,7 +298,7 @@ class Gambling(commands.Cog):
 					ongoing_duel.remove(member.id)
 					return await ctx.send(f"`{winner.name}#{winner.discriminator}` won UwU :>")
 
-	@commands.command()
+	@commands.command(name="crates", description="Open a crate ~~keep gambling~~")
 	async def crates(self, ctx):
 		user = await self.eh.fetch_crates(ctx.author.id)
 		embed = discord.Embed(color=ctx.author.color)
