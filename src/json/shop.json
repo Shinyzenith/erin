@@ -665,13 +665,13 @@
         "emoji": "<:yuuki:820338188170166302>",
         "raw_price": 23000
     },
-    "tsunande": {
-        "name": "Tsunande",
+    "tsunade": {
+        "name": "Tsunade",
         "price": {
             "item": "miku",
             "quantity": 50
         },
-        "emoji": "<:tsunande:820338188181831720>",
+        "emoji": "<:tsunade:820338188181831720>",
         "raw_price": 750000
     },
     "shoko": {
