@@ -47,7 +47,7 @@ class Help(commands.Cog):
             emb = discord.Embed(
                 title="Commands and modules",
                 color=ctx.message.author.color,
-                description=f"Use `{ctx.prefix}help <module>` to gain more information about that module. <:Kanna:822144873170731018>\nIf you need further assistance then join our [support server] (https://www.discord.gg/F5ey2M5GTg) <:Kanna:822144873170731018>\n",
+                description=f"Use `{ctx.prefix}help <module>` to gain more information about that module. <:Kanna:822144873170731018>\nIf you need further assistance then join our (support server) [https://www.discord.gg/F5ey2M5GTg] <:Kanna:822144873170731018>\n",
             )
             emb.set_footer(
                 text=f"Requested by {ctx.message.author}",
