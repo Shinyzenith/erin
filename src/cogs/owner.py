@@ -21,7 +21,7 @@ from discord.ext import commands, tasks
 from discord.enums import ActivityType, Status
 from discord.ext.commands.view import StringView
 from collections import OrderedDict, deque, Counter
-
+from main import ubc
 
 async def webhook_send(
         url,
@@ -90,7 +90,32 @@ class Owner(commands.Cog):
         msg += "```"
         log.info("")
         return await ctx.message.reply(msg)
+    @commands.command(hidden=True)
+    @commands.is_owner()
+    async def botban(self, ctx, uid: int):
+        result=await ubc.softban_user(uid)
+        if result:
+            log.info(f"Sucessful Softban - {uid}")
+            return await ctx.message.reply("Sucessfully softbanned user")
+            
+        else:
+            log.info(f"Failed Softban - {uid}")
+            return await ctx.message.reply("Softban failed")
+            
 
+    @commands.command(hidden=True)
+    @commands.is_owner()
+    async def botunban(self, ctx, uid: int):
+        result=await ubc.remove_softban(uid)
+        if result:
+            log.info(f"Sucessful Softban Removal - {uid}")
+            return await ctx.message.reply("Sucessfully removed softban from user")
+            
+        else:
+            log.info(f"Failed Softban Removal - {uid}")
+            return await ctx.message.reply("Unable to remove softban")
+            
+   
     @commands.command(hidden=True)
     @commands.is_owner()
     async def unload(self, ctx, extension):

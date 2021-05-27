@@ -16,3 +16,5 @@ share/python-wheels/
 # Environments
 .env
 update.sh
+# mongo folder
+/mdbcluster

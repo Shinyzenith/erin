@@ -6,8 +6,12 @@ import aiohttp
 import logging
 import traceback
 import coloredlogs
+import datetime as dt
 from io import StringIO
 from discord.ext import commands
+import humanize
+
+from main import BotBan, CooldownError
 
 
 log = logging.getLogger("errorhandler cog")
@@ -78,6 +82,12 @@ class ErrorHandler(commands.Cog):
                          icon_url=self.bot.user.avatar_url)
         embed.set_author(name=f"{ctx.message.author.name}#{ctx.author.discriminator}",
                          icon_url=ctx.message.author.avatar_url)
+        if isinstance(error, CooldownError):
+            embed.description=str(error)
+            return await ctx.send(embed=embed )
+        if isinstance(error,  BotBan):
+            embed.description=str(error)
+            return await ctx.send(embed=embed )
         error = getattr(error, 'original', error)
 
         if isinstance(error, discord.errors.Forbidden):
@@ -196,6 +206,7 @@ class ErrorHandler(commands.Cog):
             embed.title = f"Command can only be executed in NSFW channels"
             embed.description = error.argument
             return await ctx.send(embed=embed)
+
         await export_exception(ctx, error)
         #raise error
 

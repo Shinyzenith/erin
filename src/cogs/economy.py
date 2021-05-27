@@ -325,9 +325,10 @@ class Economy(commands.Cog):
 			embed = discord.Embed(color=discord.Color.teal())
 			embed.title = "The Waifu Shop"
 			for item in chunk:
+				v= (f" / `{shop[item]['raw_price']} erin`" if shop[item]['price']['item']!="erin" else "")
 				embed.add_field(
 					name=item,
-					value=f"{shop[item]['name']} {shop[item]['emoji']} | Costs `{shop[item]['price']['quantity']} {shop[item]['price']['item']}`",
+					value=f"{shop[item]['name']} {shop[item]['emoji']} | Costs `{shop[item]['price']['quantity']} {shop[item]['price']['item']}`" + v,
 					inline=False,
 				)
 			embed.set_footer(
