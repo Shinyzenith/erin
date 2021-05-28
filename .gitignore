@@ -19,3 +19,5 @@ share/python-wheels/
 /mdbcluster
 #your update script
 update.sh
+#yarn.lock files lol
+yarn.lock
