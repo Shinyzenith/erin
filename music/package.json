@@ -1,14 +1,13 @@
 {
-  "name": "ErinMusicCommandsCuzDpyAndFFMPEGIsAFuckingStupidCombo",
+  "name": "erinmusic",
   "version": "1.0.0",
-  "main": "./dist/music.js",
+  "main": "dist/music.js",
   "repository": "https://github.com/AakashSharma7269/erin",
   "author": "AakashSharma7269 <aakashsensharma@gmail.com>",
-  "type": "module",
   "license": "MIT",
   "scripts": {
     "watch": "tsc -w",
-    "run": "nodemon ."
+    "start": "nodemon --exec node ./dist/main.js"
   },
   "dependencies": {
     "discord.js": "^12.5.3",
@@ -16,7 +15,7 @@
   },
   "devDependencies": {
     "@types/node": "^15.6.1",
-    "ts-node": "^10.0.0",
-    "typescript": "^4.2.4"
+    "nodemon": "^2.0.7",
+    "ts-node": "^10.0.0"
   }
 }

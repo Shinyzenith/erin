@@ -35,8 +35,10 @@ global isoncooldown
 
 # Cooldown Error
 
+
 class CooldownError(commands.CheckFailure):
     pass
+
 
 class BotBan(commands.CheckFailure):
     pass
@@ -59,14 +61,14 @@ class PrefixManager:
         self.client = MongoClient(os.getenv('CONNECTIONURI'))
         self.db = self.client.erin
         self.col = self.db["config"]
-        self.prefixes={}
+        self.prefixes = {}
+
     def register_guild(self, g):
         self.col.insert_one({"gid": g.id, "prefixes": ["-"]})
 
     def get_prefix(self, client, message):
         # if str(message.guild.id) in self.prefixes:
         #     return self.prefixes[str(message.guild.id)]
-        log.warn("Prefix check")
         prefixes = []
         guild = self.col.find_one({"gid": message.guild.id})
         if not guild:
@@ -74,7 +76,7 @@ class PrefixManager:
             prefixes = ["-"]
         else:
             prefixes = guild["prefixes"]
-        self.prefixes[str(message.guild.id)]=prefixes
+        self.prefixes[str(message.guild.id)] = prefixes
         return prefixes
 
 # bot banning class
@@ -86,11 +88,10 @@ class UserBanClient:
             os.getenv("CONNECTIONURI"))
         self.db = self.client.erin
         self.col = self.db["softbans"]
-        self.col2= self.db["cooldowns"]
+        self.col2 = self.db["cooldowns"]
         self.users = []
 
     async def fetch_user_bans(self, user):
-        log.warn(f"Performing user check for {user.id}")
         if str(user.id) in self.users:
             log.warn(f"{user.id} is banned from using this bot")
             raise BotBan("You are banned from using this bot")
@@ -124,43 +125,47 @@ class UserBanClient:
             return True
         else:
             return True
+
     async def check_cooldowns(self, ctx):
-        cooldown=await self.col2.find_one({"uid":ctx.author.id,"cmd":ctx.command.name})
+        cooldown = await self.col2.find_one({"uid": ctx.author.id, "cmd": ctx.command.name})
         if not cooldown:
             return True
         else:
-            if int(float(cooldown["time"]))>time.time():
-                if cooldown["uses"]>=cooldown["permitted_uses"]:
-                    period=humanize.naturaldelta(dt.timedelta(seconds=int(float(cooldown["time"]))-time.time()))
+            if int(float(cooldown["time"])) > time.time():
+                if cooldown["uses"] >= cooldown["permitted_uses"]:
+                    period = humanize.naturaldelta(dt.timedelta(
+                        seconds=int(float(cooldown["time"]))-time.time()))
                     raise CooldownError(f'Try again in {period}')
                     return False
                 else:
                     return True
             else:
                 log.warn("No longer in cooldown")
-                await self.col2.delete_one({"uid":ctx.author.id,"cmd":ctx.command.name})
+                await self.col2.delete_one({"uid": ctx.author.id, "cmd": ctx.command.name})
                 return True
-    async def create_cooldown(self, ctx, uses:int, period:int):
-        cooldown=await self.col2.find_one({"uid":ctx.author.id,"cmd":ctx.command.name})
+
+    async def create_cooldown(self, ctx, uses: int, period: int):
+        cooldown = await self.col2.find_one({"uid": ctx.author.id, "cmd": ctx.command.name})
         if cooldown:
-            if cooldown["uses"]<uses:
-                if time.time()>int(float(cooldown["time"])):
-                    await self.col2.delete_one({"uid":ctx.author.id,"cmd":ctx.command.name})
+            if cooldown["uses"] < uses:
+                if time.time() > int(float(cooldown["time"])):
+                    await self.col2.delete_one({"uid": ctx.author.id, "cmd": ctx.command.name})
                     return
                 else:
                     del cooldown["_id"]
-                    cooldown["uses"]+=1
-                    await self.col2.replace_one({"uid":ctx.author.id, "cmd":ctx.command.name}, cooldown)
+                    cooldown["uses"] += 1
+                    await self.col2.replace_one({"uid": ctx.author.id, "cmd": ctx.command.name}, cooldown)
                     return
             else:
-                if time.time()>int(float(cooldown["time"])):
-                    await self.col2.delete_one({"uid":ctx.author.id,"cmd":ctx.command.name})
-                    return               
+                if time.time() > int(float(cooldown["time"])):
+                    await self.col2.delete_one({"uid": ctx.author.id, "cmd": ctx.command.name})
+                    return
         else:
-            await self.col2.insert_one({"uid":ctx.author.id,"cmd":ctx.command.name, "time":str(time.time()+period), "uses":1, "permitted_uses":uses})
+            await self.col2.insert_one({"uid": ctx.author.id, "cmd": ctx.command.name, "time": str(time.time()+period), "uses": 1, "permitted_uses": uses})
 
     async def predicate(self, ctx):
         return await self.fetch_user_bans(ctx.author)
+
     async def cooldown_checker(self, ctx):
         return await self.check_cooldowns(ctx)
 # bot instance class
@@ -200,7 +205,7 @@ bot = ErinBot()
 
 # initalizing clients
 ubc = UserBanClient()
-isoncooldown=commands.check(ubc.cooldown_checker)
+isoncooldown = commands.check(ubc.cooldown_checker)
 # send message on startup
 
 
