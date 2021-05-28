@@ -190,10 +190,7 @@ class Economy(commands.Cog):
 
 	async def drop(self, msg):
 		prefix = (await self.pm.get_prefix(msg))[0]
-		drop = random.choice(
-			random.sample(list(self.load_shop().keys()), 3)
-			+ ["erin" for i in range(len(self.load_shop()) // 2)]
-		)
+		drop = "erin"
 		embed = discord.Embed()
 		quantity = random.randint(5, 60)
 		embed.title = f"Use `{prefix}pick {quantity}`  to get `{quantity} {drop}`"
@@ -692,8 +689,9 @@ class Economy(commands.Cog):
 				)
 			)
 		shop=self.load_shop()
-		if item not in shop:
-			return await ctx.send("this item is not in the shop")
+		if item!="erin":
+			if item not in shop:
+				return await ctx.send("this item is not in the shop")
 		user=await self.eh.find_user(ctx.author.id)
 		if item not in user:
 			user[item]=0
@@ -713,8 +711,9 @@ class Economy(commands.Cog):
 				)
 			)
 		shop=self.load_shop()
-		if item not in shop:
-			return await ctx.send("this item is not in the shop")
+		if item!="erin":
+			if item not in shop:
+				return await ctx.send("this item is not in the shop")
 		user=await self.eh.find_user(uid)
 		if item not in user:
 			user[item]=0
@@ -723,9 +722,10 @@ class Economy(commands.Cog):
 		else:
 			user[item]-=quantity
 		await self.eh.update_user(uid, user)
-		return await ctx.send("added item")
+		return await ctx.send("removed item")
 	@commands.command()
 	async def recipe(self, ctx, item, quantity: int = 1):
+		item=item.lower()
 		if quantity <= 0:
 			return await ctx.send(
 				embed=GLE(
