@@ -723,7 +723,7 @@ class Economy(commands.Cog):
 		else:
 			user[item]-=quantity
 		await self.eh.update_user(uid, user)
-		return await ctx.send("added item")
+		return await ctx.send("removed item")
 	@commands.command()
 	async def recipe(self, ctx, item, quantity: int = 1):
 		if quantity <= 0:
