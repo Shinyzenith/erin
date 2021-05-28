@@ -701,6 +701,30 @@ class Economy(commands.Cog):
 		await self.eh.update_user(ctx.author.id, user)
 		return await ctx.send("added item")
 	@commands.command()
+	@commands.is_owner()
+	async def takeitems(self, ctx, uid: int, quantity: int=5, item: str="kanna"):
+		if quantity <= 0:
+			return await ctx.send(
+				embed=GLE(
+					None,
+					"You cannot take negative amounts",
+					author=ctx.author.avatar_url,
+					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+				)
+			)
+		shop=self.load_shop()
+		if item not in shop:
+			return await ctx.send("this item is not in the shop")
+		user=await self.eh.find_user(uid)
+		if item not in user:
+			user[item]=0
+		if quantity>user[item]:
+			user[item]=0
+		else:
+			user[item]-=quantity
+		await self.eh.update_user(uid, user)
+		return await ctx.send("added item")
+	@commands.command()
 	async def recipe(self, ctx, item, quantity: int = 1):
 		if quantity <= 0:
 			return await ctx.send(
