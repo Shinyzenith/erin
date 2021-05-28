@@ -123,6 +123,13 @@ class Gambling(commands.Cog):
 				rr = 1.5
 			if quantity > 8000:
 				rr = 2
+			if quantity > 20000:
+				return await ctx.send(embed=GLE(
+					None,
+					f"There is a gambling cap of 20,000 erins",
+					ctx.author.avatar_url,
+					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+				))			 
 			luck = random.randint(1, 2)
 			await ubc.create_cooldown(ctx, 5, 60)
 			if luck == 2:
