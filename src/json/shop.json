@@ -48,10 +48,10 @@
         "name": "Gura",
         "price": {
             "item": "fubuki",
-            "quantity": 350
+            "quantity": 60
         },
         "emoji": "<:gura:820283098369097748>",
-        "raw_price": 2100000
+        "raw_price": 360000
     },
     "tohru": {
         "name": "Tohru",
@@ -102,10 +102,10 @@
         "name": "Kizuna",
         "price": {
             "item": "gura",
-            "quantity": 15
+            "quantity": 3
         },
         "emoji": "<:kizuna:820285443475767297>",
-        "raw_price": 31500000
+        "raw_price": 1080000
     },
     "koboyashi": {
         "name": "Koboyashi",
@@ -264,10 +264,10 @@
         "name": "Akira",
         "price": {
             "item": "tsukasa",
-            "quantity": 320
+            "quantity": 32
         },
         "emoji": "<:akira:820288683897782302>",
-        "raw_price": 7200000
+        "raw_price": 720000
     },
     "akari": {
         "name": "Akari",
@@ -336,10 +336,10 @@
         "name": "Sumi",
         "price": {
             "item": "chizuru",
-            "quantity": 25
+            "quantity": 5
         },
         "emoji": "<:sumi:820331377731698715>",
-        "raw_price": 28125000
+        "raw_price": 937500
     },
     "minami": {
         "name": "Minami",
@@ -372,10 +372,10 @@
         "name": "Mikoiino",
         "price": {
             "item": "kaguya",
-            "quantity": 5
+            "quantity": 2
         },
         "emoji": "<:mikoiino:820331377818992650>",
-        "raw_price": 1800000
+        "raw_price": 720000
     },
     "mami": {
         "name": "Mami",
@@ -435,10 +435,10 @@
         "name": "Chizuru",
         "price": {
             "item": "ruka",
-            "quantity": 90
+            "quantity": 15
         },
         "emoji": "<:chizuru:820331378020319242>",
-        "raw_price": 1125000
+        "raw_price": 187500
     },
     "nao": {
         "name": "Nao",
@@ -579,10 +579,10 @@
         "name": "Mitsuha",
         "price": {
             "item": "shiina",
-            "quantity": 35
+            "quantity": 3
         },
         "emoji": "<:mitsuha:820337879518543883>",
-        "raw_price": 5600000
+        "raw_price": 480000
     },
     "lucy": {
         "name": "Lucy",
@@ -606,19 +606,19 @@
         "name": "Kei",
         "price": {
             "item": "kaguya",
-            "quantity": 20
+            "quantity": 5
         },
         "emoji": "<:kei:820337882794557490>",
-        "raw_price": 7200000
+        "raw_price": 1800000
     },
     "zerotwo": {
         "name": "Zerotwo",
         "price": {
             "item": "rem",
-            "quantity": 250
+            "quantity": 25
         },
         "emoji": "<:zerotwo:820338187817189394>",
-        "raw_price": 3125000
+        "raw_price": 312500
     },
     "violet": {
         "name": "Violet",
@@ -690,7 +690,7 @@
             "quantity": 3
         },
         "emoji": "<:rin:820338188391809114>",
-        "raw_price": 9375000
+        "raw_price": 937500
     },
     "sena": {
         "name": "Sena",
