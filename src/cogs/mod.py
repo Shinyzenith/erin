@@ -1262,9 +1262,9 @@ class Moderation(commands.Cog):
         embed.set_footer(text=f"Requested by {ctx.author}")
         await ctx.message.channel.send(embed=embed)
 
-    @commands.command(description="Shows how many people have a role")
+    @commands.command(description="Shows how many people have a role", aliases=["rolemembers"])
     @commands.guild_only()
-    async def inrole(self, ctx, *, role: discord.Role):
+    async def rm(self, ctx, *, role: discord.Role):
         members = []
         for user in ctx.guild.members:
             if role in user.roles:
