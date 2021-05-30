@@ -117,16 +117,16 @@ class Gambling(commands.Cog):
 		uid = ctx.author.id
 		user = await self.eh.find_user(uid)
 		if quantity <= user["erin"]:
-			if quantity <= 5000:
+			if quantity <= 500:
 				rr = 1.25
-			if quantity <= 8000:
+			if quantity <= 800:
 				rr = 1.5
-			if quantity > 8000:
+			if quantity > 800:
 				rr = 2
-			if quantity > 20000:
+			if quantity > 2000:
 				return await ctx.send(embed=GLE(
 					None,
-					f"There is a gambling cap of 20,000 erins",
+					f"There is a gambling cap of 2,000 erins",
 					ctx.author.avatar_url,
 					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 				))			 
