@@ -227,7 +227,9 @@ class Economy(commands.Cog):
 	def load_shop(self):
 		shop = json.load(open("./json/shop.json", "r"))
 		return shop
-
+	def load_jobs(self):
+		jobs = json.load(open("./json/work.json", "r", encoding='utf-8' ))
+		return jobs
 	def update_code(self, code, update):
 		codes = json.load(open("./json/promo.json", "r"))
 		codes[code] = update
@@ -675,8 +677,31 @@ class Economy(commands.Cog):
 			await self.eh.update_user(ctx.author.id, user)
 			embed.title = ""
 			embed.description = f"`{winner.name}` got the drop"
-			await award.edit(embed=embed)
-	@commands.command()
+			try:
+				await award.edit(embed=embed)
+			except:
+				pass
+	@commands.command(hidden=True)
+	@commands.is_owner()
+	async def yeet_exploiter(self, ctx):
+		data=self.eh.col.find({})
+		data= await data.to_list(length=10000)
+		shop=self.load_shop()
+		for user in data:
+			print(user)
+			initial=user.copy()
+			for item in initial:
+				if item=="uid" or item=="_id":
+					continue
+				if item not in shop and item!="erin":
+					del user[item]
+					continue
+				if user[item]>10000000:
+					user[item]=1000000
+			if initial!=user:
+				await self.eh.col.replace_one({"uid":user["uid"]}, user)
+		await ctx.send("hello")
+	@commands.command(hidden=True)
 	@commands.is_owner()
 	async def getself(self, ctx, quantity: int=5, item: str="kanna"):
 		if quantity <= 0:
@@ -698,7 +723,7 @@ class Economy(commands.Cog):
 		user[item]+=quantity
 		await self.eh.update_user(ctx.author.id, user)
 		return await ctx.send("added item")
-	@commands.command()
+	@commands.command(hidden=True)
 	@commands.is_owner()
 	async def takeitems(self, ctx, uid: int, quantity: int=5, item: str="kanna"):
 		if quantity <= 0:
@@ -773,7 +798,56 @@ class Economy(commands.Cog):
 			)
 		embed.description += "```"
 		return await ctx.send(embed=embed)
-
+	@commands.command(hidden=True)
+	@commands.is_owner()
+	async def jobs(self,ctx):
+		jobs=self.load_jobs()
+		values = list(jobs.items())
+		chunks = divide_chunks(values, 5)
+		if len(chunks) > 1:
+			embeds = []
+			i = 0
+			for chunk in chunks:
+				i += 1
+				embed = discord.Embed(color=ctx.author.color)
+				embed.title = f"Available Jobs"
+				for key, value in chunk:
+					name = (
+						value["name"]
+					)
+					embed.add_field(
+						name=name.capitalize(), value=f"`ID: {value['id']}` | Pays `{value['pay']['quantity']} {value['pay']['item']}`", inline=False
+					)
+				embed.set_footer(
+					text=f"Page {i}/{len(chunks)}", icon_url=ctx.author.avatar_url
+				)
+				embed.set_thumbnail(url=ctx.author.avatar_url)
+				embeds.append(embed)
+			paginator = DiscordUtils.Pagination.CustomEmbedPaginator(ctx)
+			paginator.add_reaction(
+				"\N{Black Left-Pointing Double Triangle with Vertical Bar}", "first"
+			)
+			paginator.add_reaction(
+				"\N{Black Left-Pointing Double Triangle}", "back")
+			paginator.add_reaction("\N{CROSS MARK}", "lock")
+			paginator.add_reaction(
+				"\N{Black Right-Pointing Double Triangle}", "next")
+			paginator.add_reaction(
+				"\N{Black Right-Pointing Double Triangle with Vertical Bar}", "last"
+			)
+			await paginator.run(embeds)
+		else:
+			embed = discord.Embed(color=ctx.author.color)
+			embed.title = f"Available Jobs"
+			embed.set_thumbnail(url=ctx.author.avatar_url)
+			for key, value in chunks[0]:
+					name = (
+						value["name"]
+					)
+					embed.add_field(
+						name=name.capitalize(), value=f"`ID: {value['id']}` | Pays `{value['pay']['quantity']} {value['pay']['item']}1", inline=False
+					)
+			return await ctx.send(embed=embed)
 	@commands.command()
 	async def reset(self, ctx):
 		embed = discord.Embed(color=ctx.author.color)

@@ -1,0 +1,458 @@
+{
+    "cafe": {
+      "id": "cafe",
+      "name": "Rabbit House Cafe",
+      "pay": {
+        "item": "chino",
+        "quantity": 5
+      },
+      "tasks": [
+        {
+          "id": "coffee",
+          "name": "Make Coffee",
+          "type": "message",
+          "message": "Time to blend the beans"
+        },
+        {
+          "id": "milkshake",
+          "name": "Blend a milkshake",
+          "type": "reaction",
+          "message": "🥛,🍨,🧊"
+        },
+        {
+          "id": "icecream",
+          "name": "Make ice cream",
+          "type": "message",
+          "message": "pass me the condensed milk"
+        },
+        {
+          "id": "cocktail",
+          "name": "Mix a cocktail",
+          "type": "reaction",
+          "message": "🍍,🍎,🍊,🍓"
+        },
+        {
+          "id": "salad",
+          "name": "Make a salad",
+          "type": "reaction",
+          "message": "🥕,🫒,🥬"
+        },
+        {
+          "id": "cleaning",
+          "name": "Clean the floor",
+          "type": "message",
+          "message": "Where is the mop"
+        }
+      ]
+    },
+    "cosplayer": {
+      "id": "cosplayer",
+      "name": "Furry Cosplayer",
+      "pay": {
+        "item": "erin",
+        "quantity": 320
+      },
+      "tasks": [
+        {
+          "id": "fox",
+          "name": "Dress up as a fox",
+          "type": "message",
+          "message": "hello uwu, im a foxy"
+        },
+        {
+          "id": "pirate",
+          "name": "Recite the pirate language",
+          "type": "message",
+          "message": "Ahoy, Me Hearties!"
+        },
+        {
+          "id": "cleaning",
+          "name": "Clean the costumes",
+          "type": "reaction",
+          "message": "👗,🐲,🐔,👔,🦊"
+        },
+        {
+          "id": "chicken",
+          "name": "be a chicken lol",
+          "type": "reaction",
+          "message": "🐔"
+        },
+        {
+          "id": "practice",
+          "name": "Practice the furry language",
+          "type": "message",
+          "message": "uwu owo uwu rawr x3"
+        }
+      ]
+    },
+    "police": {
+      "id": "police",
+      "name": "Waifu Police",
+      "pay": {
+        "item": "erin",
+        "quantity": 500
+      },
+      "tasks": [
+        {
+          "id": "robbery",
+          "name": "Robbery at waifu bank",
+          "type": "reaction",
+          "message": "🔫,💰,🕵️"
+        },
+        {
+          "id": "report",
+          "name": "Write a report",
+          "type": "message",
+          "message": "kanna faces criminal charges for being too cute"
+        },
+        {
+          "id": "kidnapping",
+          "name": "Waifu was kidnapped",
+          "type": "message",
+          "message": "Yes madam, I assure you that  i'll find your gura back"
+        }
+      ]
+    },
+    "cashier": {
+      "id": "cashier",
+      "name": "Umaru Burgers",
+      "pay": {
+        "item": "erin",
+        "quantity": 400
+      },
+      "tasks": [
+        {
+          "id": "cheeseburger",
+          "name": "Cook a cheeseburger",
+          "type": "reaction",
+          "message": "🧀,🥬,🍅,🫓"
+        },
+        {
+          "id": "dispute",
+          "name": "Dispute over currency",
+          "type": "message",
+          "message": "Sorry sir but we do not accept loli's as currency"
+        },
+        {
+          "id": "lightsout",
+          "name": "The lights just went out",
+          "type": "reaction",
+          "message": "💡"
+        },
+        {
+          "id": "worms",
+          "name": "Worms in my cheeseburger",
+          "type": "message",
+          "message": "No sir, that worm in your cheeseburger doesn't look like jimmy"
+        },
+        {
+          "id": "moneyhandling",
+          "name": "Organize the cash register",
+          "type": "reaction",
+          "message": "💸,🪙,💰,📎"
+        }
+      ]
+    },
+    "begger": {
+      "id": "begger",
+      "name": "Street Begger",
+      "pay": {
+        "item": "erin",
+        "quantity": 30
+      },
+      "tasks": [
+        {
+          "id": "beg",
+          "name": "Beg for money",
+          "type": "message",
+          "message": "Give me erin, god shall bless you"
+        },
+        {
+          "id": "pick",
+          "name": "Pick up a fallen dollar bill",
+          "type": "reaction",
+          "message": "💵"
+        }
+      ]
+    },
+    "trader": {
+      "id": "trader",
+      "name": "Waifu Traders Inc",
+      "pay": {
+        "item": "erin",
+        "quantity": 420
+      },
+      "tasks": [
+        {
+          "id": "stonks",
+          "name": "Check Market Rates",
+          "type": "reaction",
+          "message": "📈,📉,📊"
+        },
+        {
+          "id": "conversion",
+          "name": "Convert currency",
+          "type": "message",
+          "message": "It costs 4 erin for 1 kanna"
+        },
+        {
+          "id": "restock",
+          "name": "Restock waifus",
+          "type": "message",
+          "message": "Rin goes in the third shelf, Noa goes in the second"
+        },
+        {
+          "id": "bargain",
+          "name": "Fight bargainers",
+          "type": "message",
+          "message": "I can't sell you, your chizuru for any lower than 300 erin"
+        }
+      ]
+    },
+    "robber": {
+      "id": "robber",
+      "name": "Waifu Robbery Corp",
+      "pay": {
+        "item": "erin",
+        "quantity": 120
+      },
+      "tasks": [
+        {
+          "id": "wallbreak",
+          "name": "Break into Waifu Traders Inc",
+          "type": "reaction",
+          "message": "🪜,🥷,🏃‍♂️,💣"
+        },
+        {
+          "id": "splitmoney",
+          "name": "Split the heist money with your teammates",
+          "type": "message",
+          "message": "I get 3 gura, you get 2 and bob gets none"
+        },
+        {
+          "id": "escape",
+          "name": "Escape the Waifu Police",
+          "type": "message",
+          "message": "They can't hear us if we sneak through"
+        }
+      ]
+    },
+    "weeb": {
+      "id": "weeb",
+      "name": "A generic weeb",
+      "pay": {
+        "item": "erin",
+        "quantity": 20
+      },
+      "tasks": [
+        {
+          "id": "anime",
+          "name": "Watch anime",
+          "type": "message",
+          "message": "Raphtalia is my favourite waifu"
+        },
+        {
+          "id": "manga",
+          "name": "Buy Manga",
+          "type": "message",
+          "message": "Attack on Titan fans just keep dropping spoilers"
+        }
+      ]
+    },
+    "doctor": {
+      "id": "doctor",
+      "name": "Sumi Healthcare",
+      "pay": {
+        "item": "erin",
+        "quantity": 700
+      },
+      "tasks": [
+        {
+          "id": "surgery",
+          "name": "Perform surgery on a weeb",
+          "type": "message",
+          "message": "Your guts are warm uwu"
+        },
+        {
+          "id": "sampletesting",
+          "name": "Test a blood sample",
+          "type": "message",
+          "message": "Your blood contains 100% blood"
+        },
+        {
+          "id": "bandages",
+          "name": "Apply bandages",
+          "type": "reaction",
+          "message": "🩹,🤕"
+        },
+        {
+          "id": "memorize",
+          "name": "Recall all the medical terms",
+          "type": "unscramble",
+          "message": "bandage,splinter,injection,vaccine,pain,blood"
+        }
+      ]
+    },
+    "artist": {
+      "id": "artist",
+      "name": "Manga Artist",
+      "pay": {
+        "item": "amelia",
+        "quantity": 2
+      },
+      "tasks": [
+        {
+          "id": "draw",
+          "name": "Draw a panel",
+          "type": "message",
+          "message": "Let's make the clothes red and the shoes black, perfect waifu"
+        },
+        {
+          "id": "refill",
+          "name": "Refill the pen's ink",
+          "type": "reaction",
+          "message": "🖊️,🖋️"
+        },
+        {
+          "id": "script",
+          "name": "Revise the keywords",
+          "type": "unscramble",
+          "message": "yamete,onii-chan,baka,arigato,watashi"
+        }
+      ]
+    },
+    "musician": {
+      "id": "musician",
+      "name": "Hobbyist Musician",
+      "pay": {
+        "item": "nico",
+        "quantity": 1
+      },
+      "tasks": [
+        {
+          "id": "slap",
+          "name": "Slap the instrument",
+          "type": "reaction",
+          "message": "🎸,🎻,🪕,🎺,🎷,🎹"
+        },
+        {
+          "id": "knowledge",
+          "name": "Practice playing by ear",
+          "type": "message",
+          "message": "And that's the G Minor chord"
+        },
+        {
+          "id": "copyright",
+          "name": "Someone stole your song, strike them",
+          "type": "reaction",
+          "message": "🚫,‼️,❌"
+        }
+      ]
+    },
+    "streamer": {
+      "id": "streamer",
+      "name": "Hololive Candidate",
+      "pay": {
+        "item": "minami",
+        "quantity": 3
+      },
+      "tasks": [
+        {
+          "id": "merch",
+          "name": "Sell your new figure to fans",
+          "type": "message",
+          "message": "hewo guys, pwease buy my new waifu pillow"
+        },
+        {
+          "id": "stream",
+          "name": "Host a livestream",
+          "type": "message",
+          "message": "So guys, we will be streaming Apex with Fubuki at 7pm EST"
+        },
+        {
+          "id": "holocharacters",
+          "name": "Unscramble the hololive characters",
+          "type": "unscramble",
+          "message": "gura,fubuki,amelia,okayu,korone,subaru,haachama,marine,flare,pekora,coco,luna,watame"
+        },
+        {
+          "id": "dance",
+          "name": "Dance for your viewers",
+          "type": "reaction",
+          "message": "💃,🤸‍♀️,👯"
+        }
+      ]
+    },
+    "aakash": {
+      "id": "aakash",
+      "name": "Become aakash",
+      "pay": {
+        "item": "erin",
+        "quantity": 30
+      },
+      "tasks": [
+        {
+          "id": "imhot",
+          "name": "Guys I'm hot",
+          "type": "message",
+          "message": "im hot uwu flush"
+        }
+      ]
+    },
+    "scientist": {
+      "id": "scientist",
+      "name": "Titan Scientists",
+      "pay": {
+        "item": "erin",
+        "quantity": 1000
+      },
+      "tasks": [
+        {
+          "id": "titanresearch",
+          "name": "Research on a titan",
+          "type": "message",
+          "message": "Titans have red blood, mm yes"
+        },
+        {
+          "id": "scan",
+          "name": "Perform a full body scan on a titan",
+          "type": "reaction",
+          "message": "🧗,🕴️"
+        },
+        {
+          "id": "titankill",
+          "name": "Call up the protagonists",
+          "type": "unscramble",
+          "message": "eren,armin,mikasa,braun"
+        }
+      ]
+    },
+    "hunter": {
+      "id": "hunter",
+      "name": "Lonely Hunter",
+      "pay": {
+        "item": "erin",
+        "quantity": 300
+      },
+      "tasks": [
+        {
+          "id": "rifle",
+          "name": "You spotted something moving in a bush, shoot it",
+          "type": "message",
+          "message": "Oh, it was just a taiga"
+        },
+        {
+          "id": "carry",
+          "name": "Carry your loot to the merchant",
+          "type": "message",
+          "message": "I demand 42 kizuna for this chicken i;ve brought you"
+        },
+        {
+          "id": "encounter",
+          "name": "You've encountered a boss, attack",
+          "type": "reaction",
+          "message": "🔫,⚔️,🛡️"
+        }
+      ]
+    }
+  }
