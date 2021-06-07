@@ -700,5 +700,15 @@
         },
         "emoji": "<:sena:820338189378125824>",
         "raw_price": 50
+    },
+    "justnya": {
+        "name": "Justnya",
+        "price": {
+            "item": "erin",
+            "quantity": 3500
+        },
+        "emoji": "<:justnya:851413300763820053>",
+        "raw_price": 3500
     }
+    
 }

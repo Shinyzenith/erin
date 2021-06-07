@@ -131,7 +131,7 @@ class Gambling(commands.Cog):
 					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 				))			 
 			luck = random.randint(1, 2)
-			await ubc.create_cooldown(ctx, 5, 60)
+			await ubc.create_cooldown(ctx, 3, 60)
 			if luck == 2:
 				user["erin"] -= quantity
 				user["erin"] += int(quantity*rr)

@@ -16,7 +16,7 @@
             "quantity": 300
         },
         "uses": 13,
-        "cooldown": 86400,
+        "cooldown": 43200,
         "per_person": 9999
     },
     "hourly": {
