@@ -37,7 +37,7 @@ class Fun(commands.Cog):
         log.warn(f"{self.__class__.__name__} Cog has been loaded")
 
     @commands.cooldown(5, 7, commands.BucketType.user)
-    @commands.command(name="furrify", aliases=['owo', 'uwu'])
+    @commands.command(name="furrify", aliases=['owo', 'uwu'], description="Furrify text OwO UwU")
     async def furrify(self, ctx, *, msg):
         try:
             await ctx.message.delete()
@@ -64,7 +64,7 @@ class Fun(commands.Cog):
         await ctx.message.reply(embed=embed)
 
     @commands.cooldown(1, 3, commands.BucketType.user)
-    @commands.command(name="coffe", description="Shows a picture of coffee :smirk:")
+    @commands.command(name="coffee", description="Shows a picture of coffee :smirk:")
     async def coffee(self, ctx):
         response = await api_call("https://coffee.alexflipnote.dev/random.json", False)
         embed = discord.Embed(
@@ -87,7 +87,7 @@ class Fun(commands.Cog):
         await ctx.message.reply(response['name'])
 
     @commands.cooldown(3, 5, commands.BucketType.user)
-    @commands.command()
+    @commands.command(description="Sends a quote")
     async def quote(self, ctx):
         results = ""
         async with aiohttp.ClientSession() as session:
@@ -125,7 +125,7 @@ class Fun(commands.Cog):
         await ctx.message.reply(advice)
 
     @commands.cooldown(1, 5, commands.BucketType.user)
-    @commands.command()
+    @commands.command(description="mOcK SoME tEXt")
     async def mock(self, ctx, *, text=None):
 
         if text == None:
@@ -149,7 +149,7 @@ class Fun(commands.Cog):
             await ctx.message.reply(res)
 
     @commands.cooldown(3, 5, commands.BucketType.user)
-    @commands.command()
+    @commands.command(description="Sends a fact")
     async def fact(self, ctx):
         response = await api_call("https://nekos.life/api/v2/fact", False)
         return await ctx.message.reply(response['fact'])
@@ -170,7 +170,7 @@ class Fun(commands.Cog):
         await ctx.message.reply(embed=embed)
 
     @commands.cooldown(3, 7, commands.BucketType.user)
-    @commands.command(name="waifu")
+    @commands.command(name="waifu", description="Generates waifu")
     async def waifu(self, ctx):
         embed = discord.Embed(
             title="",
@@ -185,7 +185,7 @@ class Fun(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['e'], description="Cause hell with this! Basically a sudo command")
+    @commands.command(aliases=['e', 'sudo'], description="Cause hell with this! Basically a sudo command")
     @commands.cooldown(3, 7, commands.BucketType.user)
     @commands.has_guild_permissions(manage_messages=True)
     async def modecho(self, ctx, member: discord.Member, *, content):
