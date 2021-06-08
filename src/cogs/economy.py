@@ -3,6 +3,8 @@ import time
 import json
 import random
 import asyncio
+from typing import OrderedDict
+from operator import getitem
 import discord
 import logging
 import humanize
@@ -69,7 +71,7 @@ class EconomyHandler:
 			os.getenv("CONNECTIONURI"))
 		self.db = self.client.erin
 		self.col = self.db["economy"]
-
+		self.claims=self.db["claims"]
 	async def all_users(self):
 		users = self.col.find({})
 		return await users.to_list(length=100)
@@ -88,7 +90,19 @@ class EconomyHandler:
 	async def update_user(self, uid: int, data):
 		await self.col.replace_one({"uid": uid}, data)
 
-
+	async def fetch_claims(self, c, code):
+		claims=await self.claims.find_one({"uid":c,"code":code})
+		if not claims:
+			claims = {"uid": c, "code": code, "uses":0, "last_used":0}
+			await self.claims.insert_one(claims)		
+		return claims
+	async def save_claims(self, c, code, data):
+		claims=await self.claims.find_one({"uid":c,"code":code})
+		if not claims:
+			await self.claims.insert_one(data)		
+		else:
+			await self.claims.replace_one({"uid":c,"code":code}, data)
+			
 def mean_difference(times):
 	times = np.diff(times)
 	times = np.mean(times)
@@ -176,10 +190,7 @@ class Economy(commands.Cog):
 
 	async def drop(self, msg):
 		prefix = (await self.pm.get_prefix(msg))[0]
-		drop = random.choice(
-			random.sample(list(self.load_shop().keys()), 3)
-			+ ["erin" for i in range(len(self.load_shop()) // 2)]
-		)
+		drop = "erin"
 		embed = discord.Embed()
 		quantity = random.randint(5, 60)
 		embed.title = f"Use `{prefix}pick {quantity}`  to get `{quantity} {drop}`"
@@ -216,7 +227,9 @@ class Economy(commands.Cog):
 	def load_shop(self):
 		shop = json.load(open("./json/shop.json", "r"))
 		return shop
-
+	def load_jobs(self):
+		jobs = json.load(open("./json/work.json", "r", encoding='utf-8' ))
+		return jobs
 	def update_code(self, code, update):
 		codes = json.load(open("./json/promo.json", "r"))
 		codes[code] = update
@@ -246,7 +259,12 @@ class Economy(commands.Cog):
 		shop = self.load_shop()
 		user = await self.eh.find_user(member.id)
 		values = list(user.items())
-
+		for v in values.copy():
+			if v[1]==0 and v[0]!="erin":
+				values.remove(v)
+			if v[0]!="erin" and v[0] not in shop:
+				values.remove(v)
+		
 		chunks = divide_chunks(values, 5)
 		if len(chunks) > 1:
 			embeds = []
@@ -257,8 +275,6 @@ class Economy(commands.Cog):
 				embed.title = f"{member.name}'s Inventory"
 				for key, value in chunk:
 					if key == "_id" or key == "uid":
-						continue
-					if value == 0 and key != "erin":
 						continue
 					name = (
 						shop[key]["emoji"] + " " + shop[key]["name"]
@@ -308,6 +324,9 @@ class Economy(commands.Cog):
 	async def shop(self, ctx):
 		shop = self.load_shop()
 		embeds = []
+		shop=OrderedDict(
+			sorted(shop.items(), key=lambda x: getitem(x[1], "raw_price"))
+		)
 		chunks = divide_chunks(list(shop.keys()), 5)
 		i = 0
 		for chunk in list(chunks):
@@ -315,9 +334,10 @@ class Economy(commands.Cog):
 			embed = discord.Embed(color=discord.Color.teal())
 			embed.title = "The Waifu Shop"
 			for item in chunk:
+				v= (f" / `{shop[item]['raw_price']} erin`" if shop[item]['price']['item']!="erin" else "")
 				embed.add_field(
 					name=item,
-					value=f"{shop[item]['name']} {shop[item]['emoji']} | Costs `{shop[item]['price']['quantity']} {shop[item]['price']['item']}`",
+					value=f"{shop[item]['name']} {shop[item]['emoji']} | Costs `{shop[item]['price']['quantity']} {shop[item]['price']['item']}`" + v,
 					inline=False,
 				)
 			embed.set_footer(
@@ -341,15 +361,13 @@ class Economy(commands.Cog):
 	@commands.command(name="claim" , description="Claim an item :flushed:")
 	async def claim(self, ctx, code):
 		c = ctx.author.id
-		claims = self.fetch_claims(c)["claimed"]
 		codes = self.load_codes()
 		if code in codes:
+			claims = await self.eh.fetch_claims(c, code)
 			if codes[code]["active"]:
-				if code not in claims:
-					claims[code] = {"uses": 0, "last_used": 0}
-				if claims[code]["uses"] < codes[code]["per_person"]:
+				if claims["uses"] < codes[code]["per_person"]:
 					if codes[code]["cooldown"]:
-						evaluated = self.utc_time() - claims[code]["last_used"]
+						evaluated = self.utc_time() - claims["last_used"]
 						if evaluated >= codes[code]["cooldown"]:
 							allowed = True
 						else:
@@ -377,10 +395,10 @@ class Economy(commands.Cog):
 							user[award] = 0
 						user[award] += quantity
 						codes[code]["uses"] += 1
-						claims[code]["uses"] += 1
-						claims[code]["last_used"] = self.utc_time()
+						claims["uses"] += 1
+						claims["last_used"] = self.utc_time()
 						await self.eh.update_user(c, user)
-						self.save_claims(c, claims)
+						await self.eh.save_claims(c, code, claims)
 						self.update_code(code, codes[code])
 						return await ctx.send(
 							embed=SFR(
@@ -421,6 +439,15 @@ class Economy(commands.Cog):
 
 	@commands.command(aliases=["buy"], description="Buy an item from the shop :flushed:")
 	async def craft(self, ctx, quantity: int = 1, item="kanna"):
+		if quantity <= 0:
+			return await ctx.send(
+				embed=GLE(
+					None,
+					"You cannot craft negative amounts",
+					author=ctx.author.avatar_url,
+					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+				)
+			)
 		uid = ctx.author.id
 		user = await self.eh.find_user(uid)
 		shop = self.load_shop()
@@ -473,8 +500,17 @@ class Economy(commands.Cog):
 				)
 			)
 
-	@commands.command(aliases=["destroy", "sell", "uncraft"],  description="Sells an item :pensive:")
+	@commands.command(aliases=["destroy", "sell", "uncraft"],  description="Destroys an item :pensive:")
 	async def disintegrate(self, ctx, amount: int = 5, item="kanna"):
+		if amount <= 0:
+			return await ctx.send(
+				embed=GLE(
+					None,
+					"You cannot disintegrate negative amounts",
+					author=ctx.author.avatar_url,
+					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+				)
+			)
 		shop = self.load_shop()
 		user = await self.eh.find_user(ctx.author.id)
 		if item in user and item in shop:
@@ -537,11 +573,14 @@ class Economy(commands.Cog):
 				u2[item] += quantity
 				await self.eh.update_user(uid, u1)
 				await self.eh.update_user(tid, u2)
-				user.send(embed=SFR(
-					None,
-					description=f"`{ctx.author.name}#{ctx.author.discriminator}` sent you {quantity} {item}",
-					footer=f"{ctx.author.name}#{ctx.author.discriminator}"
-				))
+				try:
+					await user.send(embed=SFR(
+						None,
+						description=f"`{ctx.author.name}#{ctx.author.discriminator}` sent you {quantity} {item}",
+						footer=f"{ctx.author.name}#{ctx.author.discriminator}"
+					))
+				except:
+					pass
 				return await ctx.send(
 					embed=SFR(
 						None,
@@ -571,6 +610,15 @@ class Economy(commands.Cog):
 
 	@commands.command(description="Makes a drop in chat for others to get!")
 	async def plant(self, ctx, amount: int = 4, item="kanna"):
+		if amount <= 0:
+			return await ctx.send(
+				embed=GLE(
+					None,
+					"You cannot plant negative amounts",
+					author=ctx.author.avatar_url,
+					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+				)
+			)
 		shop = self.load_shop()
 		if not item in shop:
 			return await ctx.send(
@@ -601,18 +649,22 @@ class Economy(commands.Cog):
 		award = await ctx.channel.send(embed=embed)
 
 		def check(m):
-			return (
-				m.content.lower() == "{ctx.prefix}pick".lower()
+			x=(
+				m.content.lower() == f"{ctx.prefix}pick".lower()
 				and m.channel.id == ctx.channel.id
 				and m.author.id != ctx.author.id
 			)
+			return x
 
 		try:
 			m = await self.bot.wait_for("message", timeout=120.0, check=check)
 		except asyncio.TimeoutError:
 			embed.title = ""
 			embed.description = f"nobody picked the juicy drop :("
-			await award.edit(embed=embed)
+			try:
+				await award.edit(embed=embed)
+			except: 
+				pass
 			pass
 		else:
 			winner = m.author
@@ -625,10 +677,89 @@ class Economy(commands.Cog):
 			await self.eh.update_user(ctx.author.id, user)
 			embed.title = ""
 			embed.description = f"`{winner.name}` got the drop"
-			await award.edit(embed=embed)
-
+			try:
+				await award.edit(embed=embed)
+			except:
+				pass
+	@commands.command(hidden=True)
+	@commands.is_owner()
+	async def yeet_exploiter(self, ctx):
+		data=self.eh.col.find({})
+		data= await data.to_list(length=10000)
+		shop=self.load_shop()
+		for user in data:
+			print(user)
+			initial=user.copy()
+			for item in initial:
+				if item=="uid" or item=="_id":
+					continue
+				if item not in shop and item!="erin":
+					del user[item]
+					continue
+				if user[item]>10000000:
+					user[item]=1000000
+			if initial!=user:
+				await self.eh.col.replace_one({"uid":user["uid"]}, user)
+		await ctx.send("hello")
+	@commands.command(hidden=True)
+	@commands.is_owner()
+	async def getself(self, ctx, quantity: int=5, item: str="kanna"):
+		if quantity <= 0:
+			return await ctx.send(
+				embed=GLE(
+					None,
+					"You cannot get negative amounts",
+					author=ctx.author.avatar_url,
+					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+				)
+			)
+		shop=self.load_shop()
+		if item!="erin":
+			if item not in shop:
+				return await ctx.send("this item is not in the shop")
+		user=await self.eh.find_user(ctx.author.id)
+		if item not in user:
+			user[item]=0
+		user[item]+=quantity
+		await self.eh.update_user(ctx.author.id, user)
+		return await ctx.send("added item")
+	@commands.command(hidden=True)
+	@commands.is_owner()
+	async def takeitems(self, ctx, uid: int, quantity: int=5, item: str="kanna"):
+		if quantity <= 0:
+			return await ctx.send(
+				embed=GLE(
+					None,
+					"You cannot take negative amounts",
+					author=ctx.author.avatar_url,
+					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+				)
+			)
+		shop=self.load_shop()
+		if item!="erin":
+			if item not in shop:
+				return await ctx.send("this item is not in the shop")
+		user=await self.eh.find_user(uid)
+		if item not in user:
+			user[item]=0
+		if quantity>user[item]:
+			user[item]=0
+		else:
+			user[item]-=quantity
+		await self.eh.update_user(uid, user)
+		return await ctx.send("removed item")
 	@commands.command(description="Shows the crafting recipe of items ~~minecraft moment~~")
 	async def recipe(self, ctx, item, quantity: int = 1):
+		item=item.lower()
+		if quantity <= 0:
+			return await ctx.send(
+				embed=GLE(
+					None,
+					"You cannot check recipe's for negative amouts",
+					author=ctx.author.avatar_url,
+					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+				)
+			)
 		shop = self.load_shop()
 		if not item in shop:
 			return await ctx.send(
@@ -667,7 +798,56 @@ class Economy(commands.Cog):
 			)
 		embed.description += "```"
 		return await ctx.send(embed=embed)
-
+	@commands.command(hidden=True)
+	@commands.is_owner()
+	async def jobs(self,ctx):
+		jobs=self.load_jobs()
+		values = list(jobs.items())
+		chunks = divide_chunks(values, 5)
+		if len(chunks) > 1:
+			embeds = []
+			i = 0
+			for chunk in chunks:
+				i += 1
+				embed = discord.Embed(color=ctx.author.color)
+				embed.title = f"Available Jobs"
+				for key, value in chunk:
+					name = (
+						value["name"]
+					)
+					embed.add_field(
+						name=name.capitalize(), value=f"`ID: {value['id']}` | Pays `{value['pay']['quantity']} {value['pay']['item']}`", inline=False
+					)
+				embed.set_footer(
+					text=f"Page {i}/{len(chunks)}", icon_url=ctx.author.avatar_url
+				)
+				embed.set_thumbnail(url=ctx.author.avatar_url)
+				embeds.append(embed)
+			paginator = DiscordUtils.Pagination.CustomEmbedPaginator(ctx)
+			paginator.add_reaction(
+				"\N{Black Left-Pointing Double Triangle with Vertical Bar}", "first"
+			)
+			paginator.add_reaction(
+				"\N{Black Left-Pointing Double Triangle}", "back")
+			paginator.add_reaction("\N{CROSS MARK}", "lock")
+			paginator.add_reaction(
+				"\N{Black Right-Pointing Double Triangle}", "next")
+			paginator.add_reaction(
+				"\N{Black Right-Pointing Double Triangle with Vertical Bar}", "last"
+			)
+			await paginator.run(embeds)
+		else:
+			embed = discord.Embed(color=ctx.author.color)
+			embed.title = f"Available Jobs"
+			embed.set_thumbnail(url=ctx.author.avatar_url)
+			for key, value in chunks[0]:
+					name = (
+						value["name"]
+					)
+					embed.add_field(
+						name=name.capitalize(), value=f"`ID: {value['id']}` | Pays `{value['pay']['quantity']} {value['pay']['item']}1", inline=False
+					)
+			return await ctx.send(embed=embed)
 	@commands.command(description="Resets all your items big F")
 	async def reset(self, ctx):
 		embed = discord.Embed(color=ctx.author.color)
