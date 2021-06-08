@@ -7,7 +7,7 @@ import asyncio
 import logging
 import coloredlogs
 import motor.motor_asyncio
-
+from main import isoncooldown, ubc
 from discord.ext import commands
 log = logging.getLogger("Gambling cog")
 coloredlogs.install(logger=log)
@@ -105,7 +105,7 @@ class Gambling(commands.Cog):
 		log.warn(f"{self.__class__.__name__} Cog has been loaded")
 
 	@commands.command(name="gamble" , description="Gambling addiction go brrrrrr")
-	@commands.cooldown(5, 300, commands.BucketType.user)
+	@isoncooldown
 	async def gamble(self, ctx, quantity: int = 10):
 		if quantity<=0:
 			return await ctx.send(embed=GLE(
@@ -117,13 +117,21 @@ class Gambling(commands.Cog):
 		uid = ctx.author.id
 		user = await self.eh.find_user(uid)
 		if quantity <= user["erin"]:
-			if quantity <= 5000:
+			if quantity <= 500:
 				rr = 1.25
-			if quantity <= 8000:
+			if quantity <= 800:
 				rr = 1.5
-			if quantity > 8000:
+			if quantity > 800:
 				rr = 2
+			if quantity > 2000:
+				return await ctx.send(embed=GLE(
+					None,
+					f"There is a gambling cap of 2,000 erins",
+					ctx.author.avatar_url,
+					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+				))			 
 			luck = random.randint(1, 2)
+			await ubc.create_cooldown(ctx, 3, 60)
 			if luck == 2:
 				user["erin"] -= quantity
 				user["erin"] += int(quantity*rr)
@@ -154,12 +162,12 @@ class Gambling(commands.Cog):
 			))
 
 	@commands.command(name="duel" , description="Duel someone for items 😈😈")
-	@commands.cooldown(5, 180, commands.BucketType.user)
+	@isoncooldown
 	async def duel(self, ctx, member: discord.Member = None, amount=1, item=None):
 		if amount<=0:
 			return await ctx.send(embed=GLE(
 				None,
-				"You cannot duel for negative amounts",
+				"You cannot duel for negative amounts <:taiga:820332735762530366>",
 				author=ctx.author.avatar_url,
 				footer=f"{ctx.author.name}#{ctx.author.discriminator}"
 			))
@@ -167,7 +175,7 @@ class Gambling(commands.Cog):
 		if ctx.author.id in ongoing_duel:
 			return await ctx.send(embed=GLE(
 				None,
-				f"You cannot start another duel while being in one",
+				f"You cannot start another duel while being in one <:taiga:820332735762530366> ",
 				ctx.author.avatar_url,
 				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 			))
@@ -176,7 +184,7 @@ class Gambling(commands.Cog):
 			ongoing_duel.remove(ctx.author.id)
 			return await ctx.send(embed=GLE(
 				None,
-				f"pls mention the bet for this battle",
+				f"please mention the bet for this battle <:kofuku:820337881074761758>",
 				ctx.author.avatar_url,
 				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 			))
@@ -185,7 +193,7 @@ class Gambling(commands.Cog):
 			ongoing_duel.remove(ctx.author.id)
 			return await ctx.send(embed=GLE(
 				None,
-				f"pls mention a user",
+				f"please mention a user <:kofuku:820337881074761758>",
 				ctx.author.avatar_url,
 				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 			))		
@@ -296,125 +304,129 @@ class Gambling(commands.Cog):
 					await self.eh.update_user(mid, u2)
 					ongoing_duel.remove(ctx.author.id)
 					ongoing_duel.remove(member.id)
+					await ubc.create_cooldown(ctx, 5, 180)
 					return await ctx.send(f"`{winner.name}#{winner.discriminator}` won UwU :>")
 
-	@commands.command(name="crates", description="Open a crate ~~keep gambling~~")
-	async def crates(self, ctx):
-		user = await self.eh.fetch_crates(ctx.author.id)
-		embed = discord.Embed(color=ctx.author.color)
-		embed.title = f"{ctx.author.name}'s Crates"
-		crates = self.load_crates()
-		del user["uid"]
-		del user["_id"]
-		for crate in user:
-			embed.add_field(
-				name=crates[crate]["name"],
-				value=user[crate]
-			)
-		return await ctx.send(embed=embed)
+	# lets keep crates for the future
 
-	@commands.group(name="case", aliases=['lootcase', "crate"], case_insensitive=True)
-	async def case(self, ctx):
-		if ctx.invoked_subcommand is None:
-			await ctx.message.reply(embed=GLE(
-				None,
-				"The correct format to open a case be `-case <type(basic,advanced,ultra)>`",
-				ctx.author.avatar_url,
-				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
-			))
 
-	@case.command()
-	async def basic(self, ctx):
-		user = await self.eh.fetch_crates(ctx.author.id)
-		u = await self.eh.find_user(ctx.author.id)
-		shop = self.load_shop()
-		if user["basic"] == 0:
-			return await ctx.send(embed=GLE(
-				None,
-				"You don't have any basic crates <:kofuku:820337881074761758>",
-				ctx.author.avatar_url,
-				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
-			))
-		else:
-			user["basic"] -= 1
-		weights = random.sample(range(1, 500), 3)
-		drops = self.load_crates()
-		basic_crate = drops["basic"]["items"]
-		embed = discord.Embed()
-		embed.title = "You got:"
-		embed.description = ""
-		for weight in weights:
-			item = random.choice(basic_crate)
-			if not item in u:
-				u[item] = 0
-			u[item] += weight
-			embed.description += f"\n {shop[item]['emoji']} {weight} {item}"
-			basic_crate.remove(item)
-		await self.eh.update_user(ctx.author.id, u)
-		await self.eh.update_crates(ctx.author.id, user)
-		return await ctx.send(embed=embed)
+	# @commands.command()
+	# async def crates(self, ctx):
+	# 	user = await self.eh.fetch_crates(ctx.author.id)
+	# 	embed = discord.Embed(color=ctx.author.color)
+	# 	embed.title = f"{ctx.author.name}'s Crates"
+	# 	crates = self.load_crates()
+	# 	del user["uid"]
+	# 	del user["_id"]
+	# 	for crate in user:
+	# 		embed.add_field(
+	# 			name=crates[crate]["name"],
+	# 			value=user[crate]
+	# 		)
+	# 	return await ctx.send(embed=embed)
 
-	@case.command()
-	async def advanced(self, ctx):
-		user = await self.eh.fetch_crates(ctx.author.id)
-		u = await self.eh.find_user(ctx.author.id)
-		shop = self.load_shop()
-		if user["advanced"] == 0:
-			return await ctx.send(embed=GLE(
-				None,
-				"You don't have any advanced crates <:kofuku:820337881074761758>",
-				ctx.author.avatar_url,
-				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
-			))
-		else:
-			user["advanced"] -= 1
-		weights = random.sample(range(1, 20), 3)
-		drops = self.load_crates()
-		basic_crate = drops["advanced"]["items"]
-		embed = discord.Embed()
-		embed.title = "You got:"
-		embed.description = ""
-		for weight in weights:
-			item = random.choice(basic_crate)
-			if not item in u:
-				u[item] = 0
-			u[item] += weight
-			embed.description += f"\n {shop[item]['emoji']} {weight} {item}"
-			basic_crate.remove(item)
-		await self.eh.update_user(ctx.author.id, u)
-		await self.eh.update_crates(ctx.author.id, user)
-		return await ctx.send(embed=embed)
+	# @commands.group(name="case", aliases=['lootcase', "crate"], case_insensitive=True)
+	# async def case(self, ctx):
+	# 	if ctx.invoked_subcommand is None:
+	# 		await ctx.message.reply(embed=GLE(
+	# 			None,
+	# 			"The correct format to open a case be `-case <type(basic,advanced,ultra)>`",
+	# 			ctx.author.avatar_url,
+	# 			footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+	# 		))
 
-	@case.command()
-	async def ultra(self, ctx):
-		user = await self.eh.fetch_crates(ctx.author.id)
-		u = await self.eh.find_user(ctx.author.id)
-		shop = self.load_shop()
-		if user["ultra"] == 0:
-			return await ctx.send(embed=GLE(
-				None,
-				"You don't have any ultra crates <:kofuku:820337881074761758>",
-				ctx.author.avatar_url,
-				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
-			))
-		else:
-			user["ultra"] -= 1
-		weights = random.sample(range(1, 50), 3)
-		drops = self.load_crates()
-		basic_crate = drops["ultra"]["items"]
-		embed = discord.Embed()
-		embed.title = "You got:"
-		embed.description = ""
-		for weight in weights:
-			item = random.choice(basic_crate)
-			if not item in u:
-				u[item] = 0
-			u[item] += weight
-			embed.description += f"\n {shop[item]['emoji']} {weight} {item}"
-			basic_crate.remove(item)
-		await self.eh.update_user(ctx.author.id, u)
-		await self.eh.update_crates(ctx.author.id, user)
-		return await ctx.send(embed=embed)
+	# @case.command()
+	# async def basic(self, ctx):
+	# 	user = await self.eh.fetch_crates(ctx.author.id)
+	# 	u = await self.eh.find_user(ctx.author.id)
+	# 	shop = self.load_shop()
+	# 	if user["basic"] == 0:
+	# 		return await ctx.send(embed=GLE(
+	# 			None,
+	# 			"You don't have any basic crates <:kofuku:820337881074761758>",
+	# 			ctx.author.avatar_url,
+	# 			footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+	# 		))
+	# 	else:
+	# 		user["basic"] -= 1
+	# 	weights = random.sample(range(1, 500), 3)
+	# 	drops = self.load_crates()
+	# 	basic_crate = drops["basic"]["items"]
+	# 	embed = discord.Embed()
+	# 	embed.title = "You got:"
+	# 	embed.description = ""
+	# 	for weight in weights:
+	# 		item = random.choice(basic_crate)
+	# 		if not item in u:
+	# 			u[item] = 0
+	# 		u[item] += weight
+	# 		embed.description += f"\n {shop[item]['emoji']} {weight} {item}"
+	# 		basic_crate.remove(item)
+	# 	await self.eh.update_user(ctx.author.id, u)
+	# 	await self.eh.update_crates(ctx.author.id, user)
+	# 	return await ctx.send(embed=embed)
+
+	# @case.command()
+	# async def advanced(self, ctx):
+	# 	user = await self.eh.fetch_crates(ctx.author.id)
+	# 	u = await self.eh.find_user(ctx.author.id)
+	# 	shop = self.load_shop()
+	# 	if user["advanced"] == 0:
+	# 		return await ctx.send(embed=GLE(
+	# 			None,
+	# 			"You don't have any advanced crates <:kofuku:820337881074761758>",
+	# 			ctx.author.avatar_url,
+	# 			footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+	# 		))
+	# 	else:
+	# 		user["advanced"] -= 1
+	# 	weights = random.sample(range(1, 20), 3)
+	# 	drops = self.load_crates()
+	# 	basic_crate = drops["advanced"]["items"]
+	# 	embed = discord.Embed()
+	# 	embed.title = "You got:"
+	# 	embed.description = ""
+	# 	for weight in weights:
+	# 		item = random.choice(basic_crate)
+	# 		if not item in u:
+	# 			u[item] = 0
+	# 		u[item] += weight
+	# 		embed.description += f"\n {shop[item]['emoji']} {weight} {item}"
+	# 		basic_crate.remove(item)
+	# 	await self.eh.update_user(ctx.author.id, u)
+	# 	await self.eh.update_crates(ctx.author.id, user)
+	# 	return await ctx.send(embed=embed)
+
+	# @case.command()
+	# async def ultra(self, ctx):
+	# 	user = await self.eh.fetch_crates(ctx.author.id)
+	# 	u = await self.eh.find_user(ctx.author.id)
+	# 	shop = self.load_shop()
+	# 	if user["ultra"] == 0:
+	# 		return await ctx.send(embed=GLE(
+	# 			None,
+	# 			"You don't have any ultra crates <:kofuku:820337881074761758>",
+	# 			ctx.author.avatar_url,
+	# 			footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+	# 		))
+	# 	else:
+	# 		user["ultra"] -= 1
+	# 	weights = random.sample(range(1, 50), 3)
+	# 	drops = self.load_crates()
+	# 	basic_crate = drops["ultra"]["items"]
+	# 	embed = discord.Embed()
+	# 	embed.title = "You got:"
+	# 	embed.description = ""
+	# 	for weight in weights:
+	# 		item = random.choice(basic_crate)
+	# 		if not item in u:
+	# 			u[item] = 0
+	# 		u[item] += weight
+	# 		embed.description += f"\n {shop[item]['emoji']} {weight} {item}"
+	# 		basic_crate.remove(item)
+	# 	await self.eh.update_user(ctx.author.id, u)
+	# 	await self.eh.update_crates(ctx.author.id, user)
+	# 	return await ctx.send(embed=embed)
 
 
 def setup(bot):
