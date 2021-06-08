@@ -194,6 +194,7 @@ class Economy(commands.Cog):
 		embed = discord.Embed()
 		quantity = random.randint(5, 60)
 		embed.title = f"Use `{prefix}pick {quantity}`  to get `{quantity} {drop}`"
+		embed.set_image(url="https://cdn.discordapp.com/emojis/820473033700671569.png?v=1")
 		award = await msg.channel.send(embed=embed)
 
 		def check(m):
