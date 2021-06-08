@@ -611,7 +611,7 @@ class Moderation(commands.Cog):
             except:
                 pass
             try:
-                await ctx.message.guild.ban(user, reason=reason)
+                await ctx.message.guild.ban(user, reason=reason, delete_message_days=0)
             except discord.errors.Forbidden:
                 return await ctx.message.reply(
                     f"Unable to ban {user.mention}. Make sure i have `Ban members` permission enabled."
@@ -1144,16 +1144,17 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     async def isbanned(self, ctx, user: discord.User):
         try:
-            await ctx.guild.fetch_ban(user)
+            ban = await ctx.guild.fetch_ban(user)
+            reason = ("No Reason" if not ban.reason else ban.reason)
             return await ctx.message.reply(
-                f"{user.mention} is banned from {ctx.message.guild.name}"
+                f"{user.mention} is banned from {ctx.message.guild.name} with reason: `{reason}`"
             )
         except discord.NotFound:
             return await ctx.message.reply(
                 f"{user.mention} is not banned from {ctx.message.guild.name}"
             )
 
-    @commands.command(name="fakeban", aliases=['fban'], description="Shows if a user is banned or not")
+    @commands.command(name="fakeban", aliases=['fban'], description="Fake bans")
     @commands.guild_only()
     @commands.has_guild_permissions(ban_members=True)
     async def fakeban(self, ctx, member: discord.Member = None, *, reason: str = "Reason not specified"):
@@ -1264,7 +1265,7 @@ class Moderation(commands.Cog):
 
     @commands.command(description="Shows how many people have a role", aliases=["rolemembers"])
     @commands.guild_only()
-    async def rm(self, ctx, *, role: discord.Role):
+    async def inrole(self, ctx, *, role: discord.Role):
         members = []
         for user in ctx.guild.members:
             if role in user.roles:
@@ -1327,7 +1328,7 @@ class Moderation(commands.Cog):
                         value=f'Role Permission Integer: `{role.permissions.value}`\n\nPermissions: **{permissions}**')
         await ctx.send(embed=embed)
 
-    @commands.command(name='prune')
+    @commands.command(name='prune' description="Deletes messages")
     async def prune(self, ctx, amount: int = 50):
         await ctx.message.delete()
         user = self.bot.user
