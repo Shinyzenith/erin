@@ -1328,7 +1328,7 @@ class Moderation(commands.Cog):
                         value=f'Role Permission Integer: `{role.permissions.value}`\n\nPermissions: **{permissions}**')
         await ctx.send(embed=embed)
 
-    @commands.command(name='prune' description="Deletes messages")
+    @commands.command(name='prune', description="Deletes messages")
     async def prune(self, ctx, amount: int = 50):
         await ctx.message.delete()
         user = self.bot.user

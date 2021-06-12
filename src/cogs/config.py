@@ -510,8 +510,6 @@ class Config(commands.Cog):
         return await ctx.message.reply(embed=embed)
 
     @commands.cooldown(1, 3, commands.BucketType.user)
-
-    @commands.command()
     @commands.group(name="ping", description="Shows you my ping!")
     async def ping(self, ctx):
         time_now = time.time()
