@@ -610,7 +610,7 @@ class Economy(commands.Cog):
 			)
 
 	@commands.command(description="Makes a drop in chat for others to get!")
-	async def plant(self, ctx, amount: int = 4, item="kanna"):
+	async def plant(self, ctx, amount, item):
 		if amount <= 0:
 			return await ctx.send(
 				embed=GLE(
@@ -689,7 +689,6 @@ class Economy(commands.Cog):
 		data= await data.to_list(length=10000)
 		shop=self.load_shop()
 		for user in data:
-			print(user)
 			initial=user.copy()
 			for item in initial:
 				if item=="uid" or item=="_id":

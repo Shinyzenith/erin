@@ -1,20 +1,14 @@
 import re
 import os
-import sys
 import typing
-import random
 import asyncio
-import aiohttp
 import discord
 import logging
 import humanize
 import datetime
-import traceback
 import coloredlogs
 import DiscordUtils
 from time import time
-from pytz import timezone
-from datetime import date
 import motor.motor_asyncio
 from datetime import datetime
 from discord.ext import commands, tasks
@@ -1231,7 +1225,6 @@ class Moderation(commands.Cog):
             user_boosting_since_days = str(user_boosting_since_days)+"days"
 
         user_highest_role = member.top_role.mention
-        print(user_highest_role)
         embed.add_field(name="User identity:", value=f"User mention: {member.mention}\nName and Tag: **{member.name}#{member.discriminator}**\nUser id: **{member.id}**\nServer Nickname: **{member.display_name}**\n\nBot user? **{is_user_bot}**\nServer administrator? **{user_admin}**\nAnimated avatar? **{user_animated_avatar}**\n\nBoosting since: **{user_boosting_since}**\nBoosting days: **{user_boosting_since_days}**", inline=False)
         embed.add_field(
             name="Dates:", value=f"Account created at: **{user_created_at}**\nUser account was created: **{user_created_days} days ago**\n\nJoined server at: **{user_joined_guild_at}**\nUser joined the server: **{user_joined_days} days ago**", inline=False)

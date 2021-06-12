@@ -7,13 +7,8 @@ import asyncio
 import aiohttp
 import discord
 import logging
-import humanize
-import datetime
 import traceback
 import coloredlogs
-import motor.motor_asyncio
-
-from typing import Union
 from pathlib import Path
 from discord.ext import commands, tasks
 from aiohttp import ClientResponseError
@@ -72,7 +67,6 @@ class Owner(commands.Cog):
     @commands.command(hidden=True)
     @commands.is_owner()
     async def reload(self, ctx):
-        log.info("")
         cwd = Path(__file__).parents[0]
         cwd = str(cwd)
         msg = "```"
@@ -88,8 +82,8 @@ class Owner(commands.Cog):
                     f"[+] Reloaded cogs.{file[:-3]} by {ctx.message.author.display_name}#{ctx.message.author.discriminator}  -  {ctx.message.author.id}"
                 )
         msg += "```"
-        log.info("")
         return await ctx.message.reply(msg)
+    
     @commands.command(hidden=True)
     @commands.is_owner()
     async def botban(self, ctx, uid: int):

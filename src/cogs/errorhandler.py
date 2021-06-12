@@ -1,15 +1,12 @@
 # imports
 import os
-import pickle
 import discord
 import aiohttp
 import logging
 import traceback
 import coloredlogs
-import datetime as dt
 from io import StringIO
 from discord.ext import commands
-import humanize
 
 from main import BotBan, CooldownError
 

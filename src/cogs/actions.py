@@ -1,10 +1,6 @@
-import json
-import typing
 import aiohttp
-import asyncio
 import discord
 import logging
-import requests
 import coloredlogs
 
 from discord.ext import commands

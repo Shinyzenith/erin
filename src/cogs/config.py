@@ -2,13 +2,11 @@ import os
 import sys
 import time
 import psutil
-import asyncio
 import aiohttp
 import discord
 import logging
 import humanize
 import datetime
-import traceback
 import coloredlogs
 import motor.motor_asyncio
 
