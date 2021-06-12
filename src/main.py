@@ -136,11 +136,9 @@ class UserBanClient:
                     period = humanize.naturaldelta(dt.timedelta(
                         seconds=int(float(cooldown["time"]))-time.time()))
                     raise CooldownError(f'Try again in {period}')
-                    return False
                 else:
                     return True
             else:
-                log.warn("No longer in cooldown")
                 await self.col2.delete_one({"uid": ctx.author.id, "cmd": ctx.command.name})
                 return True
 
