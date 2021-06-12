@@ -231,7 +231,7 @@ class Moderation(commands.Cog):
     async def on_ready(self):
         log.warn(f"{self.__class__.__name__} Cog has been loaded")
 
-    @commands.command(name="warn", aliases=["strike"])
+    @commands.command(name="warn", aliases=["strike"], description="Warn a user")
     @commands.has_permissions(manage_messages=True)
     @commands.guild_only()
     async def warn(self, ctx, user: discord.Member, *, reason: str):
@@ -312,7 +312,7 @@ class Moderation(commands.Cog):
             pass
         # editing the reason of a warn that was entered prior
 
-    @commands.command(name="reason", aslias=["rs"])
+    @commands.command(name="reason", aslias=["rs"], description="Changes a warn/strike reason")
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
     async def reason(self, ctx, searchUser: discord.User, warnID: int, *, reason: str = None):
@@ -372,7 +372,7 @@ class Moderation(commands.Cog):
             pass
         return await ctx.send(embed=channelEmbed)
 
-    @ commands.command(name="search", aliases=["warns"])
+    @ commands.command(name="search", aliases=["warns"], description="Shows a users punishments")
     @ commands.guild_only()
     async def search(self, ctx, searchUser: discord.User):
         user = await self.dbHandler.find_user(str(searchUser.id), ctx.message.guild.id)
@@ -444,7 +444,7 @@ class Moderation(commands.Cog):
             )
             return await paginator.run(embeds)
 
-    @commands.command()
+    @commands.command(name="delpunishments", description="Deletes __**ALL**__ punishments")
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def delpunishments(self, ctx, user: discord.User):
@@ -506,7 +506,7 @@ class Moderation(commands.Cog):
                     f"\N{CROSS MARK} reaction recieved ...cancelling process"
                 )
 
-    @commands.command()
+    @commands.command(name="ban" , description="Bans a user")
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     async def ban(
@@ -621,7 +621,7 @@ class Moderation(commands.Cog):
         await self.dbHandler.update_user_warn(str(user.id), userData)
         return await ctx.message.reply(embed=channelEmbed)
 
-    @commands.command()
+    @commands.command(name="softban" , description="Softbans a user which bans them and quickly unbans them to purge thier messages")
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     async def softban(
@@ -732,7 +732,7 @@ class Moderation(commands.Cog):
         await self.dbHandler.update_user_warn(str(user.id), userData)
         return await ctx.message.reply(embed=channelEmbed)
 
-    @commands.command()
+    @commands.command(name="unban", description="Unbans a user")
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     async def unban(
@@ -823,7 +823,7 @@ class Moderation(commands.Cog):
             )
             return await ctx.send(embed=channelEmbed)
 
-    @commands.command()
+    @commands.command(name="rmpunish", description="Removes a punishment")
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
     async def rmpunish(self, ctx, user: discord.User, warn: int = None):
@@ -864,7 +864,7 @@ class Moderation(commands.Cog):
             pass
         await ctx.reply(embed=embed)
 
-    @commands.command()
+    @commands.command(name="mute", description="Mutes a user")
     @commands.has_guild_permissions(mute_members=True)
     async def mute(self, ctx, member: discord.Member, mute_period: str, *, reason: str):
         try:
@@ -970,7 +970,7 @@ class Moderation(commands.Cog):
             str(member.id), mutedExpireTime, mutedAt, ctx.message.guild.id, reason
         )
 
-    @commands.command()
+    @commands.command(name="unmute", description="Unmutes a user")
     @commands.has_guild_permissions(mute_members=True)
     async def unmute(self, ctx, member: discord.Member, *, reason: str):
         if len(reason) > 150:
@@ -1053,7 +1053,7 @@ class Moderation(commands.Cog):
         except:
             pass
 
-    @commands.command()
+    @commands.command(name="kick", description="Kicks a user")
     @commands.guild_only()
     @commands.has_guild_permissions(kick_members=True)
     async def kick(
@@ -1140,7 +1140,7 @@ class Moderation(commands.Cog):
         await self.dbHandler.update_user_warn(str(user.id), userData)
         return await ctx.message.reply(embed=channelEmbed)
 
-    @commands.command()
+    @commands.command(name="isbanned", description="Shows if a user is banned or not")
     @commands.guild_only()
     async def isbanned(self, ctx, user: discord.User):
         try:
@@ -1154,7 +1154,7 @@ class Moderation(commands.Cog):
                 f"{user.mention} is not banned from {ctx.message.guild.name}"
             )
 
-    @commands.command(name="fakeban", aliases=['fban'])
+    @commands.command(name="fakeban", aliases=['fban'], description="Fake bans")
     @commands.guild_only()
     @commands.has_guild_permissions(ban_members=True)
     async def fakeban(self, ctx, member: discord.Member = None, *, reason: str = "Reason not specified"):
@@ -1176,7 +1176,7 @@ class Moderation(commands.Cog):
             name="Banned:", value=f"{member.mention} - {member.id}", inline=False)
         await ctx.send(embed=embed)
 
-    @commands.command(pass_context=True)
+    @commands.command(pass_context=True, description="Shows info about a user")
     @commands.guild_only()
     async def whois(self, ctx, *, member: discord.Member = None):
         if not member:  # if member is no mentioned
@@ -1251,7 +1251,7 @@ class Moderation(commands.Cog):
                          icon_url=self.bot.user.avatar_url)
         await ctx.send(embed=embed)
 
-    @commands.command(pass_context=True)
+    @commands.command(pass_context=True, description="Shows a users avatar")
     async def avatar(self, ctx, *, member: discord.Member = None):
         if not member:
             member = ctx.author
@@ -1263,7 +1263,7 @@ class Moderation(commands.Cog):
         embed.set_footer(text=f"Requested by {ctx.author}")
         await ctx.message.channel.send(embed=embed)
 
-    @commands.command()
+    @commands.command(description="Shows how many people have a role", aliases=["rolemembers"])
     @commands.guild_only()
     async def inrole(self, ctx, *, role: discord.Role):
         members = []
@@ -1303,7 +1303,7 @@ class Moderation(commands.Cog):
             '\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}', "last")
         await paginator.run(embeds)
 
-    @commands.command(name='roleinfo', aliases=['ri'])
+    @commands.command(name='roleinfo', aliases=['ri'], description=('Shows info about a role'))
     async def roleinfo_command(self, ctx, *, role: discord.Role = None):
         if not role:
             return await ctx.send("Mention a role / enter role id / type out a role name (case sensitive).")
@@ -1328,7 +1328,7 @@ class Moderation(commands.Cog):
                         value=f'Role Permission Integer: `{role.permissions.value}`\n\nPermissions: **{permissions}**')
         await ctx.send(embed=embed)
 
-    @commands.command(name='prune')
+    @commands.command(name='prune' description="Deletes messages")
     async def prune(self, ctx, amount: int = 50):
         await ctx.message.delete()
         user = self.bot.user

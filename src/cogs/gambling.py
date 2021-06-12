@@ -103,8 +103,8 @@ class Gambling(commands.Cog):
 	@commands.Cog.listener()
 	async def on_ready(self):
 		log.warn(f"{self.__class__.__name__} Cog has been loaded")
-
-	@commands.command()
+    
+	@commands.command(name="gamble" , description="Gambling addiction go brrrrrr")
 	@isoncooldown
 	async def gamble(self, ctx, quantity: int = 10):
 		if quantity<=0:
@@ -161,7 +161,8 @@ class Gambling(commands.Cog):
 				footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 			))
 
-	@commands.command()
+
+	@commands.command(name="duel" , description="Duel someone for items 😈😈")
 	@isoncooldown
 	async def duel(self, ctx, member: discord.Member = None, amount=1, item=None):
 		if amount<=0:

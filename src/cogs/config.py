@@ -256,7 +256,7 @@ class Config(commands.Cog):
                     pass
 
     # prefix manager sub command
-    @commands.group(name="prefix", aliases=["setprefix"], case_insensitive=True)
+    @commands.group(name="prefix", aliases=["setprefix"], case_insensitive=True, description="Sets my prefix!")
     @commands.cooldown(10, 120, commands.BucketType.guild)
     @commands.has_permissions(manage_guild=True)
     async def prefix(self, ctx):
@@ -350,7 +350,7 @@ class Config(commands.Cog):
             embed.description = f"`{prefix}` was already in the guild prefix list"
         return await ctx.message.reply(embed=embed)
 
-    @commands.group(name="muterole", case_insensitive=True)
+    @commands.group(name="muterole", case_insensitive=True, description="Sets up a `Muted` role!")
     @commands.cooldown(10, 120, commands.BucketType.guild)
     @commands.has_permissions(manage_guild=True)
     async def muterole(self, ctx):
@@ -411,7 +411,7 @@ class Config(commands.Cog):
         )
         return await ctx.message.reply(embed=embed)
 
-    @commands.group(name="banappeal", case_insensitive=True)
+    @commands.group(name="banappeal", case_insensitive=True, description="Sets the ban appeal link")
     @commands.cooldown(10, 120, commands.BucketType.guild)
     @commands.has_permissions(manage_guild=True)
     async def banappeal(self, ctx):
@@ -458,7 +458,7 @@ class Config(commands.Cog):
         )
         return await ctx.message.reply(embed=embed)
 
-    @commands.group(name="currencygen", case_insensitive=True)
+    @commands.group(name="currencygen", case_insensitive=True, description="Sets the `drop/pick` channel")
     @commands.cooldown(10, 120, commands.BucketType.guild)
     @commands.has_permissions(manage_guild=True)
     async def currencygen(self, ctx):
@@ -510,7 +510,9 @@ class Config(commands.Cog):
         return await ctx.message.reply(embed=embed)
 
     @commands.cooldown(1, 3, commands.BucketType.user)
+
     @commands.command()
+    @commands.group(name="ping", description="Shows you my ping!")
     async def ping(self, ctx):
         time_now = time.time()
         msg = await ctx.message.reply(
@@ -594,10 +596,13 @@ class Config(commands.Cog):
         name="invite", description="Get a invite link to add me to your server"
     )
     async def invite(self, ctx):
+
         perms = discord.Permissions.all()
+        
         await ctx.send(
             f"<{discord.utils.oauth_url(self.bot.user.id, permissions=perms)}>"
         )
+        
 
 
 def setup(bot):
