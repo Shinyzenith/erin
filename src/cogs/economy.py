@@ -610,7 +610,7 @@ class Economy(commands.Cog):
 			)
 
 	@commands.command(description="Makes a drop in chat for others to get!")
-	async def plant(self, ctx, amount, item):
+	async def plant(self, ctx, amount: int, item):
 		if amount <= 0:
 			return await ctx.send(
 				embed=GLE(
