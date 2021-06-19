@@ -1323,7 +1323,10 @@ class Moderation(commands.Cog):
 
     @commands.command(name='prune', description="Deletes messages")
     async def prune(self, ctx, amount: int = 50):
-        await ctx.message.delete()
+        try:
+            await ctx.message.delete()
+        except:
+            pass
         user = self.bot.user
         global counter
         counter = 0
