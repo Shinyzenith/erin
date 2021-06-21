@@ -208,6 +208,7 @@ class Economy(commands.Cog):
 		except asyncio.TimeoutError:
 			embed.title = ""
 			embed.description = f"nobody picked the juicy drop :("
+			embed.set_image(url="https://cdn.discordapp.com/emojis/856411166845567006.png?v=1")
 			await award.edit(embed=embed)
 			pass
 		else:
@@ -219,6 +220,7 @@ class Economy(commands.Cog):
 			await self.eh.update_user(winner.id, udata)
 			embed.title = ""
 			embed.description = f"`{winner.name}` got the drop"
+			embed.set_image(url="https://cdn.discordapp.com/emojis/856411166765744168.png?v=1")
 			await award.edit(embed=embed)
 
 	def load_codes(self):
@@ -662,6 +664,7 @@ class Economy(commands.Cog):
 		except asyncio.TimeoutError:
 			embed.title = ""
 			embed.description = f"nobody picked the juicy drop :("
+			embed.set_footer(text="")
 			try:
 				await award.edit(embed=embed)
 			except: 
@@ -678,6 +681,7 @@ class Economy(commands.Cog):
 			await self.eh.update_user(ctx.author.id, user)
 			embed.title = ""
 			embed.description = f"`{winner.name}` got the drop"
+			embed.set_footer(text="")
 			try:
 				await award.edit(embed=embed)
 			except:
