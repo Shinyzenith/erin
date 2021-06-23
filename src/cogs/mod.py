@@ -12,7 +12,7 @@ from time import time
 import motor.motor_asyncio
 from datetime import datetime
 from discord.ext import commands, tasks
-
+from main import ubc, isoncooldown
 # Initializing the logger
 log = logging.getLogger("Moderation cog")
 coloredlogs.install(logger=log)
@@ -1322,6 +1322,7 @@ class Moderation(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command(name='prune', description="Deletes messages")
+    @isoncooldown
     async def prune(self, ctx, amount: int = 50):
         try:
             await ctx.message.delete()
@@ -1343,6 +1344,7 @@ class Moderation(commands.Cog):
                 return False
         try:
             deleted = await ctx.channel.purge(limit=amount, check=check)
+            await ubc.create_cooldown(ctx, 2,180)
         except:
             pass
 # TODO if bot if offline and they're muted with lets say something like another bot and then they're meant to be unmuted with erin then we don't have the log in mutes collection so we need to make sure that if they have the role then we'll just try to remove it and add a warn owo

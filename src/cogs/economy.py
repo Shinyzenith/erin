@@ -11,7 +11,7 @@ import humanize
 import coloredlogs
 import DiscordUtils
 import motor.motor_asyncio
-
+from main import isoncooldown, ubc
 import numpy as np
 import datetime as dt
 
@@ -612,6 +612,7 @@ class Economy(commands.Cog):
 			)
 
 	@commands.command(description="Makes a drop in chat for others to get!")
+	@isoncooldown
 	async def plant(self, ctx, amount: int, item):
 		if amount <= 0:
 			return await ctx.send(
@@ -650,7 +651,7 @@ class Economy(commands.Cog):
 		)
 		embed.set_footer(text=f"Pick it up using {ctx.prefix}pick")
 		award = await ctx.channel.send(embed=embed)
-
+		await ubc.create_cooldown(ctx, 1, 300)
 		def check(m):
 			x=(
 				m.content.lower() == f"{ctx.prefix}pick".lower()

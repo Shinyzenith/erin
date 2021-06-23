@@ -81,10 +81,10 @@ class ErrorHandler(commands.Cog):
                          icon_url=ctx.message.author.avatar_url)
         if isinstance(error, CooldownError):
             embed.description=str(error)
-            return await ctx.send(embed=embed )
+            return await ctx.send(embed=embed, delete_after=10)
         if isinstance(error,  BotBan):
             embed.description=str(error)
-            return await ctx.send(embed=embed )
+            return await ctx.send(embed=embed, delete_after=10 )
         error = getattr(error, 'original', error)
 
         if isinstance(error, discord.errors.Forbidden):
