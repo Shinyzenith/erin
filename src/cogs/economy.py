@@ -194,7 +194,22 @@ class Economy(commands.Cog):
 		embed = discord.Embed()
 		quantity = random.randint(5, 60)
 		embed.title = f"Use `{prefix}pick {quantity}`  to get `{quantity} {drop}`"
-		embed.set_image(url="https://cdn.discordapp.com/emojis/820473033700671569.png?v=1")
+		urls=[
+			"https://cdn.discordapp.com/emojis/857587189150908427.png?v=1",
+			"https://cdn.discordapp.com/emojis/721165247355813919.png?v=1",
+			"https://cdn.discordapp.com/emojis/820473033700671569.png?v=1"
+		]
+		failed_urls=[
+			"https://cdn.discordapp.com/emojis/795494641654169601.png?v=1",
+			"https://cdn.discordapp.com/emojis/856411166845567006.png?v=1",
+			"https://cdn.discordapp.com/emojis/757313492188397639.png?v=1"
+		]
+		happy_responses=[
+			"https://cdn.discordapp.com/emojis/828306221299269713.gif?v=1",
+			"https://cdn.discordapp.com/emojis/725698510472872016.png?v=1",
+			"https://cdn.discordapp.com/emojis/856411166765744168.png?v=1"
+		]
+		embed.set_image(url=random.choice(urls))
 		award = await msg.channel.send(embed=embed)
 
 		def check(m):
@@ -208,7 +223,7 @@ class Economy(commands.Cog):
 		except asyncio.TimeoutError:
 			embed.title = ""
 			embed.description = f"nobody picked the juicy drop :("
-			embed.set_image(url="https://cdn.discordapp.com/emojis/856411166845567006.png?v=1")
+			embed.set_image(url=random.choice(failed_urls))
 			await award.edit(embed=embed)
 			pass
 		else:
@@ -220,7 +235,7 @@ class Economy(commands.Cog):
 			await self.eh.update_user(winner.id, udata)
 			embed.title = ""
 			embed.description = f"`{winner.name}` got the drop"
-			embed.set_image(url="https://cdn.discordapp.com/emojis/856411166765744168.png?v=1")
+			embed.set_image(url=random.choice(happy_responses))
 			await award.edit(embed=embed)
 
 	def load_codes(self):
