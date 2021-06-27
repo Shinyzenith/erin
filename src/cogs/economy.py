@@ -800,13 +800,27 @@ class Economy(commands.Cog):
 		return await ctx.send("removed item")
 
 	@commands.command(description="Shows the crafting recipe of items ~~minecraft moment~~")
-	async def recipe(self, ctx, item, quantity: int = 1):
+	async def recipe(self, ctx, item, quantity: str="1"):
+		if item.isdigit():
+			item, quantity=str(quantity), int(item)
+		else:
+			if not quantity.isdigit():
+				return await ctx.send(
+					embed=GLE(
+						None,
+						"Please specify a valid amount",
+						author=ctx.author.avatar_url,
+						footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+					)
+				)
+			else:
+				item, quantity=str(item), int(quantity)
 		item=item.lower()
 		if quantity <= 0:
 			return await ctx.send(
 				embed=GLE(
 					None,
-					"You cannot check recipe's for negative amouts",
+					"You cannot check recipe's for negative amounts",
 					author=ctx.author.avatar_url,
 					footer=f"{ctx.author.name}#{ctx.author.discriminator}",
 				)
