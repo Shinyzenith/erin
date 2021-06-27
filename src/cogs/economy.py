@@ -270,11 +270,41 @@ class Economy(commands.Cog):
 		return int(datetime.now().timestamp())
 
 	@commands.command(name="inv" , description="Shows your inventory")
-	async def inv(self, ctx, member: discord.Member = None):
-		if not member:
-			member = ctx.message.author
-		name = member.name
+	async def inv(self, ctx, item: str=None):
+		member=ctx.author
 		shop = self.load_shop()
+		if item:
+			if item!="erin" and item not in shop:
+				try:
+					converter=commands.MemberConverter()
+					member= await converter.convert(ctx, item)
+				except:
+					return await ctx.send(
+						embed=GLE(
+							None,
+							f"Specified item is not in shop",
+							ctx.author.avatar_url,
+							footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+						),
+						delete_after=5
+					)
+			else:
+				user = await self.eh.find_user(member.id)
+				if item not in user:
+					return await ctx.send(
+						embed=GLE(
+							None,
+							f"Member doesn't have the specified item",
+							ctx.author.avatar_url,
+							footer=f"{ctx.author.name}#{ctx.author.discriminator}",
+						),
+						delete_after=5
+					)
+				embed=discord.Embed(colour=member.colour)
+				embed.title=f"{member.name}'s Inventory"
+				embed.description=f"`{user[item]} {item}`"	
+				return await ctx.send(embed=embed)	
+		name=member.name	
 		user = await self.eh.find_user(member.id)
 		values = list(user.items())
 		for v in values.copy():
@@ -289,7 +319,7 @@ class Economy(commands.Cog):
 			i = 0
 			for chunk in chunks:
 				i += 1
-				embed = discord.Embed(color=ctx.author.color)
+				embed = discord.Embed(color=member.color)
 				embed.title = f"{member.name}'s Inventory"
 				for key, value in chunk:
 					if key == "_id" or key == "uid":
@@ -303,9 +333,9 @@ class Economy(commands.Cog):
 						name=name.capitalize(), value=f"{value}", inline=False
 					)
 				embed.set_footer(
-					text=f"Page {i}/{len(chunks)}", icon_url=ctx.author.avatar_url
+					text=f"Page {i}/{len(chunks)}", icon_url=member.avatar_url
 				)
-				embed.set_thumbnail(url=ctx.author.avatar_url)
+				embed.set_thumbnail(url=member.avatar_url)
 				embeds.append(embed)
 			paginator = DiscordUtils.Pagination.CustomEmbedPaginator(ctx)
 			paginator.add_reaction(
@@ -321,9 +351,9 @@ class Economy(commands.Cog):
 			)
 			await paginator.run(embeds)
 		else:
-			embed = discord.Embed(color=ctx.author.color)
+			embed = discord.Embed(color=member.color)
 			embed.title = f"{name}'s Inventory"
-			embed.set_thumbnail(url=ctx.author.avatar_url)
+			embed.set_thumbnail(url=member.avatar_url)
 			for key, value in chunks[0]:
 				if key == "_id" or key == "uid":
 					continue
