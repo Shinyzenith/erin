@@ -270,7 +270,7 @@ class Economy(commands.Cog):
 		return int(datetime.now().timestamp())
 
 	@commands.command(name="inv" , description="Shows your inventory")
-	async def inv(self, ctx, item: str=None):
+	async def inv(self, ctx, *, item: str=None):
 		member=ctx.author
 		shop = self.load_shop()
 		if item:
@@ -694,6 +694,7 @@ class Economy(commands.Cog):
 		embed.title = (
 			f"{ctx.author.name}#{ctx.author.discriminator} dropped `{amount} {item}`"
 		)
+		embed.set_image(url="https://cdn.discordapp.com/attachments/848228982880206898/859020843237507072/tenor.gif")
 		embed.set_footer(text=f"Pick it up using {ctx.prefix}pick")
 		award = await ctx.channel.send(embed=embed)
 		await ubc.create_cooldown(ctx, 1, 300)
@@ -709,7 +710,8 @@ class Economy(commands.Cog):
 			m = await self.bot.wait_for("message", timeout=120.0, check=check)
 		except asyncio.TimeoutError:
 			embed.title = ""
-			embed.description = f"nobody picked the juicy drop :("
+			embed.description = f"nobody picked the juicy drop"
+			embed.set_image(url="https://cdn.discordapp.com/attachments/534761264967188500/859022146172092416/sadge.png")
 			embed.set_footer(text="")
 			try:
 				await award.edit(embed=embed)
@@ -727,6 +729,7 @@ class Economy(commands.Cog):
 			await self.eh.update_user(ctx.author.id, user)
 			embed.title = ""
 			embed.description = f"`{winner.name}` got the drop"
+			embed.set_image(url="https://cdn.discordapp.com/attachments/534761264967188500/859022526625349652/happyge.png")
 			embed.set_footer(text="")
 			try:
 				await award.edit(embed=embed)
