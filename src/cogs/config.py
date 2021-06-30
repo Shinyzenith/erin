@@ -588,16 +588,24 @@ class Config(commands.Cog):
         delta = datetime.datetime.utcnow() - self.bot.startup_time
         await ctx.send(f"I started up {humanize.precisedelta(delta)} ago")
 
-    @commands.command(
-        name="invite", description="Get a invite link to add me to your server"
-    )
+    @commands.command(name="invite", description="Get a invite link to add me to your server")
     async def invite(self, ctx):
 
         perms = discord.Permissions.all()
-        
-        await ctx.send(
-            f"<{discord.utils.oauth_url(self.bot.user.id, permissions=perms)}>"
+
+        em = discord.Embed(color=discord.Color.blurple())
+
+        em.set_author(name=self.bot.user.name,
+                      icon_url=self.bot.user.avatar_url)
+        em.set_thumbnail(url=ctx.message.author.avatar_url)
+        em.add_field(
+            name="Invite Me!",
+            inline=False,
+            value=f"[Click Here](<{discord.utils.oauth_url(self.bot.user.id, permissions=perms)}>)",
         )
+        
+        em.set_footer(text=f"{ctx.author}", icon_url=ctx.message.author.avatar_url)
+        await ctx.send(embed=em)
         
 
 
