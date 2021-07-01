@@ -46,18 +46,22 @@
   Make sure to link the GitHub page or credit Erin if u do decide to fork or host a local instance of Erin!
 </p>
 
-<h3>Contribute</h3>
+<h2>Contribute</h2>
 
   Hey! we're certainly not pros when it comes to bot making, the bot does have some very clunky parts when it comes to caching and general code quality. We are working around the clock to make it better. 
   We appreciate any support we can get from the community, including Patreon donations (coming soon!) and/or GitHub PR's with code quality fixes!!!
   <br>
-  Note: The API & dashboard are still under development! and credits to <a href="https://nekos.life">https://nekos.life</a> for the image API!
+  Note: The API & dashboard are still under development! and credits to <a href="https://nekos.life">https://nekos.life </a> for the image API!
 
-  <h4>Run locally</h4>
+  <h3>Monetary support</h3>
+
+  Patreon donations are coming soon! 
+
+  <h3>Run locally</h3>
   
-  If you want to run Erin locally, you'll need to set a couple things up.
+  If you want to run Erin locally, you'll need to set a couple of things up.
 
-  <h5>Step 1: Fork, clone, and open on your machine</h5>
+  <h4>Step 1: Fork, clone, and open on your machine</h4>
 
   You'll first want fork the repo and clone it to your machine! 
   First, go to <a href="https://github.com/AakashSharma7269/erin">https://github.com/AakashSharma7269/erin </a> and click the <code>Fork</code> button in the top right.
@@ -67,7 +71,7 @@
   <br>
   Then, create a virtual environment (highly recommended but not required) and install all the dependencies in <a href="https://github.com/AakashSharma7269/erin/blob/main/requirements.txt"><code>requirements.txt</code></a>.
 
-  <h5>Step 2: Download and install MongoDB</h5>
+  <h4>Step 2: Download and install MongoDB</h4>
 
   Erin the bot uses MongoDB for storing data. 
   If you do not have it installed on your machine, go to <a href=https://www.mongodb.com/try/download>https://www.mongodb.com/try/download </a> and download a server installer for your OS. 
@@ -75,7 +79,7 @@
   (It will take a couple of minutes, so you can just keep it running in the background)
   Once it is finished you can close out the installer. 
   
-  <h5>Step 3: Create a Discord bot.</h5>
+  <h4>Step 3: Create a Discord bot.</h4>
   
   Create a new application in your <a href="https://discord.com/developers/applications">developer portal page</a> on Discord and call it something like "ErinTestApp." 
   Then create a new bot for that application and call it something like "ErinTest." 
@@ -84,12 +88,12 @@
   For the permissions, you can just select <code>administrator</code> instead of manually selecting them all.
   You will also need to go to the "bot" tab and enable the server members and presence intents.
 
-  <h5>Step 4: Fill in the variables in the <code>.env</code> file</h5>
+  <h4>Step 4: Fill in the variables in the <code>.env</code> file</h4>
   
   At the repo root, create a new file and call it <code>.env</code>. 
   (you probably shouldn't commit it so don't add it / gitignore it)
   Copy and paste the contents of <a href="https://github.com/AakashSharma7269/erin/blob/main/demo.env"><code>demo.env</code></a> into the <code>.env</code> file you just made and fill in the Discord bot token and type <code>localhost</code> for the MongoDB URI, or another URI if you are using a database hosted in the cloud.
 
-  <h5>Step 5: Run!</h5>
+  <h4>Step 5: Run!</h4>
 
   Run the bot by running <code>starterin.sh</code> or <code>starterin.bat</code> depending on your OS. (<code>.sh</code> is for macOS and Linux and <code>.bat</code> is for Windows)
