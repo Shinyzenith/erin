@@ -209,7 +209,7 @@ class Fun(commands.Cog):
     @commands.command(name="stock", aliases=['stocks'], description="Gets information about a stock.") # documentation at https://polygon.io/docs/
     async def stock(self, ctx, stock, date: str = ""):
         await ctx.message.delete()
-        api_key = "tjNuEfAGYZeUj23ZySSnpHeEjSeGEMlu" # The API is free to use at https://polygon.io/
+        api_key = "<INSERT_KEY_HERE>" # The API is free to use at https://polygon.io -- ratelimit is high enough that it won't be an issue.
         try:
             # First, detemine if the date argument has a regular date in it
             try:
@@ -274,7 +274,7 @@ class Fun(commands.Cog):
                 color=ctx.message.author.color,
                 timestamp=ctx.message.created_at
             )
-            embed.add_field(name="Error", value="Could not get stock data.", inline=False)
+            embed.add_field(name="Error", value="Could not get stock data. ", inline=False)
             embed.set_author(name=self.bot.user.display_name,
                              icon_url=self.bot.user.avatar_url)
             await ctx.send(embed=embed)
