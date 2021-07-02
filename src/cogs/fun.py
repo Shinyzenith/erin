@@ -1,3 +1,4 @@
+
 import json
 import random
 import discord
@@ -5,6 +6,7 @@ import aiohttp
 import logging
 import coloredlogs
 
+from datetime import datetime, timedelta
 from discord.ext import commands
 
 log = logging.getLogger("fun cog")
