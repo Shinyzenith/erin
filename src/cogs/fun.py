@@ -216,6 +216,7 @@ class Fun(commands.Cog):
                       description="Gets information about a stock.")  # documentation at https://polygon.io/docs/
     async def stock(self, ctx, stock, date: str = ""):
         api_key = os.getenv("POLYGON_API_KEY")  # The API is free to use at https://polygon.io/
+        stock = stock.upper()
         try:
             # First, detemine if the date argument has a regular date in it
             try:
