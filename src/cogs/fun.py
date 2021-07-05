@@ -1,10 +1,12 @@
 import json
+import os
 import random
 import discord
 import aiohttp
 import logging
 import coloredlogs
 
+from datetime import datetime, timedelta
 from discord.ext import commands
 
 log = logging.getLogger("fun cog")
@@ -54,7 +56,8 @@ class Fun(commands.Cog):
             description=response['response']
         )
         embed.set_footer(
-            text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}", icon_url=ctx.message.author.avatar_url)
+            text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",
+            icon_url=ctx.message.author.avatar_url)
         embed.set_author(name=self.bot.user.display_name,
                          icon_url=self.bot.user.avatar_url)
         embed.set_image(url=response['url'])
@@ -70,7 +73,8 @@ class Fun(commands.Cog):
             timestamp=ctx.message.created_at
         )
         embed.set_footer(
-            text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}", icon_url=ctx.message.author.avatar_url)
+            text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",
+            icon_url=ctx.message.author.avatar_url)
         embed.set_author(name=self.bot.user.display_name,
                          icon_url=self.bot.user.avatar_url)
         embed.set_image(url=response['file'])
@@ -105,7 +109,8 @@ class Fun(commands.Cog):
                               color=ctx.message.author.color, timestamp=ctx.message.created_at)
         embed.set_image(url=response['file'])
         embed.set_footer(
-            text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}", icon_url=ctx.message.author.avatar_url)
+            text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",
+            icon_url=ctx.message.author.avatar_url)
         embed.set_author(name=self.bot.user.display_name,
                          icon_url=self.bot.user.avatar_url)
         await ctx.message.reply(embed=embed)
@@ -160,7 +165,8 @@ class Fun(commands.Cog):
             timestamp=ctx.message.created_at
         )
         embed.set_footer(
-            text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}", icon_url=ctx.message.author.avatar_url)
+            text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",
+            icon_url=ctx.message.author.avatar_url)
         embed.set_author(name=self.bot.user.display_name,
                          icon_url=self.bot.user.avatar_url)
         embed.set_image(url=await api_call("https://nekos.life/api/v2/img/goose"))
@@ -175,7 +181,8 @@ class Fun(commands.Cog):
             timestamp=ctx.message.created_at
         )
         embed.set_footer(
-            text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}", icon_url=ctx.message.author.avatar_url)
+            text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",
+            icon_url=ctx.message.author.avatar_url)
         embed.set_author(name=self.bot.user.display_name,
                          icon_url=self.bot.user.avatar_url)
         embed.set_image(url=await api_call("https://nekos.life/api/v2/img/waifu"))
@@ -193,7 +200,7 @@ class Fun(commands.Cog):
         for webhook in current_webhooks:
             if webhook.name == "Erin bot webhook":
                 webhook_count.append(webhook)
-        if(len(webhook_count) > 1):
+        if (len(webhook_count) > 1):
             new_webhook = await ctx.message.channel.create_webhook(name='Erin bot webhook', reason="Bot webhook")
             for webhook in webhook_count:
                 await webhook.delete()
@@ -203,6 +210,85 @@ class Fun(commands.Cog):
             for webhook in webhook_count:
                 new_webhook = webhook
         await new_webhook.send(content=content, username=member.display_name, avatar_url=member.avatar_url)
+
+    @commands.cooldown(3, 7, commands.BucketType.user)
+    @commands.command(name="stock", aliases=['stocks'],
+                      description="Gets information about a stock.")  # documentation at https://polygon.io/docs/
+    async def stock(self, ctx, stock, date: str = ""):
+        await ctx.message.delete()
+        api_key = os.getenv("POLYGON_API_KEY")  # The API is free to use at https://polygon.io/
+        try:
+            # First, detemine if the date argument has a regular date in it
+            try:
+                date_time = datetime.strptime(date, '%Y-%m-%d')
+            except:  # invalid date
+                date_time = datetime.today()
+            delta = timedelta(days=1)
+            # Now see if there is a date offset (2d, 5m, 10w)
+            try:
+                if "d" in date:
+                    delta = timedelta(days=int(date.split("d")[0]))
+                elif "w" in date:
+                    delta = timedelta(weeks=int(date.split("w")[0]))
+                elif "m" in date:
+                    delta = timedelta(months=int(date.split("m")[0]))
+                elif "y" in date:
+                    delta = timedelta(years=int(date.split("y")[0]))
+            finally:
+                if delta.days < 1:  # you can't get data from the future
+                    delta = timedelta(days=1)
+
+                date_time -= delta
+                if date_time.weekday() > 4:
+                    date_time -= timedelta(days=date_time.weekday() - 4) #trading is closed on the weekends, so move back time to the friday.
+                date = date_time.strftime('%Y-%m-%d')
+
+            information = await api_call(
+                "https://api.polygon.io/v1/meta/symbols/%s/company?apiKey=%s" % (stock, api_key), False)
+            data = await api_call(
+                "https://api.polygon.io/v1/open-close/%s/%s?apiKey=%s&adjusted=true" % (stock, date, api_key), False)
+
+            if "error" in information:
+                embed = discord.Embed(
+                    title="Stocks",
+                    color=ctx.message.author.color,
+                    timestamp=ctx.message.created_at
+                )
+                embed.add_field(name="Error", value="Could not find %s" % (stock), inline=False)
+                embed.set_author(name=self.bot.user.display_name,
+                                 icon_url=self.bot.user.avatar_url)
+                await ctx.send(embed=embed)
+            else:
+                percentage = "{:+.2f}%".format(100 * (float(data['close']) - float(data['open'])) / float(data['open']))  # calculate and format a percentage gain or loss
+                embed = discord.Embed(
+                    title="Stock Prices for %s (%s) on %s" % (information['name'], information['symbol'], date),
+                    description="Data from https://polygon.io",
+                    color=ctx.message.author.color,
+                    timestamp=ctx.message.created_at
+                )
+                embed.set_footer(
+                    text=f"Requested by {ctx.message.author.display_name}#{ctx.message.author.discriminator}",
+                    icon_url=ctx.message.author.avatar_url)
+                embed.set_author(name=self.bot.user.display_name,
+                                 icon_url=self.bot.user.avatar_url)
+                embed.set_thumbnail(url=information['logo'])
+                embed.add_field(name="Open", value=data['open'], inline=True)
+                embed.add_field(name="Close", value="%s (%s)" % (data['close'], percentage), inline=False)
+                embed.add_field(name="High", value="{:.2f}".format(data['high']),
+                                inline=True)  # these values aren't always rounded to two decimals so we need to format them
+                embed.add_field(name="Low", value="{:.2f}".format(data['low']), inline=True)
+
+                await ctx.send(embed=embed)
+        except:
+            embed = discord.Embed(
+                title="Stocks",
+                color=ctx.message.author.color,
+                timestamp=ctx.message.created_at
+            )
+            embed.add_field(name="Error", value="No trading occured on this date, or an error occured.",  inline=False)
+            embed.set_author(name=self.bot.user.display_name,
+                             icon_url=self.bot.user.avatar_url)
+            await ctx.send(embed=embed)
 
 
 def setup(bot):
