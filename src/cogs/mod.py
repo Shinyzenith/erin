@@ -508,7 +508,7 @@ class Moderation(commands.Cog):
         ctx,
         user: typing.Union[discord.Member, discord.User],
         *,
-        reason: str = "No reason given"
+        reason: str = "No reason given. "
     ):
         try:
             await ctx.guild.fetch_ban(user)
@@ -623,7 +623,7 @@ class Moderation(commands.Cog):
         ctx,
         user: typing.Union[discord.Member, discord.User],
         *,
-        reason: str = "No reason given"
+        reason: str = "No reason given. "
     ):
         try:
             await ctx.guild.fetch_ban(user)
@@ -734,7 +734,7 @@ class Moderation(commands.Cog):
         ctx,
         user: discord.User,
         *,
-        reason: str = "No reason given"
+        reason: str = "No reason given. "
     ):
         try:
             await ctx.guild.fetch_ban(user)
@@ -860,7 +860,7 @@ class Moderation(commands.Cog):
 
     @commands.command(name="mute", description="Mutes a user")
     @commands.has_guild_permissions(mute_members=True)
-    async def mute(self, ctx, member: discord.Member, mute_period: str, *, reason: str = "No reason given"):
+    async def mute(self, ctx, member: discord.Member, mute_period: str, *, reason: str = "No reason given. "):
         try:
             muted_role = await self.GuildConfigHandler.get_muted_role(ctx.guild)
         except KeyError:
@@ -966,18 +966,12 @@ class Moderation(commands.Cog):
 
     @commands.command(name="unmute", description="Unmutes a user")
     @commands.has_guild_permissions(mute_members=True)
-    async def unmute(self, ctx, member: discord.Member, *, reason: str = "No reason given"):
+    async def unmute(self, ctx, member: discord.Member, *, reason: str = "No reason given. "):
         if len(reason) > 150:
             return await ctx.message.reply(
                 "Reason parameter exceeded 150 characters. Please write a shorter reason to continue."
             )
-        mutes = await self.muteHandler.fetch_user_mutes(member.id, ctx.message.guild.id)
-        if len(mutes) == 0:
-            return await ctx.message.reply(
-                f"*uhhhhhhh awkward moment* {member.mention} is not muted"
-            )
-        for mute in mutes:
-            await self.muteHandler.delete_mute_entry(mute)
+
         try:
             mutedRoleID = await self.GuildConfigHandler.get_muted_role(ctx.guild)
         except:
@@ -985,6 +979,34 @@ class Moderation(commands.Cog):
                 f"Unable to unmute {member.mention} as the guild muted role has not been setup in my config >:(("
             )
         mutedRole = ctx.message.guild.get_role(mutedRoleID)
+
+        mutes = await self.muteHandler.fetch_user_mutes(member.id, ctx.message.guild.id)
+        if len(mutes) == 0:
+            try:
+                if mutedRole in member.roles:
+                    await member.remove_roles(
+                        mutedRole,
+                        reason=f"{self.bot.user.display_name} was manually unmuted",
+                    )
+                    try:
+                        await member.send(f"You were unmuted in **{ctx.message.guild.name}**.") #if this should send the embed as below, I can change that
+                    except:
+                        pass
+                    return await ctx.message.reply(
+                        f"*uhhhhhhh awkward moment* {member.mention} is muted, but I have no record of it. Mute role has been removed automatically."
+                    )
+
+                return await ctx.message.reply(
+                    f"*uhhhhhhh awkward moment* {member.mention} is not muted"
+                )
+            except:
+                return ctx.message.reply(
+                    f"Unable to unmute {member.mention} make sure i have `manage roles` permission and their highest role is not above my highest role"
+                )
+
+        for mute in mutes:
+            await self.muteHandler.delete_mute_entry(mute)
+
         if not mutedRole:
             return await ctx.message.reply(
                 f"Unable to unmute {member.mention} as the guild muted role was not found."
@@ -1055,7 +1077,7 @@ class Moderation(commands.Cog):
         ctx,
         user: discord.Member,
         *,
-        reason: str = "No reason given"
+        reason: str = "No reason given. "
     ):
         if len(reason) > 150:
             return await ctx.message.reply(
@@ -1139,7 +1161,7 @@ class Moderation(commands.Cog):
     async def isbanned(self, ctx, user: discord.User):
         try:
             ban = await ctx.guild.fetch_ban(user)
-            reason = ("No Reason" if not ban.reason else ban.reason)
+            reason = ("No reason given. " if not ban.reason else ban.reason)
             return await ctx.message.reply(
                 f"{user.mention} is banned from {ctx.message.guild.name} with reason: `{reason}`"
             )
@@ -1151,7 +1173,7 @@ class Moderation(commands.Cog):
     @commands.command(name="fakeban", aliases=['fban'], description="Fake bans")
     @commands.guild_only()
     @commands.has_guild_permissions(ban_members=True)
-    async def fakeban(self, ctx, member: discord.Member = None, *, reason: str = "No reason given."):
+    async def fakeban(self, ctx, member: discord.Member = None, *, reason: str = "No reason given. "):
         await ctx.message.delete()
         if not member:
             return await ctx.send("Mention a user to ban :))")
