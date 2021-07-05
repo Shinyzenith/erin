@@ -1,4 +1,3 @@
-# boilerplate dependencies
 import asyncio
 import logging
 import math
@@ -10,8 +9,7 @@ import numpy
 
 from discord.ext import commands
 import discord
-# this stuff is useful
-# TODO: Remember to add to requirements.txt
+
 from PIL import Image as PILImage
 from io import BytesIO
 from PIL import ImageFont, ImageEnhance, ImageDraw, ImageOps
@@ -201,6 +199,7 @@ async def biden(ctx, args):
         return await ctx.send("An error occurred processing this image. ")
     finally:
         os.remove(tempString)
+
 async def deepfry(ctx, args):
     colours = ((254, 0, 2), (255, 255, 15))
     # keep these the same for all functions
