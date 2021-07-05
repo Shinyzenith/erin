@@ -215,7 +215,6 @@ class Fun(commands.Cog):
     @commands.command(name="stock", aliases=['stocks'],
                       description="Gets information about a stock.")  # documentation at https://polygon.io/docs/
     async def stock(self, ctx, stock, date: str = ""):
-        await ctx.message.delete()
         api_key = os.getenv("POLYGON_API_KEY")  # The API is free to use at https://polygon.io/
         try:
             # First, detemine if the date argument has a regular date in it
