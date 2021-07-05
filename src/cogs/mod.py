@@ -20,7 +20,7 @@ coloredlogs.install(logger=log)
 time_regex = re.compile(r"(?:(\d{1,5})(h|s|m|d))+?")
 time_dict = {"h": 3600, "s": 1, "m": 60, "d": 86400}
 
-
+# TODO add a 30 warn per user per guild limit asap, if count exceeds 30 by any chance then prune the last 2
 class TimeConverter(commands.Converter):
     async def convert(self, ctx, argument):
         args = argument.lower()
@@ -228,7 +228,7 @@ class Moderation(commands.Cog):
     @commands.command(name="warn", aliases=["strike"], description="Warn a user")
     @commands.has_permissions(manage_messages=True)
     @commands.guild_only()
-    async def warn(self, ctx, user: discord.Member, *, reason: str):
+    async def warn(self, ctx, user: discord.Member, *, reason: str = "No reason given."):
         # sanitizing input
         if user.bot:
             return await ctx.message.reply("Don't even **try** to warn my kind :)")
@@ -309,7 +309,7 @@ class Moderation(commands.Cog):
     @commands.command(name="reason", aslias=["rs"], description="Changes a warn/strike reason")
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
-    async def reason(self, ctx, searchUser: discord.User, warnID: int, *, reason: str = None):
+    async def reason(self, ctx, searchUser: discord.User, warnID: int, *, reason: str):
         if not reason:
             return await ctx.send("Please mention the new reason!")
         if len(reason) > 150:
@@ -508,7 +508,7 @@ class Moderation(commands.Cog):
         ctx,
         user: typing.Union[discord.Member, discord.User],
         *,
-        reason: str,
+        reason: str = "No reason given"
     ):
         try:
             await ctx.guild.fetch_ban(user)
@@ -623,7 +623,7 @@ class Moderation(commands.Cog):
         ctx,
         user: typing.Union[discord.Member, discord.User],
         *,
-        reason: str,
+        reason: str = "No reason given"
     ):
         try:
             await ctx.guild.fetch_ban(user)
@@ -734,7 +734,7 @@ class Moderation(commands.Cog):
         ctx,
         user: discord.User,
         *,
-        reason: str,
+        reason: str = "No reason given"
     ):
         try:
             await ctx.guild.fetch_ban(user)
@@ -1055,7 +1055,7 @@ class Moderation(commands.Cog):
         ctx,
         user: discord.Member,
         *,
-        reason: str,
+        reason: str = "No reason given"
     ):
         if len(reason) > 150:
             return await ctx.message.reply(
@@ -1350,10 +1350,8 @@ class Moderation(commands.Cog):
 # TODO if bot if offline and they're muted with lets say something like another bot and then they're meant to be unmuted with erin then we don't have the log in mutes collection so we need to make sure that if they have the role then we'll just try to remove it and add a warn owo
 # TODO ability to add a mod log channel and write an async handler to webhook the data to the channel.
 # TODO: 2) TEMPBAN 5) invite lookup
-
 # TODO add logging features such as member log, vc log, ban log, unban log, kick log, and so on and so forth
-# TODO denc already coded this ^ i'll code a async config handler for this so don't touch this for now please
-# TODO add a 30 warn per user per guild limit asap, if count exceeds 30 by any chance then prune the last 2
+
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
