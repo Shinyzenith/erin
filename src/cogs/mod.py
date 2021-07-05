@@ -860,7 +860,7 @@ class Moderation(commands.Cog):
 
     @commands.command(name="mute", description="Mutes a user")
     @commands.has_guild_permissions(mute_members=True)
-    async def mute(self, ctx, member: discord.Member, mute_period: str, *, reason: str):
+    async def mute(self, ctx, member: discord.Member, mute_period: str, *, reason: str = "No reason given"):
         try:
             muted_role = await self.GuildConfigHandler.get_muted_role(ctx.guild)
         except KeyError:
@@ -966,7 +966,7 @@ class Moderation(commands.Cog):
 
     @commands.command(name="unmute", description="Unmutes a user")
     @commands.has_guild_permissions(mute_members=True)
-    async def unmute(self, ctx, member: discord.Member, *, reason: str):
+    async def unmute(self, ctx, member: discord.Member, *, reason: str = "No reason given"):
         if len(reason) > 150:
             return await ctx.message.reply(
                 "Reason parameter exceeded 150 characters. Please write a shorter reason to continue."
@@ -1151,7 +1151,7 @@ class Moderation(commands.Cog):
     @commands.command(name="fakeban", aliases=['fban'], description="Fake bans")
     @commands.guild_only()
     @commands.has_guild_permissions(ban_members=True)
-    async def fakeban(self, ctx, member: discord.Member = None, *, reason: str = "Reason not specified"):
+    async def fakeban(self, ctx, member: discord.Member = None, *, reason: str = "No reason given."):
         await ctx.message.delete()
         if not member:
             return await ctx.send("Mention a user to ban :))")
