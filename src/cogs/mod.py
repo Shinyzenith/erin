@@ -309,7 +309,7 @@ class Moderation(commands.Cog):
     @commands.command(name="reason", aslias=["rs"], description="Changes a warn/strike reason")
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
-    async def reason(self, ctx, searchUser: discord.User, warnID: int, *, reason: str):
+    async def reason(self, ctx, searchUser: discord.User, warnID: int, *, reason: str = None):
         if not reason:
             return await ctx.send("Please mention the new reason!")
         if len(reason) > 150:
