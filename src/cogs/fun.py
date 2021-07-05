@@ -259,7 +259,6 @@ class Fun(commands.Cog):
                                  icon_url=self.bot.user.avatar_url)
                 await ctx.send(embed=embed)
             else:
-                ctx.send(information)
                 percentage = "{:+.2f}%".format(100 * (float(data['close']) - float(data['open'])) / float(data['open']))  # calculate and format a percentage gain or loss
                 embed = discord.Embed(
                     title="Stock Prices for %s (%s) on %s" % (information['name'], information['symbol'], date),
