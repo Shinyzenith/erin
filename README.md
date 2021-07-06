@@ -96,4 +96,4 @@
 
   <h4>Step 5: Run!</h4>
 
-  Run the bot by running <code>starterin.sh</code> or <code>starterin.bat</code> depending on your OS. (<code>.sh</code> is for macOS and Linux and <code>.bat</code> is for Windows)
+  Run the bot by running <code>starterin.sh</code> or <code>starterin.bat</code> depending on your OS. (You can also additionally run <code>yarn dev</code> or <code>npm run dev</code>.)

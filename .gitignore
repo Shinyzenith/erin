@@ -17,5 +17,4 @@ share/python-wheels/
 .env
 # Mongo DB
 /mdbcluster
-#your update script
-update.sh
+music
