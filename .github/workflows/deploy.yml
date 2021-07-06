@@ -1,4 +1,4 @@
-# yea idk what i'm doing, i copied this workflow script online ._.
+#testing workflow
 name: Deploy
 
 on: [push]
