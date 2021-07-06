@@ -1,5 +1,5 @@
-#testing workflow
-name: Deploy
+#testing yet again
+name: Deploy to prod
 
 on: [push]
 
