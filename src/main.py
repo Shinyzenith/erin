@@ -76,13 +76,11 @@ class PrefixManager:
             prefixes = ["-"]
         else:
             prefixes = guild["prefixes"]
-        self.prefixes[str(message.guild.id)] = prefixes
         # May or may not have copied code from:
         # https://stackoverflow.com/a/64434732/10291933
-        return commands.when_mentioned_or(*prefixes)(bot, message)
-        # If you don't want it to work when the bot is pinged then just return
-        # the prefixes instead.
-        # return prefixes
+        prefixes = commands.when_mentioned_or(*prefixes)(bot, message)
+        self.prefixes[str(message.guild.id)] = prefixes
+        return prefixes
 
 # bot banning class
 
