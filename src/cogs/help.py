@@ -44,10 +44,16 @@ class Help(commands.Cog):
     @commands.command(hidden=True)
     async def help(self, ctx, *, input: str = None):
         if not input:
+            prefix = ctx.prefix
+            print(str(prefix))
+            if "<@" in str(prefix) and ">" in str(prefix):
+                # Yum some ugly string manipulation
+                prefix = f"@{str(self.bot.user).split('#')[0]} "
+            print(str(prefix))
             emb = discord.Embed(
                 title="Commands and modules",
                 color=ctx.message.author.color,
-                description=f"Use `{ctx.prefix}help <module>` to gain more information about that module. <:Kanna:822144873170731018>\nIf you need further assistance then join our support server https://www.discord.gg/F5ey2M5GTg <:Kanna:822144873170731018>\n",
+                description=f"Use `{prefix}help <module>` to gain more information about that module. <:Kanna:822144873170731018>\nIf you need further assistance then join our support server https://www.discord.gg/F5ey2M5GTg <:Kanna:822144873170731018>\n",
             )
             emb.set_footer(
                 text=f"Requested by {ctx.message.author}",
