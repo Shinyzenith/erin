@@ -990,7 +990,7 @@ class Moderation(commands.Cog):
                     )
                     entryData = {
                         "type": "mute",
-                        "reason": "Unknown reason. ",
+                        "reason": "Unknown reason.",
                         "time": ctx.message.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"),
                         "mod": f"{self.bot.user.id}",
                     }
