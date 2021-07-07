@@ -988,12 +988,17 @@ class Moderation(commands.Cog):
                         mutedRole,
                         reason=f"{self.bot.user.display_name} was manually unmuted",
                     )
-                    try:
-                        await member.send(f"You were unmuted in **{ctx.message.guild.name}**.") #if this should send the embed as below, I can change that
-                    except:
-                        pass
+                    entryData = {
+                        "type": "mute",
+                        "reason": "Unknown reason.",
+                        "time": ctx.message.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"),
+                        "mod": f"{self.bot.user.id}",
+                    }
+                    userData = await self.dbHandler.find_user(str(member.id), ctx.message.guild.id)
+                    userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
+                    await self.dbHandler.update_user_warn(str(member.id), userData)
                     return await ctx.message.reply(
-                        f"*uhhhhhhh awkward moment* {member.mention} is muted, but I have no record of it. Mute role has been removed automatically."
+                        f"*uhhhhhhh awkward moment* {member.mention} is muted, but I have no record of it. Mute role has been removed automatically, and the mute has been logged."
                     )
 
                 return await ctx.message.reply(
