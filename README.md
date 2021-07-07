@@ -80,12 +80,7 @@
   Once it is finished you can close out the installer.
 
   You can also optionally do the following: 
-  1. Install docker
-     1.Windows: download and execute the docker installer
-	 2.Linux
-	 		1. Debian based system: ``sudo apt install docker``
-			2. Arch based system: ``sudo pacman -Syy docker``
-			run the following for linux machines: ``sudo systemctl start docker`` ``sudo systemctl enable docker``
+  1. Install docker.
   2. `docker image pull mongo` 
   3.`docker run --name erinDb - -p <port of choice>:27017 -v <volume path>:/data/db/ mongo`
   4.  Edit the `CONNECTIONURI` field in the .env file and set it to `mongodb://localhost:<the port you chose in step 3>`
