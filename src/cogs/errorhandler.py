@@ -161,9 +161,9 @@ class ErrorHandler(commands.Cog):
             if int(h) == 0 and int(m) == 0:
                 embed.description = f"**You must wait `{int(s)}` second(s) to use this command!**"
             elif int(h) == 0 and int(m) != 0:
-                embed.description = f"**You must wait `{int(m)}` minutes and `{int(s)}` seconds to use this command!**"
+                embed.description = f"**You must wait `{int(m)}` minute(s) and `{int(s)}` second(s) to use this command!**"
             else:
-                embed.description = f"**You must wait `{int(h)}` hours, `{int(m)}` minutes and `{int(s)}` seconds to use this command!**"
+                embed.description = f"**You must wait `{int(h)}` hour(s), `{int(m)}` minute(s) and `{int(s)}` second(s) to use this command!**"
             return await ctx.send(embed=embed)
 
         if isinstance(error, commands.errors.NotOwner):
