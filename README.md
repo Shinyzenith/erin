@@ -82,7 +82,7 @@
   You can also optionally do the following: 
   1. Install docker.
   2. `docker image pull mongo` 
-  3. `docker run --name erinDb - -p <port of choice>:27017 -v <volume path>:/data/db/ mongo`
+  3. `docker run --name erinDb -d -p <port of choice>:27017 -v <volume path>:/data/db/ mongo`
   4.  Edit the `CONNECTIONURI` field in the .env file and set it to `mongodb://localhost:<the port you chose in step 3>`
   5.  Step 4 should get you ready for development. If you restart your development machine then run `docker start erinDb` to start the container.
   Note: On linux you will need to run `sudo systemctl start docker` and `sudo systemctl enable docker` 
