@@ -7,7 +7,6 @@ import threading
 import uuid
 import coloredlogs
 import numpy
-from matplotlib import font_manager
 from discord.ext import commands
 import discord
 
@@ -266,8 +265,6 @@ async def deepfry(ctx, args):
     tempString = uuid.uuid4().__str__() + ".png"
 
     try:
-
-        # Crush image to hell and back
         image = image.convert('RGB')
         width, height = image.width, image.height
         image = image.resize((int(width ** .75), int(height ** .75)), resample=PILImage.LANCZOS)
