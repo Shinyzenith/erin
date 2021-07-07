@@ -23,8 +23,8 @@ async def get_image_async(ctx):
     async for message in ctx.channel.history(limit=100):
         if message.attachments:
             for attachment in message.attachments:
-                if attachment.content_type != "image/jpeg" and attachment.content_type != "image/png":  # it must be an image
-                    pass
+                if attachment.content_type not in ("image/jpeg", "image/png"):  # it must be an image
+                    continue
                 image = PILImage.open(BytesIO(await attachment.read()))
                 return image.convert("RGBA") #this is important for working with transparency and stuff.
     return None;
