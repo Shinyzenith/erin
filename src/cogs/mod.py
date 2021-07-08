@@ -825,7 +825,7 @@ class Moderation(commands.Cog):
 
     @commands.command(name="mute", description="Mutes a user")
     @commands.has_guild_permissions(mute_members=True)
-    async def mute(self, ctx, member: discord.Member, mute_period, *, reason: str = "No reason given. "):
+    async def mute(self, ctx, member: discord.Member, mute_period: str, *, reason: str = "No reason given. "):
         try:
             muted_role = await self.GuildConfigHandler.get_muted_role(ctx.guild)
         except KeyError:
