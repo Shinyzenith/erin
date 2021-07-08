@@ -51,7 +51,7 @@
   Hey! we're certainly not pros when it comes to bot making, the bot does have some very clunky parts when it comes to caching and general code quality. We are working around the clock to make it better.
   We appreciate any support we can get from the community, including Patreon donations (coming soon!) and/or GitHub PR's with code quality fixes!!!
   <br>
-  Note: The API & dashboard are still under development! and credits to <a href="https://nekos.life">https://nekos.life </a> for the image API!
+  Note: The API, dashboard, and music module are still under development! and credits to <a href="https://nekos.life">https://nekos.life </a> for the image API!
 
   <h3>Monetary support</h3>
 
