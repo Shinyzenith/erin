@@ -76,6 +76,9 @@ class PrefixManager:
             prefixes = ["-"]
         else:
             prefixes = guild["prefixes"]
+        # May or may not have copied code from:
+        # https://stackoverflow.com/a/64434732/10291933
+        prefixes = commands.when_mentioned_or(*prefixes)(bot, message)
         self.prefixes[str(message.guild.id)] = prefixes
         return prefixes
 
