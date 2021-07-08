@@ -85,7 +85,7 @@
   3. `docker run --name erinDb -d -p <port of choice>:27017 -v <volume path>:/data/db/ mongo`
   4.  Edit the `CONNECTIONURI` field in the .env file and set it to `mongodb://localhost:<the port you chose in step 3>`
   5.  Step 4 should get you ready for development. If you restart your development machine then run `docker start erinDb` to start the container.
-  Note: On linux you will need to run `sudo systemctl start docker` and `sudo systemctl enable docker` 
+  <br>Note: On linux you will need to run `sudo systemctl start docker` and `sudo systemctl enable docker` 
   <br>
 	I personally prefer docker as i don't need to install all the software i need individually, instead i can just install docker and pull the image as required (if it's available in the docker repo).
   <h4>Step 3: Create a Discord bot.</h4>
