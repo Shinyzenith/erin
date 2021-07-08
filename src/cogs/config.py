@@ -235,23 +235,26 @@ class Config(commands.Cog):
         )
     # print guild prefixes on pinging the bot
 
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        if message.author.bot:
-            return
-        if not message.guild:
-            return
-        if len(message.mentions) == 1:
-            if message.mentions[0] == self.bot.user:
-                message_content = message.content.split()
-                try:
-                    if message_content[1].lower() == "prefix":
-                        prefixes = await self.gcm.get_prefix(message.guild)
-                        reply_message = "".join(
-                            [f"\n`{prefix}`" for prefix in prefixes])
-                        await message.reply(f"My prefixes in this server are:{reply_message}")
-                except:
-                    pass
+    # Removed cause you now can ping the bot instead of using a prefix to run
+    # commands
+    #
+    # @commands.Cog.listener()
+    # async def on_message(self, message):
+    #     if message.author.bot:
+    #         return
+    #     if not message.guild:
+    #         return
+    #     if len(message.mentions) == 1:
+    #         if message.mentions[0] == self.bot.user:
+    #             message_content = message.content.split()
+    #             try:
+    #                 if message_content[1].lower() == "prefix":
+    #                     prefixes = await self.gcm.get_prefix(message.guild)
+    #                     reply_message = "".join(
+    #                         [f"\n`{prefix}`" for prefix in prefixes])
+    #                     await message.reply(f"My prefixes in this server are:{reply_message}")
+    #             except:
+    #                 pass
 
     # prefix manager sub command
     @commands.group(name="prefix", aliases=["setprefix"], case_insensitive=True, description="Sets my prefix!")
@@ -260,8 +263,28 @@ class Config(commands.Cog):
     async def prefix(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.message.reply(
-                "please mention a proper argument such as `add` or `remove`"
+                "Please mention a proper argument such as `add` or `remove`"
             )
+
+    @commands.group(name="prefixes", aliases=["getprefix", "getprefixes"], case_insensitive=True, description="Gets my prefix!")
+    @commands.cooldown(10, 120, commands.BucketType.guild)
+    async def prefixes(self, ctx):
+        prefixes = await self.gcm.get_prefix(ctx.guild)
+        embed = discord.Embed(
+            color=ctx.message.author.color, timestamp=ctx.message.created_at
+        )
+        embed.set_footer(
+            text=ctx.message.author.display_name,
+            icon_url=ctx.message.author.avatar_url
+        )
+        embed.set_author(
+            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+        )
+        embed.title = "Current prefix list"
+        prefixNames = "".join([f"`{prefix}`\n" for prefix in prefixes])
+        embed.description = prefixNames
+        embed.set_thumbnail(url=ctx.message.author.avatar_url)
+        return await ctx.message.reply(embed=embed)
 
     @prefix.command()
     @commands.has_permissions(manage_guild=True)
