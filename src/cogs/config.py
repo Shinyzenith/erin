@@ -594,7 +594,7 @@ class Config(commands.Cog):
         em.add_field(
             name="Developers:",
             inline=False,
-            value="<@633967275090771971> (Shinyzenith#6969 **Project Manager and Owner**)\n<@488688724948025357> (DankCoder#9983 **Project Manager, Front-end Developer, and Owner**)\n<@758991567695642644> (Idli_#0001 **Front-end Developer**)",
+            value="<@633967275090771971> (Shinyzenith#6969 **Project Manager and Owner**)\n<@488688724948025357> (DankCoder#9983 **Project Manager, Front-end Developer, and Owner**)\n<@403657714812715008> (LinusDropTips#0404 **Developer**)\n<@747265562501185596> (thurm#1337 **Developer**)\n<@633764848924229635> (Ckyiu#9659 **Developer**)",
         )
         em.add_field(
             name="Server info:",
