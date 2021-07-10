@@ -43,6 +43,8 @@ class Help(commands.Cog):
 
     @commands.command(hidden=True)
     async def help(self, ctx, *, input: str = None):
+        if "<@" in str(ctx.prefix) and ">" in str(ctx.prefix):
+            ctx.prefix = f"@{str(self.bot.user).split('#')[0]} "
         if not input:
             emb = discord.Embed(
                 title="Commands and modules",

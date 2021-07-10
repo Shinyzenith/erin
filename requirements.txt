@@ -9,3 +9,4 @@ humanize
 dateparser
 psutil
 Pillow
+dislash.py
