@@ -207,15 +207,14 @@ bot = ErinBot()
 # initalizing clients
 ubc = UserBanClient()
 isoncooldown = commands.check(ubc.cooldown_checker)
+
 # send message on startup
-
-
 @bot.event
 async def on_ready():
     await webhook_send(os.getenv("UPTIMELOG"), "Erin started up \N{Thumbs Up Sign}")
     log.info(f"Logged in as {bot.user.name} - {bot.user.id}")
 
-# creating bot class instance and loading extensions
+# loading extensions
 log.info("Loading extensions")
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)

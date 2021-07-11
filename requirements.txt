@@ -8,3 +8,5 @@ python-dotenv
 humanize
 dateparser
 psutil
+Pillow
+dislash.py
