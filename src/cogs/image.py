@@ -569,7 +569,7 @@ async def daviesad(ctx, args):
     try:
 
         script_dir = os.path.dirname(__file__)  # <-- absolute dir the script is in
-        rel_path = "../assets/daviedisappointed.png"
+        rel_path = "../assets/daviesad.png"
         abs_file_path = os.path.join(script_dir, rel_path)
         davie = PILImage.open(abs_file_path)
         width_b, height_b = davie.size
@@ -696,7 +696,7 @@ class Image(commands.Cog):
     @commands.cooldown(3, 10, commands.BucketType.user)
     @commands.command(name="daviesad", description="Davie504 is sad.")
     async def daviesad(self, ctx):
-        th = threading.Thread(target=async_handler(daviegun, ctx, []))
+        th = threading.Thread(target=async_handler(daviesad, ctx, []))
         th.start()
 
 
