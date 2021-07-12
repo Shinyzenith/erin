@@ -12,7 +12,7 @@ import datetime as dt
 
 from pathlib import Path
 from dotenv import load_dotenv
-from pymongo import MongoClient
+from database import ErinDatabase
 from discord.ext import commands
 
 # dotenv config
@@ -58,7 +58,7 @@ async def webhook_send(url, message, username="Erin uptime Logs", avatar="https:
 # prefix manager class
 class PrefixManager:
     def __init__(self):
-        self.client = MongoClient(os.getenv('CONNECTIONURI'))
+        self.client = ErinDatabase(os.getenv('CONNECTIONURI'))
         self.db = self.client.erin
         self.col = self.db["config"]
         self.prefixes = {}
