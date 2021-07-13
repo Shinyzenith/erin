@@ -57,28 +57,12 @@ async def webhook_send(url, message, username="Erin uptime Logs", avatar="https:
 
 # prefix manager class
 class PrefixManager:
-    def __init__(self):
-        self.client = ErinDatabase(os.getenv('CONNECTIONURI'))
-        self.db = self.client.erin
-        self.col = self.db["config"]
+    def __init__(self, bot):
+        self.client = ErinDatabase(bot, os.getenv('CONNECTIONURI'))
         self.prefixes = {}
 
-    def register_guild(self, g):
-        self.col.insert_one({"gid": g.id, "prefixes": ["-"]})
-
     def get_prefix(self, client, message):
-        # if str(message.guild.id) in self.prefixes:
-        #     return self.prefixes[str(message.guild.id)]
-        prefixes = []
-        guild = self.col.find_one({"gid": message.guild.id})
-        if not guild:
-            self.register_guild(message.guild)
-            prefixes = ["-"]
-        else:
-            prefixes = guild["prefixes"]
-        # May or may not have copied code from:
-        # https://stackoverflow.com/a/64434732/10291933
-        prefixes = commands.when_mentioned_or(*prefixes)(bot, message)
+        prefixes = self.client.get_prefix(guild=message.guild, message=message)
         self.prefixes[str(message.guild.id)] = prefixes
         return prefixes
 
@@ -177,7 +161,7 @@ class ErinBot(commands.Bot):
 
         # intent and bot instance declaration
         intents = discord.Intents.all()
-        super().__init__(command_prefix=PrefixManager().get_prefix,
+        super().__init__(command_prefix=PrefixManager(self).get_prefix,
                          intents=intents, guild_subscriptions=True, case_insensitive=True)
 
         # saving startup time and creating process loop (removing the default help command cuz it's ass)
