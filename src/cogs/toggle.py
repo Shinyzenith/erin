@@ -18,7 +18,7 @@ class Toggle(commands.Cog):
 
     @commands.command()
     @commands.has_guild_permissions(administrator=True)
-    async def toggle(self, ctx, *, cog: str="cog_name"): 
+    async def toggle(self, ctx, *, cog: str="module_name"): 
         cogs=[c.lower() for c in list(self.bot.cogs.keys())]
         cog=cog.lower()
         if cog in CANNOT_BE_TOGGLED:
