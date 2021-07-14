@@ -71,7 +71,7 @@ async def bottomtext(ctx, args):
             font_size -= 1
             font = ImageFont.truetype("../assets/impact.ttf", font_size, encoding='unic')
             w, h = font.getsize(text)
-        border = math.ceil(image.width / 10)
+        border = math.floor(font_size / 15)
 
         x = (width - w) / 2
         y = height - (1.25 * font_size)
