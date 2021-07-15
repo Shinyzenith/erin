@@ -9,4 +9,3 @@ humanize
 dateparser
 psutil
 dislash.py
-cachetools
