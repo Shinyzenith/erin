@@ -42,6 +42,10 @@ class CooldownError(commands.CheckFailure):
 
 class BotBan(commands.CheckFailure):
     pass
+
+
+class ModuleDisabled(commands.CheckFailure):
+    pass
 # webhook function
 
 
@@ -92,21 +96,48 @@ class UserBanClient:
         self.db = self.client.erin
         self.col = self.db["softbans"]
         self.col2 = self.db["cooldowns"]
+        self.col3= self.db["blacklistedcogs"]
         self.users = []
 
     async def fetch_user_bans(self, user):
         if str(user.id) in self.users:
             log.warn(f"{user.id} is banned from using this bot")
             raise BotBan("You are banned from using this bot")
-            return False
 
         ban = await self.col.find_one({"uid": str(user.id)})
         if ban:
             log.warn(f"{user.id} is banned from using this bot")
             raise BotBan("You are banned from using this bot")
-            self.users.append(str(user.id))
         return (False if ban else True)
+    
+    async def check_if_enabled(self, guild, cog):
+        blacklisted=await self.col3.find_one({"gid": guild.id})
+        if blacklisted:
+            if cog in blacklisted["cogs"]:
+                raise ModuleDisabled("This module is disabled")
+            else:
+                return True
+        else:
+            return True
 
+    async def toggle_cog(self, guild, cog):
+        blacklisted=await self.col3.find_one({"gid": guild.id})
+        if blacklisted:
+            if cog in blacklisted["cogs"]:
+                blacklisted["cogs"].remove(cog)
+                status="enabled"
+            else:
+                blacklisted["cogs"].append(cog)
+                status="disabled"
+        else:
+            blacklisted={
+                "gid":guild.id,
+                "cogs":[cog]
+            }
+            await self.col3.insert_one(blacklisted)
+            return "disabled"
+        await self.col3.replace_one({"gid":guild.id}, blacklisted)
+        return status
     async def softban_user(self, userid: int):
         if str(userid) in self.users:
             return True
@@ -166,7 +197,8 @@ class UserBanClient:
 
     async def predicate(self, ctx):
         return await self.fetch_user_bans(ctx.author)
-
+    async def global_toggle(self, ctx):
+        return await self.check_if_enabled(ctx.guild, ctx.cog.qualified_name.lower())
     async def cooldown_checker(self, ctx):
         return await self.check_cooldowns(ctx)
 # bot instance class
@@ -224,6 +256,6 @@ for file in os.listdir(cwd + "/cogs"):
 
 # binding checks
 bot.add_check(ubc.predicate)
-
+bot.add_check(ubc.global_toggle)
 # running the bot
 bot.run()
