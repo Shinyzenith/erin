@@ -649,12 +649,6 @@ class Image(commands.Cog):
         th.start()
 
     @commands.cooldown(3, 10, commands.BucketType.user)
-    @commands.command(name="mattiasgrief", description="Mattias Krantz is frustrated about your image")
-    async def mattiasgrief(self, ctx):
-        th = threading.Thread(target=async_handler(mattiasgrief, ctx, []))
-        th.start()
-
-    @commands.cooldown(3, 10, commands.BucketType.user)
     @commands.command(name="daviegun", description="Davie504 is very friendly with your image in the background")
     async def daviegun(self, ctx):
         th = threading.Thread(target=async_handler(daviegun, ctx, []))
