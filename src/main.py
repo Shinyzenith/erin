@@ -208,7 +208,8 @@ class ErinBot(commands.Bot):
     def __init__(self):
 
         # intent and bot instance declaration
-        intents = discord.Intents.all()
+        intents = discord.Intents.default()
+        intents.members = True
         super().__init__(command_prefix=PrefixManager().get_prefix,
                          intents=intents, guild_subscriptions=True, case_insensitive=True)
 
