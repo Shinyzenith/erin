@@ -444,61 +444,26 @@ class Moderation(commands.Cog):
     async def delpunishments(self, ctx, user: discord.User):
         delUser = await self.dbHandler.find_user(str(user.id), ctx.message.guild.id)
         request = await ctx.message.reply(
-            f"**This will delete ALL punishments that the {user.mention} has.** Do you want to continue?"
+            f"**This will delete ALL punishments that the {user.mention} has.** Type \"yes\" to continue, \"no\" to cancel. "
         )
-        await request.add_reaction("\N{WHITE HEAVY CHECK MARK}")
-        await request.add_reaction("\N{CROSS MARK}")
-
-        def check(reaction, user):
-            state = (
-                user == ctx.message.author
-                and str(reaction.emoji) == "\N{WHITE HEAVY CHECK MARK}"
-                or str(reaction.emoji) == "\N{CROSS MARK}"
-                and reaction.message.id == request.id
-                and user.bot == False
-            )
-            return state
-
         try:
-            reaction, author = await self.bot.wait_for(
-                "reaction_add", timeout=30.0, check=check
-            )
+            message = await self.bot.wait_for("message", check=lambda m: m.author == ctx.author and m.channel.id == ctx.channel.id and ("yes" in m.content.lower() or "no" in m.content.lower()))
         except asyncio.TimeoutError:
             return await ctx.message.channel.send(
-                "Woops you didnt react within 30 seconds...."
+                "Woops, you didn't reply within 30 seconds... request cancelled. "
             )
 
-        if str(reaction.emoji) == "\N{WHITE HEAVY CHECK MARK}":
-            try:
-                await request.clear_reaction("\N{WHITE HEAVY CHECK MARK}")
-                await request.clear_reaction("\N{CROSS MARK}")
-            except:
-                pass
+        if "yes" in message.content.lower():
             delUser["gid"].pop(f"{ctx.message.guild.id}")
             await self.dbHandler.update_user_warn(str(user.id), delUser)
-            try:
-                return await request.edit(
-                    content=f"All records of {user.mention} have been deleted"
-                )
-            except:
-                return await ctx.message.reply(
-                    f"All records of {user.mention} have been deleted"
-                )
-        elif str(reaction.emoji) == "\N{CROSS MARK}":
-            try:
-                await request.clear_reaction("\N{WHITE HEAVY CHECK MARK}")
-                await request.clear_reaction("\N{CROSS MARK}")
-            except:
-                pass
 
-            try:
-                return await request.edit(
-                    content=f"\N{CROSS MARK} reaction recieved ...cancelling process"
-                )
-            except:
-                return await ctx.message.reply(
-                    f"\N{CROSS MARK} reaction recieved ...cancelling process"
-                )
+            return await ctx.message.reply(
+                f"All records of {user.mention} have been deleted."
+            )
+        else:
+            return await ctx.message.reply(
+                "Request cancelled."
+            )
 
     @commands.command(name="ban" , description="Bans a user")
     @commands.guild_only()
@@ -988,12 +953,17 @@ class Moderation(commands.Cog):
                         mutedRole,
                         reason=f"{self.bot.user.display_name} was manually unmuted",
                     )
-                    try:
-                        await member.send(f"You were unmuted in **{ctx.message.guild.name}**.") #if this should send the embed as below, I can change that
-                    except:
-                        pass
+                    entryData = {
+                        "type": "mute",
+                        "reason": "Unknown reason.",
+                        "time": ctx.message.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"),
+                        "mod": f"{self.bot.user.id}",
+                    }
+                    userData = await self.dbHandler.find_user(str(member.id), ctx.message.guild.id)
+                    userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
+                    await self.dbHandler.update_user_warn(str(member.id), userData)
                     return await ctx.message.reply(
-                        f"*uhhhhhhh awkward moment* {member.mention} is muted, but I have no record of it. Mute role has been removed automatically."
+                        f"*uhhhhhhh awkward moment* {member.mention} is muted, but I have no record of it. Mute role has been removed automatically, and the mute has been logged."
                     )
 
                 return await ctx.message.reply(
