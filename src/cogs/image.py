@@ -24,7 +24,7 @@ async def get_image_async(ctx):
     async for message in ctx.channel.history(limit=100):
         if message.attachments:
             for attachment in message.attachments:
-                if attachment.content_type != "image/jpeg" and attachment.content_type != "image/png":  # it must be an image
+                if attachment.content_type != "image/jpeg" and attachment.content_type != "image/png" and attachment.content_type != "image/webp" and attachment.content_type != "image/gif":  # it must be an image
                     pass
                 image = PILImage.open(BytesIO(await attachment.read()))
                 return image.convert("RGBA")  # this is important for working with transparency and stuff.
@@ -93,6 +93,8 @@ async def bottomtext(ctx, args):
             os.remove(temp_string)
         except:
             pass
+
+
 async def toptext(ctx, args):
     # keep these the same for all functions\
     text = args[0]
@@ -135,6 +137,8 @@ async def toptext(ctx, args):
             os.remove(temp_string)
         except:
             pass
+
+
 async def motivational(ctx, args):
     # keep these the same for all functions
     text = args[0]
@@ -174,6 +178,8 @@ async def motivational(ctx, args):
         await ctx.send("An error occurred processing this image. ")
     finally:
         os.remove(temp_string)
+
+
 # colors and rotation/reflection
 async def reflectR(ctx, args):
     # keep these the same for all functions
@@ -197,6 +203,8 @@ async def reflectR(ctx, args):
             os.remove(temp_string)
         except:
             pass
+
+
 async def reflectL(ctx, args):
     # keep these the same for all functions
     image = await get_image_async(ctx)
@@ -220,6 +228,8 @@ async def reflectL(ctx, args):
             os.remove(temp_string)
         except:
             pass
+
+
 async def colors(ctx, args):
     # keep these the same for all functions
     image = await get_image_async(ctx)
@@ -240,6 +250,8 @@ async def colors(ctx, args):
             os.remove(temp_string)
         except:
             pass
+
+
 async def mirror(ctx, args):
     # keep these the same for all functions
     image = await get_image_async(ctx)
@@ -260,6 +272,8 @@ async def mirror(ctx, args):
             os.remove(temp_string)
         except:
             pass
+
+
 async def rotate(ctx, args):
     degrees = args[0]
     # keep these the same for all functions
@@ -281,6 +295,8 @@ async def rotate(ctx, args):
             os.remove(temp_string)
         except:
             pass
+
+
 async def deepfry(ctx, args):
     colours = ((254, 0, 2), (255, 255, 15))
     # keep these the same for all functions
@@ -321,6 +337,8 @@ async def deepfry(ctx, args):
             os.remove(temp_string)
         except:
             pass
+
+
 async def bluefry(ctx, args):
     colours = ((2, 0, 255), (0, 255, 255))
     # keep these the same for all functions
@@ -361,6 +379,8 @@ async def bluefry(ctx, args):
             os.remove(temp_string)
         except:
             pass
+
+
 async def bits(ctx, args):
     bits = args[0]
     # keep these the same for all functions
@@ -424,6 +444,8 @@ async def scott(ctx, args):
             os.remove(temp_string)
         except:
             pass
+
+
 async def nintendodirect(ctx, args):
     # keep these the same for all functions
     image = await get_image_async(ctx)
@@ -458,6 +480,8 @@ async def nintendodirect(ctx, args):
             os.remove(temp_string)
         except:
             pass
+
+
 async def linustechtips(ctx, args):
     # keep these the same for all functions
     image = await get_image_async(ctx)
@@ -492,6 +516,8 @@ async def linustechtips(ctx, args):
             os.remove(temp_string)
         except:
             pass
+
+
 async def daviegun(ctx, args):
     # keep these the same for all functions
     image = await get_image_async(ctx)
@@ -524,6 +550,8 @@ async def daviegun(ctx, args):
             os.remove(temp_string)
         except:
             pass
+
+
 async def daviesad(ctx, args):
     # keep these the same for all functions
     image = await get_image_async(ctx)
@@ -562,6 +590,10 @@ class Image(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        log.warn(f"{self.__class__.__name__} Cog has been loaded")
+        
     @commands.cooldown(3, 10, commands.BucketType.user)
     @commands.command(aliases=["meme"], name="bottomtext", description="add bottom meme text to an image")
     async def bottomtext(self, ctx, *, text: str):
@@ -650,18 +682,15 @@ class Image(commands.Cog):
 
     @commands.cooldown(3, 10, commands.BucketType.user)
     @commands.command(name="daviegun", description="Davie504 is very friendly with your image in the background")
-    async def daviegun(self, ctx):
+    async def davie_gun(self, ctx):
         th = threading.Thread(target=async_handler(daviegun, ctx, []))
         th.start()
 
     @commands.cooldown(3, 10, commands.BucketType.user)
     @commands.command(name="daviesad", description="Davie504 is sad.")
-    async def daviesad(self, ctx):
+    async def davie_sad(self, ctx):
         th = threading.Thread(target=async_handler(daviesad, ctx, []))
         th.start()
 
-
-# setup function so this
-# setup function so this can be loaded as an extension
-def setup(bot: commands.Bot):
+def setup(bot):
     bot.add_cog(Image(bot))
