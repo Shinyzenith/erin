@@ -71,7 +71,7 @@ async def bottomtext(ctx, args):
             font_size -= 1
             font = ImageFont.truetype("../assets/impact.ttf", font_size, encoding='unic')
             w, h = font.getsize(text)
-        border = math.ceil(image.width / 10)
+        border = math.floor(font_size / 15)
 
         x = (width - w) / 2
         y = height - (1.25 * font_size)
@@ -569,7 +569,7 @@ async def daviesad(ctx, args):
     try:
 
         script_dir = os.path.dirname(__file__)  # <-- absolute dir the script is in
-        rel_path = "../assets/daviedisappointed.png"
+        rel_path = "../assets/daviesad.png"
         abs_file_path = os.path.join(script_dir, rel_path)
         davie = PILImage.open(abs_file_path)
         width_b, height_b = davie.size
@@ -589,8 +589,42 @@ async def daviesad(ctx, args):
         except:
             pass
 
+async def daviesad(ctx, args):
+    # keep these the same for all functions
+    image = await get_image_async(ctx)
 
+    if image == None:
+        return await ctx.send("Can't find any images in this channel. ")
+
+    width, height = image.size
+    temp_string = uuid.uuid4().__str__() + ".png"
+
+    try:
+
+        script_dir = os.path.dirname(__file__)  # <-- absolute dir the script is in
+        rel_path = "../assets/emil.png"
+        abs_file_path = os.path.join(script_dir, rel_path)
+        davie = PILImage.open(abs_file_path)
+        width_b, height_b = davie.size
+        new_width = int(width_b * (height / height_b))
+        davie = davie.resize((new_width, height), PILImage.BILINEAR)
+        width_b, height_b = davie.size
+        davie.convert("RGBA")
+        image.paste(davie, (0, 0), davie)
+
+        image.save(temp_string)
+        await ctx.message.reply(file=discord.File(temp_string))
+    except Exception:
+        await ctx.send("An error occurred processing this image. ")
+    finally:
+        try:
+            os.remove(temp_string)
+        except:
+            pass
 class Image(commands.Cog):
+    """
+    Meme maker <:lmao:865969693755310101>
+    """
 
     def __init__(self, bot):
         self.bot = bot
@@ -682,12 +716,6 @@ class Image(commands.Cog):
         th.start()
 
     @commands.cooldown(3, 10, commands.BucketType.user)
-    @commands.command(name="mattiasgrief", description="Mattias Krantz is frustrated about your image")
-    async def mattiasgrief(self, ctx):
-        th = threading.Thread(target=async_handler(mattiasgrief, ctx, []))
-        th.start()
-
-    @commands.cooldown(3, 10, commands.BucketType.user)
     @commands.command(name="daviegun", description="Davie504 is very friendly with your image in the background")
     async def daviegun(self, ctx):
         th = threading.Thread(target=async_handler(daviegun, ctx, []))
@@ -696,9 +724,8 @@ class Image(commands.Cog):
     @commands.cooldown(3, 10, commands.BucketType.user)
     @commands.command(name="daviesad", description="Davie504 is sad.")
     async def daviesad(self, ctx):
-        th = threading.Thread(target=async_handler(daviegun, ctx, []))
+        th = threading.Thread(target=async_handler(daviesad, ctx, []))
         th.start()
-
 
 # setup function so this
 # setup function so this can be loaded as an extension
