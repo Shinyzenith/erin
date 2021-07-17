@@ -492,38 +492,6 @@ async def linustechtips(ctx, args):
             os.remove(temp_string)
         except:
             pass
-async def mattiasgrief(ctx, args):
-    # keep these the same for all functions
-    image = await get_image_async(ctx)
-
-    if image == None:
-        return await ctx.send("Can't find any images in this channel. ")
-
-    width, height = image.size
-    temp_string = uuid.uuid4().__str__() + ".png"
-
-    try:
-
-        script_dir = os.path.dirname(__file__)  # <-- absolute dir the script is in
-        rel_path = "../assets/mattiasgrief.png"
-        abs_file_path = os.path.join(script_dir, rel_path)
-        matimage = PILImage.open(abs_file_path)
-        width_b, height_b = matimage.size
-        new_width = int(width_b * (height / height_b))
-        matimage = matimage.resize((new_width, height), PILImage.BILINEAR)
-        width_b, height_b = matimage.size
-        matimage.convert("RGBA")
-        image.paste(matimage, (width - width_b, 0), matimage)
-
-        image.save(temp_string)
-        await ctx.message.reply(file=discord.File(temp_string))
-    except Exception:
-        await ctx.send("An error occurred processing this image. ")
-    finally:
-        try:
-            os.remove(temp_string)
-        except:
-            pass
 async def daviegun(ctx, args):
     # keep these the same for all functions
     image = await get_image_async(ctx)
@@ -591,7 +559,6 @@ async def daviesad(ctx, args):
 
 
 class Image(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
 
