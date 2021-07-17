@@ -10,7 +10,6 @@ import numpy
 
 from discord.ext import commands
 import discord
-
 from PIL import Image as PILImage
 from io import BytesIO
 from PIL import ImageFont, ImageEnhance, ImageDraw, ImageOps
