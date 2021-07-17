@@ -622,6 +622,9 @@ async def daviesad(ctx, args):
         except:
             pass
 class Image(commands.Cog):
+    """
+    Meme maker <:lmao:865969693755310101>
+    """
 
     def __init__(self, bot):
         self.bot = bot
