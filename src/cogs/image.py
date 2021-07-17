@@ -724,12 +724,6 @@ class Image(commands.Cog):
         th = threading.Thread(target=async_handler(daviesad, ctx, []))
         th.start()
 
-    @commands.cooldown(3, 10, commands.BucketType.user)
-    @commands.command(name="emil", description="emil. ")
-    async def daviesad(self, ctx):
-        th = threading.Thread(target=async_handler(daviesad, ctx, []))
-        th.start()
-
 # setup function so this
 # setup function so this can be loaded as an extension
 def setup(bot: commands.Bot):
