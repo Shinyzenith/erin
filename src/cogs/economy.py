@@ -270,6 +270,7 @@ class Economy(commands.Cog):
 		return int(datetime.now().timestamp())
 
 	@commands.command(name="inv" , description="Shows your inventory")
+	@isoncooldown
 	async def inv(self, ctx, *, item: str=None):
 		member=ctx.author
 		shop = self.load_shop()
@@ -349,6 +350,7 @@ class Economy(commands.Cog):
 			paginator.add_reaction(
 				"\N{Black Right-Pointing Double Triangle with Vertical Bar}", "last"
 			)
+			await ubc.create_cooldown(ctx, 3, 60)
 			await paginator.run(embeds)
 		else:
 			embed = discord.Embed(color=member.color)
@@ -366,6 +368,7 @@ class Economy(commands.Cog):
 				)
 				embed.add_field(name=name.capitalize(),
 								value=f"{value}", inline=False)
+			await ubc.create_cooldown(ctx, 3, 60)
 			return await ctx.send(embed=embed)
 
 	@commands.command(name="shop" , description="Shows the shop")

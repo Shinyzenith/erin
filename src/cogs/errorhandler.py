@@ -8,7 +8,7 @@ import coloredlogs
 from io import StringIO
 from discord.ext import commands
 
-from main import BotBan, CooldownError
+from main import BotBan, CooldownError, ModuleDisabled
 
 
 log = logging.getLogger("errorhandler cog")
@@ -83,6 +83,9 @@ class ErrorHandler(commands.Cog):
             embed.description=str(error)
             return await ctx.send(embed=embed, delete_after=10)
         if isinstance(error,  BotBan):
+            embed.description=str(error)
+            return await ctx.send(embed=embed, delete_after=10 )
+        if isinstance(error,  ModuleDisabled):
             embed.description=str(error)
             return await ctx.send(embed=embed, delete_after=10 )
         error = getattr(error, 'original', error)
