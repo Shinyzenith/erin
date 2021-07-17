@@ -681,13 +681,13 @@ class Image(commands.Cog):
 
     @commands.cooldown(3, 10, commands.BucketType.user)
     @commands.command(name="daviegun", description="Davie504 is very friendly with your image in the background")
-    async def davie_gun(self, ctx):
+    async def daviegun(self, ctx):
         th = threading.Thread(target=async_handler(daviegun, ctx, []))
         th.start()
 
     @commands.cooldown(3, 10, commands.BucketType.user)
     @commands.command(name="daviesad", description="Davie504 is sad.")
-    async def davie_sad(self, ctx):
+    async def daviesad(self, ctx):
         th = threading.Thread(target=async_handler(daviesad, ctx, []))
         th.start()
 
