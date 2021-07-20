@@ -35,7 +35,7 @@ class Fun(commands.Cog):
     async def on_ready(self):
         log.warn(f"{self.__class__.__name__} Cog has been loaded")
 
-    @commands.cooldown(5, 7, commands.BucketType.user)
+    @commands.cooldown(3, 5, commands.BucketType.user)
     @commands.command(name="furrify", aliases=['owo', 'uwu'], description="Furrify text OwO UwU")
     async def furrify(self, ctx, *, msg):
         try:
