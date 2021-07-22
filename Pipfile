@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+discord = "*"
+numpy = "*"
+coloredlogs = "*"
+pymongo = "*"
+motor = "*"
+python-dotenv = "*"
+humanize = "*"
+dateparser = "*"
+psutil = "*"
+"dislash.py" = "*"
+DiscordUtils = "*"
+Pillow = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
