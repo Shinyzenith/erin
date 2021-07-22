@@ -5,21 +5,13 @@ import logging
 import datetime
 import coloredlogs
 import time
-from discord.ext.commands.cog import Cog
 import humanize
 import motor.motor_asyncio
 import datetime as dt
-
 from pathlib import Path
-from dotenv import load_dotenv
-from database import ErinDatabase
+from pymongo import MongoClient
 from discord.ext import commands
-
-# dotenv config
-load_dotenv()
-load_dotenv(verbose=True)
-env_path = Path('./../') / '.env'
-load_dotenv(dotenv_path=env_path)
+from discord.ext.commands.cog import Cog
 
 # logger config
 log = logging.getLogger("ErinBot")
@@ -42,6 +34,10 @@ class CooldownError(commands.CheckFailure):
 
 class BotBan(commands.CheckFailure):
     pass
+
+
+class ModuleDisabled(commands.CheckFailure):
+    pass
 # webhook function
 
 
@@ -57,12 +53,28 @@ async def webhook_send(url, message, username="Erin uptime Logs", avatar="https:
 
 # prefix manager class
 class PrefixManager:
-    def __init__(self, bot):
-        self.client = ErinDatabase(bot, os.getenv('CONNECTIONURI'))
+    def __init__(self):
+        self.client = MongoClient(os.getenv('CONNECTIONURI'))
+        self.db = self.client.erin
+        self.col = self.db["config"]
         self.prefixes = {}
 
+    def register_guild(self, g):
+        self.col.insert_one({"gid": g.id, "prefixes": ["-"]})
+
     def get_prefix(self, client, message):
-        prefixes = self.client.get_prefix(guild=message.guild, message=message)
+        # if str(message.guild.id) in self.prefixes:
+        #     return self.prefixes[str(message.guild.id)]
+        prefixes = []
+        guild = self.col.find_one({"gid": message.guild.id})
+        if not guild:
+            self.register_guild(message.guild)
+            prefixes = ["-"]
+        else:
+            prefixes = guild["prefixes"]
+        # May or may not have copied code from:
+        # https://stackoverflow.com/a/64434732/10291933
+        prefixes = commands.when_mentioned_or(*prefixes)(bot, message)
         self.prefixes[str(message.guild.id)] = prefixes
         return prefixes
 
@@ -76,21 +88,48 @@ class UserBanClient:
         self.db = self.client.erin
         self.col = self.db["softbans"]
         self.col2 = self.db["cooldowns"]
+        self.col3= self.db["blacklistedcogs"]
         self.users = []
 
     async def fetch_user_bans(self, user):
         if str(user.id) in self.users:
             log.warn(f"{user.id} is banned from using this bot")
             raise BotBan("You are banned from using this bot")
-            return False
 
         ban = await self.col.find_one({"uid": str(user.id)})
         if ban:
             log.warn(f"{user.id} is banned from using this bot")
             raise BotBan("You are banned from using this bot")
-            self.users.append(str(user.id))
         return (False if ban else True)
+    
+    async def check_if_enabled(self, guild, cog):
+        blacklisted=await self.col3.find_one({"gid": guild.id})
+        if blacklisted:
+            if cog in blacklisted["cogs"]:
+                raise ModuleDisabled("This module is disabled")
+            else:
+                return True
+        else:
+            return True
 
+    async def toggle_cog(self, guild, cog):
+        blacklisted=await self.col3.find_one({"gid": guild.id})
+        if blacklisted:
+            if cog in blacklisted["cogs"]:
+                blacklisted["cogs"].remove(cog)
+                status="enabled"
+            else:
+                blacklisted["cogs"].append(cog)
+                status="disabled"
+        else:
+            blacklisted={
+                "gid":guild.id,
+                "cogs":[cog]
+            }
+            await self.col3.insert_one(blacklisted)
+            return "disabled"
+        await self.col3.replace_one({"gid":guild.id}, blacklisted)
+        return status
     async def softban_user(self, userid: int):
         if str(userid) in self.users:
             return True
@@ -150,7 +189,8 @@ class UserBanClient:
 
     async def predicate(self, ctx):
         return await self.fetch_user_bans(ctx.author)
-
+    async def global_toggle(self, ctx):
+        return await self.check_if_enabled(ctx.guild, ctx.cog.qualified_name.lower())
     async def cooldown_checker(self, ctx):
         return await self.check_cooldowns(ctx)
 # bot instance class
@@ -160,8 +200,9 @@ class ErinBot(commands.Bot):
     def __init__(self):
 
         # intent and bot instance declaration
-        intents = discord.Intents.all()
-        super().__init__(command_prefix=PrefixManager(self).get_prefix,
+        intents = discord.Intents.default()
+        intents.members = True
+        super().__init__(command_prefix=PrefixManager().get_prefix,
                          intents=intents, guild_subscriptions=True, case_insensitive=True)
 
         # saving startup time and creating process loop (removing the default help command cuz it's ass)
@@ -208,6 +249,6 @@ for file in os.listdir(cwd + "/cogs"):
 
 # binding checks
 bot.add_check(ubc.predicate)
-
+bot.add_check(ubc.global_toggle)
 # running the bot
 bot.run()
