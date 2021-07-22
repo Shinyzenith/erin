@@ -5,21 +5,13 @@ import logging
 import datetime
 import coloredlogs
 import time
-from discord.ext.commands.cog import Cog
 import humanize
 import motor.motor_asyncio
 import datetime as dt
-
 from pathlib import Path
-from dotenv import load_dotenv
 from pymongo import MongoClient
 from discord.ext import commands
-
-# dotenv config
-load_dotenv()
-load_dotenv(verbose=True)
-env_path = Path('./../') / '.env'
-load_dotenv(dotenv_path=env_path)
+from discord.ext.commands.cog import Cog
 
 # logger config
 log = logging.getLogger("ErinBot")
