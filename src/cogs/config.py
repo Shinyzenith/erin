@@ -337,7 +337,7 @@ class Config(commands.Cog):
 
     @prefix.command()
     @commands.has_permissions(manage_guild=True)
-    async def remove(self, ctx, *, prefix: str = None):
+    async def remove(self, ctx, *, prefix: str = ""):
         prefixes = await self.gcm.get_prefix(ctx.guild)
 
         embed = discord.Embed(
@@ -356,7 +356,7 @@ class Config(commands.Cog):
             return await ctx.message.reply(
                 "Guild must have atleast 1 prefix, add another one before removing any."
             )
-        if len(prefix) > 2:
+        if len(prefix) == 0:
             return await ctx.message.reply("Please provide a valid prefix to remove.")
         if not (prefix in prefixes):
             return await ctx.message.reply(
