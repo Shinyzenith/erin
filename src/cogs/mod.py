@@ -107,7 +107,7 @@ class muteHandler:
                 try:
                     await mutedMember.remove_roles(
                         mutedRole,
-                        reason=f"{bot.user.display_name} auto unmute function triggered.",
+                        reason=f"{bot.user.name} auto unmute function triggered.",
                     )
                 except:
                     pass
@@ -206,7 +206,7 @@ class Moderation(commands.Cog):
         try:
             await member.add_roles(
                 mutedRole,
-                reason=f"{self.bot.user.display_name} auto unmute function triggered.",
+                reason=f"{self.bot.user.name} auto unmute function triggered.",
             )
         except:
             pass
@@ -268,15 +268,15 @@ class Moderation(commands.Cog):
 
         # building the embed
         channel = discord.Embed(
-            description=f"Punishment(s) for {user.display_name}#{user.discriminator} submitted successfully.",
+            description=f"Punishment(s) for {user.name}#{user.discriminator} submitted successfully.",
             color=11661816,
             timestamp=ctx.message.created_at,
         )
         channel.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         channel.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
 
         dmEmbed = discord.Embed(
@@ -294,10 +294,10 @@ class Moderation(commands.Cog):
                           value=f"<@{entryData['mod']}>", inline=True)
 
         dmEmbed.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         dmEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         await ctx.message.reply(embed=channel)
         try:
@@ -335,11 +335,11 @@ class Moderation(commands.Cog):
             timestamp=ctx.message.created_at,
         )
         channelEmbed.set_footer(
-            text=ctx.message.author.display_name,
+            text=ctx.message.author.name,
             icon_url=ctx.message.author.avatar_url,
         )
         channelEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         dmEmbed = discord.Embed(
             title="Erin Moderation",
@@ -385,7 +385,7 @@ class Moderation(commands.Cog):
                 timestamp=ctx.message.created_at,
             )
             embed.set_footer(
-                text=ctx.message.author.display_name,
+                text=ctx.message.author.name,
                 icon_url=ctx.message.author.avatar_url,
             )
             embed.set_author(name=self.bot.user.name,
@@ -413,11 +413,11 @@ class Moderation(commands.Cog):
                 timestamp=ctx.message.created_at,
             )
             emb.set_footer(
-                text=ctx.message.author.display_name,
+                text=ctx.message.author.name,
                 icon_url=ctx.message.author.avatar_url,
             )
             emb.set_author(
-                name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+                name=self.bot.user.name, icon_url=self.bot.user.avatar_url
             )
             return await ctx.message.reply(embed=emb)
 
@@ -478,16 +478,16 @@ class Moderation(commands.Cog):
         try:
             await ctx.guild.fetch_ban(user)
             channelEmbed = discord.Embed(
-                description=f"{user.display_name}#{user.discriminator} is already banned from the server!",
+                description=f"{user.name}#{user.discriminator} is already banned from the server!",
                 color=16724787,
                 timestamp=ctx.message.created_at,
             )
             channelEmbed.set_footer(
-                text=ctx.message.author.display_name,
+                text=ctx.message.author.name,
                 icon_url=ctx.message.author.avatar_url,
             )
             channelEmbed.set_author(
-                name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+                name=self.bot.user.name, icon_url=self.bot.user.avatar_url
             )
             return await ctx.send(embed=channelEmbed)
         except discord.NotFound:
@@ -509,11 +509,11 @@ class Moderation(commands.Cog):
             timestamp=ctx.message.created_at,
         )
         channelEmbed.set_footer(
-            text=ctx.message.author.display_name,
+            text=ctx.message.author.name,
             icon_url=ctx.message.author.avatar_url,
         )
         channelEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         dmEmbed = discord.Embed(
             title="Erin Moderation",
@@ -537,10 +537,10 @@ class Moderation(commands.Cog):
             pass
 
         dmEmbed.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         dmEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         if isinstance(user, discord.User):
             await ctx.message.guild.ban(user, reason=reason)
@@ -593,16 +593,16 @@ class Moderation(commands.Cog):
         try:
             await ctx.guild.fetch_ban(user)
             channelEmbed = discord.Embed(
-                description=f"{user.display_name}#{user.discriminator} is already banned from the server!",
+                description=f"{user.name}#{user.discriminator} is already banned from the server!",
                 color=16724787,
                 timestamp=ctx.message.created_at,
             )
             channelEmbed.set_footer(
-                text=ctx.message.author.display_name,
+                text=ctx.message.author.name,
                 icon_url=ctx.message.author.avatar_url,
             )
             channelEmbed.set_author(
-                name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+                name=self.bot.user.name, icon_url=self.bot.user.avatar_url
             )
             return await ctx.send(embed=channelEmbed)
         except discord.NotFound:
@@ -624,11 +624,11 @@ class Moderation(commands.Cog):
             timestamp=ctx.message.created_at,
         )
         channelEmbed.set_footer(
-            text=ctx.message.author.display_name,
+            text=ctx.message.author.name,
             icon_url=ctx.message.author.avatar_url,
         )
         channelEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         dmEmbed = discord.Embed(
             title="Erin Moderation",
@@ -645,10 +645,10 @@ class Moderation(commands.Cog):
                           value=f"<@{entryData['mod']}>", inline=True)
 
         dmEmbed.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         dmEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         if isinstance(user, discord.User):
             await ctx.message.guild.ban(user, reason=reason, delete_message_days=7)
@@ -720,11 +720,11 @@ class Moderation(commands.Cog):
                 timestamp=ctx.message.created_at,
             )
             channelEmbed.set_footer(
-                text=ctx.message.author.display_name,
+                text=ctx.message.author.name,
                 icon_url=ctx.message.author.avatar_url,
             )
             channelEmbed.set_author(
-                name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+                name=self.bot.user.name, icon_url=self.bot.user.avatar_url
             )
             dmEmbed = discord.Embed(
                 title="Erin Moderation",
@@ -742,11 +742,11 @@ class Moderation(commands.Cog):
             )
 
             dmEmbed.set_footer(
-                text=ctx.message.author.display_name,
+                text=ctx.message.author.name,
                 icon_url=ctx.message.author.avatar_url,
             )
             dmEmbed.set_author(
-                name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+                name=self.bot.user.name, icon_url=self.bot.user.avatar_url
             )
             try:
                 await ctx.message.guild.unban(user, reason=reason)
@@ -769,16 +769,16 @@ class Moderation(commands.Cog):
 
         except discord.NotFound:
             channelEmbed = discord.Embed(
-                description=f"{user.display_name}#{user.discriminator} is not banned from the server!",
+                description=f"{user.name}#{user.discriminator} is not banned from the server!",
                 color=16724787,
                 timestamp=ctx.message.created_at,
             )
             channelEmbed.set_footer(
-                text=ctx.message.author.display_name,
+                text=ctx.message.author.name,
                 icon_url=ctx.message.author.avatar_url,
             )
             channelEmbed.set_author(
-                name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+                name=self.bot.user.name, icon_url=self.bot.user.avatar_url
             )
             return await ctx.send(embed=channelEmbed)
 
@@ -812,10 +812,10 @@ class Moderation(commands.Cog):
                         value=f"<@{removedWarn['mod']}>", inline=True)
 
         embed.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         embed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         try:
             await user.send(embed=embed)
@@ -864,7 +864,7 @@ class Moderation(commands.Cog):
         try:
             await member.add_roles(
                 mutedRole,
-                reason=f"{self.bot.user.display_name} mute function triggered.",
+                reason=f"{self.bot.user.name} mute function triggered.",
             )
         except discord.errors.Forbidden:
             return await ctx.message.reply(
@@ -881,15 +881,15 @@ class Moderation(commands.Cog):
         userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
         await self.dbHandler.update_user_warn(str(member.id), userData)
         channel = discord.Embed(
-            description=f"Punishment(s) for {member.display_name}#{member.discriminator} submitted successfully.",
+            description=f"Punishment(s) for {member.name}#{member.discriminator} submitted successfully.",
             color=11661816,
             timestamp=ctx.message.created_at,
         )
         channel.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         channel.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
 
         dmEmbed = discord.Embed(
@@ -915,10 +915,10 @@ class Moderation(commands.Cog):
         )
 
         dmEmbed.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         dmEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         await ctx.message.reply(embed=channel)
         try:
@@ -951,7 +951,7 @@ class Moderation(commands.Cog):
                 if mutedRole in member.roles:
                     await member.remove_roles(
                         mutedRole,
-                        reason=f"{self.bot.user.display_name} was manually unmuted",
+                        reason=f"{self.bot.user.name} was manually unmuted",
                     )
                     entryData = {
                         "type": "mute",
@@ -984,7 +984,7 @@ class Moderation(commands.Cog):
         try:
             await member.remove_roles(
                 mutedRole,
-                reason=f"{self.bot.user.display_name} unmute function triggered",
+                reason=f"{self.bot.user.name} unmute function triggered",
             )
         except discord.errors.Forbidden:
             return ctx.message.reply(
@@ -1000,15 +1000,15 @@ class Moderation(commands.Cog):
         userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
         await self.dbHandler.update_user_warn(str(member.id), userData)
         channel = discord.Embed(
-            description=f"{member.display_name}#{member.discriminator} unmuted successfully.",
+            description=f"{member.name}#{member.discriminator} unmuted successfully.",
             color=11661816,
             timestamp=ctx.message.created_at,
         )
         channel.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         channel.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
 
         dmEmbed = discord.Embed(
@@ -1028,10 +1028,10 @@ class Moderation(commands.Cog):
                           value=f"<@{entryData['mod']}>", inline=True)
 
         dmEmbed.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         dmEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         await ctx.message.reply(embed=channel)
         try:
@@ -1082,11 +1082,11 @@ class Moderation(commands.Cog):
             timestamp=ctx.message.created_at,
         )
         channelEmbed.set_footer(
-            text=ctx.message.author.display_name,
+            text=ctx.message.author.name,
             icon_url=ctx.message.author.avatar_url,
         )
         channelEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         dmEmbed = discord.Embed(
             title="Erin Moderation",
@@ -1104,10 +1104,10 @@ class Moderation(commands.Cog):
                           value=f"<@{entryData['mod']}>", inline=True)
 
         dmEmbed.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         dmEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
 
         try:
@@ -1217,7 +1217,7 @@ class Moderation(commands.Cog):
             user_boosting_since_days = str(user_boosting_since_days)+"days"
 
         user_highest_role = member.top_role.mention
-        embed.add_field(name="User identity:", value=f"User mention: {member.mention}\nName and Tag: **{member.name}#{member.discriminator}**\nUser id: **{member.id}**\nServer Nickname: **{member.display_name}**\n\nBot user? **{is_user_bot}**\nServer administrator? **{user_admin}**\nAnimated avatar? **{user_animated_avatar}**\n\nBoosting since: **{user_boosting_since}**\nBoosting days: **{user_boosting_since_days}**", inline=False)
+        embed.add_field(name="User identity:", value=f"User mention: {member.mention}\nName and Tag: **{member.name}#{member.discriminator}**\nUser id: **{member.id}**\nServer Nickname: **{member.name}**\n\nBot user? **{is_user_bot}**\nServer administrator? **{user_admin}**\nAnimated avatar? **{user_animated_avatar}**\n\nBoosting since: **{user_boosting_since}**\nBoosting days: **{user_boosting_since_days}**", inline=False)
         embed.add_field(
             name="Dates:", value=f"Account created at: **{user_created_at}**\nUser account was created: **{user_created_days} days ago**\n\nJoined server at: **{user_joined_guild_at}**\nUser joined the server: **{user_joined_days} days ago**", inline=False)
         embed.add_field(name="User Permissions: ",
@@ -1301,9 +1301,9 @@ class Moderation(commands.Cog):
         role_created_days = (datetime.now()-role.created_at).days
         embed = discord.Embed(
             title="Role info", timestamp=ctx.message.created_at, color=role.color)
-        embed.set_author(name=ctx.message.author.display_name,
+        embed.set_author(name=ctx.message.author.name,
                          icon_url=ctx.message.guild.icon_url)
-        embed.set_footer(text=self.bot.user.display_name,
+        embed.set_footer(text=self.bot.user.name,
                          icon_url=self.bot.user.avatar_url)
         embed.add_field(inline=False, name="General Information:",
                         value=f'Role name: **{role.mention}**\nRole ID: `{role.id}`\nRole Position: **{role.position}**\nRole Color Hex: `{role.color}`\n\nIs role mentioned separately from online members? **{role.hoist}**\nIs role mentionable? **{role.mentionable}**\nIs role managed by integration? **{role.managed}**')
