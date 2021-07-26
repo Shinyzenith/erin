@@ -457,6 +457,11 @@ class Moderation(commands.Cog):
             delUser["gid"].pop(f"{ctx.message.guild.id}")
             await self.dbHandler.update_user_warn(str(user.id), delUser)
 
+            await request.delete()
+            try:
+                await message.delete()
+            except:
+                pass
             return await ctx.message.reply(
                 f"All records of {user.mention} have been deleted."
             )
