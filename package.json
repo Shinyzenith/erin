@@ -8,7 +8,7 @@
   "scripts": {
     "watch": "tsc -w",
     "raw": "yarn ts-node ./dashboard/src/typescript/startserver.ts",
-    "dev": "python3 src/main.py",
+    "dev": "pipenv run python src/main.py",
     "serverprod": "forever start -a -l ./logs/website/forever.log -e err.log -c node --sourceDir ./dashboard/dist/ startserver.js",
     "serverdev": "yarn nodemon --exec node ."
   },
