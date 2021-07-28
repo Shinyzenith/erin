@@ -17,7 +17,7 @@ class Toggle(commands.Cog):
         self.bot=client
 
     @commands.command()
-    @commands.has_guild_permissions(administrator=True)
+    @commands.has_guild_permissions(manage_server=True)
     async def toggle(self, ctx, *, cog: str="module_name"): 
         cogs=[c.lower() for c in list(self.bot.cogs.keys())]
         cog=cog.lower()
