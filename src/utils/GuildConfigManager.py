@@ -1,6 +1,8 @@
 import os
 import motor.motor_asyncio
 
+# This is a work in progress cog, we'll add more functions to this class!
+
 class GuildConfigManager:
     """
     Guild config util class for erin
