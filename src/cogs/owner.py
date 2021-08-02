@@ -1,9 +1,6 @@
 import os
 import ast
 import sys
-import time
-import psutil
-import asyncio
 import aiohttp
 import discord
 import logging
@@ -11,11 +8,7 @@ import traceback
 import coloredlogs
 from pathlib import Path
 from discord.ext import commands, tasks
-from aiohttp import ClientResponseError
-from discord.ext import commands, tasks
 from discord.enums import ActivityType, Status
-from discord.ext.commands.view import StringView
-from collections import OrderedDict, deque, Counter
 from main import ubc
 
 async def webhook_send(
