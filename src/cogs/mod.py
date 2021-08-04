@@ -1167,11 +1167,11 @@ class Moderation(commands.Cog):
             name="Banned:", value=f"{member.mention} - {member.id}", inline=False)
         await ctx.send(embed=embed)
 
-    @commands.command(pass_context=True, description="Shows info about a user")
+    @commands.command(pass_context=True, description="Shows useful information about a user")
     @commands.guild_only()
     async def whois(self, ctx, *, member: discord.Member = None):
-        if not member:  # if member is no mentioned
-            member = ctx.message.author  # set member as the author
+        if not member:
+            member = ctx.message.author
         roles = [role for role in member.roles]
         roles = roles[1:]
         if len(roles) != 0:
@@ -1203,32 +1203,22 @@ class Moderation(commands.Cog):
         permissions_formatted = ",  ".join(
             [permissions for permissions in permissions_formatted])
         is_user_bot = "Yes" if member.bot == True else "No"
-        user_admin = "Yes" if "Administrator" in permissions_formatted else "No"
-        user_created_at = member.created_at.strftime(
-            "%a, %#d %B %Y, %I:%M %p UTC")
-        user_joined_guild_at = member.joined_at.strftime(
-            "%a, %#d %B %Y, %I:%M %p UTC")
-
-        user_animated_avatar = member.is_avatar_animated()
-        user_created_days = (datetime.now()-member.created_at).days
-        user_joined_days = (datetime.now()-member.joined_at).days
-        user_boosting_since = None
-        user_boosting_since_days = None
+        user_created = int(member.created_at.timestamp())
+        user_joined = int(member.joined_at.timestamp())
+        user_boosting = None
+        user_boosting_days = None
         if member.premium_since != None:
-            user_boosting_since = member.premium_since.strftime(
-                "%a, %#d %B %Y, %I:%M %p UTC")
-            user_boosting_since_days = (
-                datetime.now()-member.premium_since).days
-            user_boosting_since_days = str(user_boosting_since_days)+"days"
+            user_boosting = f"<t:{int(member.premium_since.timestamp())}:F>"
+            user_boosting_days = f"<t:{int(member.premium_since.timestamp())}:R>"
 
         user_highest_role = member.top_role.mention
-        embed.add_field(name="User identity:", value=f"User mention: {member.mention}\nName and Tag: **{member.name}#{member.discriminator}**\nUser id: **{member.id}**\nServer Nickname: **{member.name}**\n\nBot user? **{is_user_bot}**\nServer administrator? **{user_admin}**\nAnimated avatar? **{user_animated_avatar}**\n\nBoosting since: **{user_boosting_since}**\nBoosting days: **{user_boosting_since_days}**", inline=False)
+        embed.add_field(name="User identity:", value=f"User id: **{member.id}**\nBot user? **{is_user_bot}**\n\nBoosting since: **{user_boosting}**\nBoosting days: **{user_boosting_days}**", inline=False)
         embed.add_field(
-            name="Dates:", value=f"Account created at: **{user_created_at}**\nUser account was created: **{user_created_days} days ago**\n\nJoined server at: **{user_joined_guild_at}**\nUser joined the server: **{user_joined_days} days ago**", inline=False)
+                name="Dates:", value=f"Account created at: **<t:{user_created}:F>**\nUser account was created: **<t:{user_created}:R> **\n\nJoined server at: **<t:{user_joined}:F>**\nUser joined the server: **<t:{user_joined}:R> **", inline=False)
         embed.add_field(name="User Permissions: ",
                         value=f"\n{permissions_formatted}", inline=False)
 
-        if not (len(member.roles)-1 >= 30):
+        if not (len(member.roles)-1 >= 25):
             embed.add_field(
                 name=f"Roles[{len(member.roles)-1}]:", value=user_roles, inline=False)
         else:
@@ -1242,7 +1232,7 @@ class Moderation(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command(pass_context=True, description="Shows a users avatar")
-    async def avatar(self, ctx, *, member: discord.Member = None):
+    async def avatar(self, ctx, *, member: discord.User = None):
         if not member:
             member = ctx.author
         embed = discord.Embed(colour=member.color, timestamp=ctx.message.created_at,
@@ -1313,7 +1303,7 @@ class Moderation(commands.Cog):
         embed.add_field(inline=False, name="General Information:",
                         value=f'Role name: **{role.mention}**\nRole ID: `{role.id}`\nRole Position: **{role.position}**\nRole Color Hex: `{role.color}`\n\nIs role mentioned separately from online members? **{role.hoist}**\nIs role mentionable? **{role.mentionable}**\nIs role managed by integration? **{role.managed}**')
         embed.add_field(inline=False, name="Dates:",
-                        value=f'Role was created at **{role.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC")}**\nRole was created **{role_created_days} days ago**')
+                        value=f'Role was created at **{role.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC")}**\nRole was created **{role_created_days} **')
         embed.add_field(inline=False, name="Permission info:",
                         value=f'Role Permission Integer: `{role.permissions.value}`\n\nPermissions: **{permissions}**')
         await ctx.send(embed=embed)
