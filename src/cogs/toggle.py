@@ -13,6 +13,9 @@ from discord.ext import commands
 from main import ubc
 
 class Toggle(commands.Cog):
+    """
+    Class to toggle modules of the bot for your server!
+    """
     def __init__(self, client):
         self.bot=client
 
