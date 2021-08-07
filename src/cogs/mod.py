@@ -1,4 +1,3 @@
-import re
 import os
 import typing
 import asyncio
@@ -11,44 +10,20 @@ import DiscordUtils
 from time import time
 import motor.motor_asyncio
 from datetime import datetime
-from discord.ext import commands, tasks
 from main import ubc, isoncooldown
+from discord.ext import commands, tasks
+from utils.TimeConverter import TimeConverter
+from utils.GuildConfigManager import GuildConfigManager
 # Initializing the logger
 log = logging.getLogger("Moderation cog")
 coloredlogs.install(logger=log)
-
-time_regex = re.compile(r"(?:(\d{1,5})(h|s|m|d))+?")
-time_dict = {"h": 3600, "s": 1, "m": 60, "d": 86400}
-
-# TODO add a 30 warn per user per guild limit asap, if count exceeds 30 by any chance then prune the last 2
-class TimeConverter(commands.Converter):
-    async def convert(self, ctx, argument):
-        args = argument.lower()
-        matches = re.findall(time_regex, args)
-        time = 0
-        for key, value in matches:
-            try:
-                time += time_dict[value] * float(key)
-            except KeyError:
-                raise commands.BadArgument(
-                    f"{value} is an invalid time key! h|m|s|d are valid arguments"
-                )
-            except ValueError:
-                raise commands.BadArgument(f"{key} is not a number!")
-        if round(time) == 0:
-            raise commands.BadArgument(
-                f"Please enter a valid time format, eg: {ctx.prefix}mute @user 1d2h3m4s ---> denoting mute @user for 1 day, 2 hour, 3 minutes and 4 seconds."
-            )
-        else:
-            return round(time)
-
 
 class muteHandler:
     def __init__(self):
         self.client = motor.motor_asyncio.AsyncIOMotorClient(
             os.getenv("CONNECTIONURI"))
         self.db = self.client.erin
-        self.gch = GuildConfigHandler()
+        self.gch = GuildConfigManager()
         self.col = self.db["mute"]
 
     async def fetch_user_mutes(self, uid: int, gid: int):
@@ -113,37 +88,6 @@ class muteHandler:
                     pass
                 return await self.delete_mute_entry(mute)
 
-
-# GuildConfigManager
-class GuildConfigHandler:
-    def __init__(self):
-        self.client = motor.motor_asyncio.AsyncIOMotorClient(
-            os.getenv("CONNECTIONURI"))
-        self.db = self.client.erin
-        self.col = self.db["config"]
-
-    async def register_guild(self, g, recheck=True):
-        if recheck:
-            guild = await self.col.find_one({"gid": g.id})
-            if not guild:
-                guild = {"gid": g.id, "prefixes": ["-"]}
-                await self.col.insert_one(guild)
-        else:
-            guild = {"gid": g.id, "prefixes": ["-"]}
-            await self.col.insert_one(guild)
-        return guild
-
-    async def get_ban_appeal(self, g):
-        guild = await self.register_guild(g)
-        link = guild["ban_appeal"]
-        return link
-
-    async def get_muted_role(self, g):
-        guild = await self.register_guild(g)
-        muted_role = guild["muted_role"]
-        return muted_role
-
-
 # Database Handler class
 class dbHandler:
     def __init__(self):
@@ -183,7 +127,7 @@ class Moderation(commands.Cog):
         self.muteHandler = muteHandler()
         self.dbHandler = dbHandler()
         self.TimeConverter = TimeConverter()
-        self.GuildConfigHandler = GuildConfigHandler()
+        self.GuildConfigManager = GuildConfigManager()
 
     @tasks.loop(seconds=2)
     async def _autounmute(self):
@@ -197,7 +141,7 @@ class Moderation(commands.Cog):
         if len(userMutes) == 0:
             return
         try:
-            muteRoleID = await self.GuildConfigHandler.get_muted_role(guild)
+            muteRoleID = await self.GuildConfigManager.get_muted_role(guild)
         except:
             return
         mutedRole = guild.get_role(muteRoleID)
@@ -535,7 +479,7 @@ class Moderation(commands.Cog):
                           value=f"<@{entryData['mod']}>", inline=True)
 
         try:
-            ban_appeal = await self.GuildConfigHandler.get_ban_appeal(ctx.guild)
+            ban_appeal = await self.GuildConfigManager.get_ban_appeal(ctx.guild)
             dmEmbed.add_field(name="Ban Appeal link:",
                               value=ban_appeal, inline=False)
         except KeyError:
@@ -830,9 +774,9 @@ class Moderation(commands.Cog):
 
     @commands.command(name="mute", description="Mutes a user")
     @commands.has_guild_permissions(mute_members=True)
-    async def mute(self, ctx, member: discord.Member, mute_period: str, *, reason: str = "No reason given. "):
+    async def mute(self, ctx, member: discord.Member, mute_period: str=None, *, reason: str = "No reason given. "):
         try:
-            muted_role = await self.GuildConfigHandler.get_muted_role(ctx.guild)
+            muted_role = await self.GuildConfigManager.get_muted_role(ctx.guild)
         except KeyError:
             return await ctx.message.reply(
                 "No muted role has been setup for the server. Make a muted role before running the mute command."
@@ -841,8 +785,13 @@ class Moderation(commands.Cog):
             return await ctx.message.reply(
                 "Reason parameter exceeded 150 characters. Please write a shorter reason to continue."
             )
+
+        try:
+            mutedExpireTimeRaw = await self.TimeConverter.convert(ctx,mute_period)
+        except:
+            mutedExpireTimeRaw = await self.GuildConfigManager.get_default_mutetime(ctx.guild)
+
         mutedAt = time()
-        mutedExpireTimeRaw = await self.TimeConverter.convert(ctx, mute_period)
         mutedExpireTime = mutedExpireTimeRaw + mutedAt
         mutedRole = ctx.message.guild.get_role(muted_role)
         if mutedRole in member.roles:
@@ -943,7 +892,7 @@ class Moderation(commands.Cog):
             )
 
         try:
-            mutedRoleID = await self.GuildConfigHandler.get_muted_role(ctx.guild)
+            mutedRoleID = await self.GuildConfigManager.get_muted_role(ctx.guild)
         except:
             return await ctx.message.reply(
                 f"Unable to unmute {member.mention} as the guild muted role has not been setup in my config >:(("

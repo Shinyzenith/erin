@@ -12,6 +12,7 @@ from discord.utils import get
 from discord.ext import commands
 from collections import  Counter
 from utils.GuildConfigManager import GuildConfigManager
+from utils.TimeConverter import TimeConverter
 
 async def webhook_send(
     url,
@@ -54,6 +55,7 @@ class Config(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.TimeConverter = TimeConverter()
         self.gcm = GuildConfigManager()
 
     @commands.Cog.listener()
@@ -310,6 +312,48 @@ class Config(commands.Cog):
         embed = discord.Embed(
             title=f"{ctx.guild.name} - muted role is:",
             description=f"{muted_role.mention}",
+            timestamp=ctx.message.created_at,
+            color=ctx.message.author.color,
+        )
+        return await ctx.message.reply(embed=embed)
+
+    
+    @commands.group(name="muteduration", case_insensitive=True, description="Sets up a `Muted` role!")
+    @commands.cooldown(10, 120, commands.BucketType.guild)
+    @commands.has_permissions(manage_guild=True)
+    async def muteduration(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.message.reply(
+                "please mention a proper argument such as `set` or `show`"
+            )
+
+    @muteduration.command(name="set")
+    @commands.has_permissions(manage_guild=True)
+    async def muteduration_set(self, ctx,mute_period:str=None):
+        _mute_period = await self.TimeConverter.convert(ctx, mute_period)
+        _mute_period_time = humanize.precisedelta(_mute_period)
+        await self.gcm.set_default_mutetime(ctx.guild,_mute_period)
+        embed = discord.Embed(
+            title=f"{ctx.guild.name} - Default mute duration has been set to:",
+            description=f"{_mute_period_time}",
+            timestamp=ctx.message.created_at,
+            color=ctx.message.author.color,
+        )
+        return await ctx.send(embed=embed)
+
+
+    @muteduration.command(name="show")
+    async def muteduration_show(self, ctx):
+        try:
+            muteduration = await self.gcm.get_default_mutetime(ctx.guild)
+        except KeyError:
+            await self.gcm.set_default_mutetime(ctx.guild)
+            return await ctx.message.reply(
+                f"A default mute duration has not been setup for {ctx.guild.name}. Setting default mute duration to 1 hour."
+            )
+        embed = discord.Embed(
+            title=f"{ctx.guild.name} - Default mute duration is:",
+            description=f"{humanize.precisedelta(muteduration)}",
             timestamp=ctx.message.created_at,
             color=ctx.message.author.color,
         )

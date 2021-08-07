@@ -1,4 +1,5 @@
 import os
+import discord
 import motor.motor_asyncio
 
 # This is a work in progress cog, we'll add more functions to this class!
@@ -111,3 +112,21 @@ class GuildConfigManager:
         currencyChannnel = guild["channel"]
         return currencyChannnel
 
+    async def set_default_mutetime(self,g:discord.Guild,default:int=None):
+        guild = await self.register_guild(g)
+        current_mute_time=None # the current config
+        try:
+            current_mute_time=guild["default_mute_duration"]
+        except KeyError:
+            pass
+        if  current_mute_time==None and default==None:
+            guild['default_mute_duration'] = 3600 # default mute time will be 1 hour if config var has not been set
+            return await self.update_guild(g,guild)
+        elif default !=None:
+            guild['default_mute_duration'] = default
+            return await self.update_guild(g,guild)
+
+    async def get_default_mutetime(self,g:discord.Guild):
+        guild = await self.register_guild(g)
+        muteduration = guild['default_mute_duration']
+        return muteduration
