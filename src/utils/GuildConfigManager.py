@@ -112,7 +112,7 @@ class GuildConfigManager:
         currencyChannnel = guild["channel"]
         return currencyChannnel
 
-    async def set_default_mutetime(self,g:discord.Guild,default:int=None):
+    async def set_default_mutetime(self,g:discord.Guild,default:int=None,get = False):
         guild = await self.register_guild(g)
         current_mute_time=None # the current config
         try:
@@ -128,6 +128,10 @@ class GuildConfigManager:
 
     async def get_default_mutetime(self,g:discord.Guild):
         guild = await self.register_guild(g)
-        await self.set_default_mutetime(g)
-        muteduration = guild['default_mute_duration']
-        return muteduration
+        try:
+            current_mute_time=guild['default_mute_duration']
+        except KeyError:
+            await self.set_default_mutetime(g)
+            current_mute_time = await self.register_guild(g)
+            current_mute_time=current_mute_time['default_mute_duration']
+        return current_mute_time
