@@ -128,5 +128,6 @@ class GuildConfigManager:
 
     async def get_default_mutetime(self,g:discord.Guild):
         guild = await self.register_guild(g)
+        await self.set_default_mutetime(g)
         muteduration = guild['default_mute_duration']
         return muteduration
