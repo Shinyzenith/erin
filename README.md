@@ -99,7 +99,7 @@
 
   At the repo root, create a new file and call it <code>.env</code>.
   (you probably shouldn't commit it so don't add it / gitignore it)
-  Copy and paste the contents of <a href="https://github.com/AakashSharma7269/erin/blob/main/demo.env"><code>demo.env</code></a> into the <code>.env</code> file you just made and fill in the Discord bot token and type <code>localhost</code> for the MongoDB URI, or another URI if you are using a database hosted in the cloud.
+  Copy and paste the contents of <a href="https://github.com/AakashSharma7269/erin/blob/main/sample.env"><code>sample.env</code></a> into the <code>.env</code> file you just made and fill in the Discord bot token and type <code>localhost</code> for the MongoDB URI, or another URI if you are using a database hosted in the cloud.
 
   <h4>Step 5: Install the dependencies and run!</h4>
   Run the following in your terminal to install the dependencies: <code>pipenv install --ignore-pipfile</code>
