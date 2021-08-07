@@ -85,7 +85,7 @@
   5.  Step 4 should get you ready for development. If you restart your development machine then run `docker start erinDb` to start the container.
   <br>Note: On linux you will need to run `sudo systemctl start docker` and `sudo systemctl enable docker` 
   <br>
-	I personally prefer docker as i don't need to install all the software i need individually, instead i can just install docker and pull the image as required (if it's available in the docker repo).
+	I personally prefer docker as I don't need to install all the software I need individually, instead I can just install docker and pull the image as required (if it's available in the docker repo).
   <h4>Step 3: Create a Discord bot.</h4>
 
   Create a new application in your <a href="https://discord.com/developers/applications">developer portal page</a> on Discord and call it something like "ErinTestApp."
