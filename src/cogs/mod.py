@@ -1283,7 +1283,6 @@ class Moderation(commands.Cog):
             await ubc.create_cooldown(ctx, 2,180)
         except:
             pass
-# TODO if bot if offline and they're muted with lets say something like another bot and then they're meant to be unmuted with erin then we don't have the log in mutes collection so we need to make sure that if they have the role then we'll just try to remove it and add a warn owo
 # TODO ability to add a mod log channel and write an async handler to webhook the data to the channel.
 # TODO: 2) TEMPBAN 5) invite lookup
 # TODO add logging features such as member log, vc log, ban log, unban log, kick log, and so on and so forth
