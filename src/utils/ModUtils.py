@@ -1,5 +1,5 @@
 import os
-import time
+from time import time
 import motor.motor_asyncio
 from utils.GuildConfigManager import GuildConfigManager
 
