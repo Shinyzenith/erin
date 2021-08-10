@@ -5,7 +5,6 @@ __pycache__/
 node_modules
 # C extensions
 *.so
-.vscode
 # Distribution / packaging
 .Python
 logs
@@ -18,3 +17,6 @@ share/python-wheels/
 # Mongo DB
 /mdbcluster
 music
+# Text editor config ignores
+.vscode
+.vim

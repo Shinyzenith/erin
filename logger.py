@@ -68,7 +68,7 @@ async def export_message_delete_several(msgs, webhook):
     embed.title = f"Messages Purged"
     embed.description = data[0:1500] + "..."
     embed.set_footer(
-        text=f"{len(msgs)} msgs were purged that were known to cache")
+        text=f"{len(msgs)} msgs were purged that were known to prefix_cache")
     await export_message(webhook, embed)
 
 

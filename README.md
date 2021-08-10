@@ -51,9 +51,7 @@
   Hey! we're certainly not pros when it comes to bot making, the bot does have some very clunky parts when it comes to caching and general code quality. We are working around the clock to make it better.
   We appreciate any support we can get from the community, including Patreon donations (coming soon!) and/or GitHub PR's with code quality fixes!!!
   <br>
-  Note: The API, dashboard, and music module are still under development! and credits to <a href="https://nekos.life">https://nekos.life </a> for the image API!
-
-  <h3>Monetary support</h3>
+  Note: The API, dashboard, and music module are still under development! and credits to <a href="https://nekos.life">https://nekos.life </a> for the image API!  <h3>Monetary support</h3>
 
   Patreon donations are coming soon!
 
@@ -87,7 +85,7 @@
   5.  Step 4 should get you ready for development. If you restart your development machine then run `docker start erinDb` to start the container.
   <br>Note: On linux you will need to run `sudo systemctl start docker` and `sudo systemctl enable docker` 
   <br>
-	I personally prefer docker as i don't need to install all the software i need individually, instead i can just install docker and pull the image as required (if it's available in the docker repo).
+	I personally prefer docker as I don't need to install all the software I need individually, instead I can just install docker and pull the image as required (if it's available in the docker repo).
   <h4>Step 3: Create a Discord bot.</h4>
 
   Create a new application in your <a href="https://discord.com/developers/applications">developer portal page</a> on Discord and call it something like "ErinTestApp."
@@ -101,8 +99,8 @@
 
   At the repo root, create a new file and call it <code>.env</code>.
   (you probably shouldn't commit it so don't add it / gitignore it)
-  Copy and paste the contents of <a href="https://github.com/AakashSharma7269/erin/blob/main/demo.env"><code>demo.env</code></a> into the <code>.env</code> file you just made and fill in the Discord bot token and type <code>localhost</code> for the MongoDB URI, or another URI if you are using a database hosted in the cloud.
+  Copy and paste the contents of <a href="https://github.com/AakashSharma7269/erin/blob/main/sample.env"><code>sample.env</code></a> into the <code>.env</code> file you just made and fill in the Discord bot token and type <code>localhost</code> for the MongoDB URI, or another URI if you are using a database hosted in the cloud.
 
-  <h4>Step 5: Run!</h4>
-
-  Run the bot by running <code>starterin.sh</code> or <code>starterin.bat</code> depending on your OS. (You can also additionally run <code>yarn dev</code> or <code>npm run dev</code>.)
+  <h4>Step 5: Install the dependencies and run!</h4>
+  Run the following in your terminal to install the dependencies: <code>pipenv install --ignore-pipfile</code>
+  Run the bot by running <code>pipenv run python src/main.py</code>

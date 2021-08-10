@@ -1,5 +1,4 @@
 import re
-import os
 import typing
 import asyncio
 import discord
@@ -9,168 +8,15 @@ import datetime
 import coloredlogs
 import DiscordUtils
 from time import time
-import motor.motor_asyncio
 from datetime import datetime
-from discord.ext import commands, tasks
 from main import ubc, isoncooldown
-# Initializing the logger
+from discord.ext import commands, tasks
+from utils.TimeConverter import TimeConverter
+from utils.GuildConfigManager import GuildConfigManager
+from utils.ModUtils import ModUtils
+
 log = logging.getLogger("Moderation cog")
 coloredlogs.install(logger=log)
-
-time_regex = re.compile(r"(?:(\d{1,5})(h|s|m|d))+?")
-time_dict = {"h": 3600, "s": 1, "m": 60, "d": 86400}
-
-# TODO add a 30 warn per user per guild limit asap, if count exceeds 30 by any chance then prune the last 2
-class TimeConverter(commands.Converter):
-    async def convert(self, ctx, argument):
-        args = argument.lower()
-        matches = re.findall(time_regex, args)
-        time = 0
-        for key, value in matches:
-            try:
-                time += time_dict[value] * float(key)
-            except KeyError:
-                raise commands.BadArgument(
-                    f"{value} is an invalid time key! h|m|s|d are valid arguments"
-                )
-            except ValueError:
-                raise commands.BadArgument(f"{key} is not a number!")
-        if round(time) == 0:
-            raise commands.BadArgument(
-                f"Please enter a valid time format, eg: {ctx.prefix}mute @user 1d2h3m4s ---> denoting mute @user for 1 day, 2 hour, 3 minutes and 4 seconds."
-            )
-        else:
-            return round(time)
-
-
-class muteHandler:
-    def __init__(self):
-        self.client = motor.motor_asyncio.AsyncIOMotorClient(
-            os.getenv("CONNECTIONURI"))
-        self.db = self.client.erin
-        self.gch = GuildConfigHandler()
-        self.col = self.db["mute"]
-
-    async def fetch_user_mutes(self, uid: int, gid: int):
-        current_time = time()
-        cursor = self.col.find(
-            {
-                "uid": str(uid),
-                "me": {"$gte": current_time},
-                "gid": gid,
-            }
-        )
-        MemberMutes = await cursor.to_list(
-            length=99999999999999999999999999999999999999999999
-        )
-        return MemberMutes
-
-    async def register_mute(
-        self, uid: str, muteExpiration: int, muteAssignedAt: int, gid: int, reason: str
-    ):
-        data = {
-            "uid": uid,
-            "me": muteExpiration,
-            "gid": gid,
-            "details": {"ma": muteAssignedAt, "reason": reason},
-        }
-        await self.col.insert_one(data)
-        return data
-
-    async def load_mutes(self):
-        current_time = round(time())
-        cursor = self.col.find({"me": {"$lte": current_time}})
-        return await cursor.to_list(
-            length=99999999999999999999999999999999999999999999
-        )  # lol
-
-    async def delete_mute_entry(self, mute):
-        data = {"uid": mute["uid"], "me": mute["me"], "gid": mute["gid"]}
-        await self.col.delete_one(data)
-
-    async def unmute_loaded_mutes(self, bot):
-        mute_list = await self.load_mutes()
-        for mute in mute_list:
-            guild = bot.get_guild(mute["gid"])
-            if not guild:
-                return await self.delete_mute_entry(mute)
-            else:
-                try:
-                    muteRoleID = await self.gch.get_muted_role(guild)
-                    mutedMember = guild.get_member(int(mute["uid"]))
-
-                except:
-                    return await self.delete_mute_entry(mute)
-                mutedRole = guild.get_role(muteRoleID)
-                if not mutedRole:
-                    return await self.delete_mute_entry(mute)
-                try:
-                    await mutedMember.remove_roles(
-                        mutedRole,
-                        reason=f"{bot.user.display_name} auto unmute function triggered.",
-                    )
-                except:
-                    pass
-                return await self.delete_mute_entry(mute)
-
-
-# GuildConfigManager
-class GuildConfigHandler:
-    def __init__(self):
-        self.client = motor.motor_asyncio.AsyncIOMotorClient(
-            os.getenv("CONNECTIONURI"))
-        self.db = self.client.erin
-        self.col = self.db["config"]
-
-    async def register_guild(self, g, recheck=True):
-        if recheck:
-            guild = await self.col.find_one({"gid": g.id})
-            if not guild:
-                guild = {"gid": g.id, "prefixes": ["-"]}
-                await self.col.insert_one(guild)
-        else:
-            guild = {"gid": g.id, "prefixes": ["-"]}
-            await self.col.insert_one(guild)
-        return guild
-
-    async def get_ban_appeal(self, g):
-        guild = await self.register_guild(g)
-        link = guild["ban_appeal"]
-        return link
-
-    async def get_muted_role(self, g):
-        guild = await self.register_guild(g)
-        muted_role = guild["muted_role"]
-        return muted_role
-
-
-# Database Handler class
-class dbHandler:
-    def __init__(self):
-        self.client = motor.motor_asyncio.AsyncIOMotorClient(
-            os.getenv("CONNECTIONURI"))
-        self.db = self.client.erin
-        self.col = self.db["warns"]
-
-    async def find_user(self, uid: str, gid: int):
-        user = await self.col.find_one({"uid": uid})
-        if not user:
-            user = await self.register_user(uid, gid)
-        try:
-            user["gid"][f"{gid}"]
-        except KeyError:
-            user["gid"][f"{gid}"] = []
-        finally:
-            return user
-
-    async def register_user(self, uid: str, gid: int):
-        data = {"uid": f"{uid}", "gid": {f"{str(gid)}": []}}
-        await self.col.insert_one(data)
-        return data
-
-    async def update_user_warn(self, uid: str, data):
-        await self.col.replace_one({"uid": f"{uid}"}, data)
-
 
 class Moderation(commands.Cog):
     """
@@ -180,24 +26,23 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self._autounmute.start()
-        self.muteHandler = muteHandler()
-        self.dbHandler = dbHandler()
+        self.ModUtils = ModUtils()
         self.TimeConverter = TimeConverter()
-        self.GuildConfigHandler = GuildConfigHandler()
+        self.GuildConfigManager = GuildConfigManager()
 
     @tasks.loop(seconds=2)
     async def _autounmute(self):
         await self.bot.wait_until_ready()
-        await self.muteHandler.unmute_loaded_mutes(self.bot)
+        await self.ModUtils.unmute_loaded_mutes(self.bot)
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
         guild = member.guild
-        userMutes = await self.muteHandler.fetch_user_mutes(member.id, guild.id)
+        userMutes = await self.ModUtils.fetch_user_mutes(member.id, guild.id)
         if len(userMutes) == 0:
             return
         try:
-            muteRoleID = await self.GuildConfigHandler.get_muted_role(guild)
+            muteRoleID = await self.GuildConfigManager.get_muted_role(guild)
         except:
             return
         mutedRole = guild.get_role(muteRoleID)
@@ -206,7 +51,7 @@ class Moderation(commands.Cog):
         try:
             await member.add_roles(
                 mutedRole,
-                reason=f"{self.bot.user.display_name} auto unmute function triggered.",
+                reason=f"{self.bot.user.name} auto unmute function triggered.",
             )
         except:
             pass
@@ -217,9 +62,9 @@ class Moderation(commands.Cog):
             "time": datetime.utcnow().strftime("%a, %#d %B %Y, %I:%M %p UTC"),
             "mod": f"{self.bot.user.id}",
         }
-        userData = await self.dbHandler.find_user(str(member.id), guild.id)
+        userData = await self.ModUtils.find_user(str(member.id), guild.id)
         userData["gid"][f"{guild.id}"].append(entryData)
-        await self.dbHandler.update_user_warn(str(member.id), userData)
+        await self.ModUtils.update_user_warn(str(member.id), userData)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -260,23 +105,23 @@ class Moderation(commands.Cog):
             "time": ctx.message.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"),
             "mod": f"{ctx.message.author.id}",
         }
-        userData = await self.dbHandler.find_user(str(user.id), ctx.message.guild.id)
+        userData = await self.ModUtils.find_user(str(user.id), ctx.message.guild.id)
         userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
 
         # updating user entries
-        await self.dbHandler.update_user_warn(str(user.id), userData)
+        await self.ModUtils.update_user_warn(str(user.id), userData)
 
         # building the embed
         channel = discord.Embed(
-            description=f"Punishment(s) for {user.display_name}#{user.discriminator} submitted successfully.",
+            description=f"Punishment(s) for {user.name}#{user.discriminator} submitted successfully.",
             color=11661816,
             timestamp=ctx.message.created_at,
         )
         channel.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         channel.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
 
         dmEmbed = discord.Embed(
@@ -294,10 +139,10 @@ class Moderation(commands.Cog):
                           value=f"<@{entryData['mod']}>", inline=True)
 
         dmEmbed.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         dmEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         await ctx.message.reply(embed=channel)
         try:
@@ -315,7 +160,7 @@ class Moderation(commands.Cog):
         if len(reason) > 150:
             return await ctx.send("Hey! the maximum word limit for a warn reason is 150.")
         # gathering the user warns in a user dictionary
-        user = await self.dbHandler.find_user(str(searchUser.id), ctx.message.guild.id)
+        user = await self.ModUtils.find_user(str(searchUser.id), ctx.message.guild.id)
         # checking if the warn exists in the database !!
         if len(user["gid"][f"{ctx.guild.id}"]) < warnID:
             return await ctx.send(f"WarnID {warnID} doesn't exist!")
@@ -328,18 +173,18 @@ class Moderation(commands.Cog):
         newReason["reason"] = reason
         # inserting new reason dictionary into warns array
         user['gid'][f'{ctx.guild.id}'].insert(warnID-1, newReason)
-        await self.dbHandler.update_user_warn(str(searchUser.id), user)
+        await self.ModUtils.update_user_warn(str(searchUser.id), user)
         channelEmbed = discord.Embed(
             description=f"Set reason for punishment with ID `{warnID}` to `{reason}`",
             color=11661816,
             timestamp=ctx.message.created_at,
         )
         channelEmbed.set_footer(
-            text=ctx.message.author.display_name,
+            text=ctx.message.author.name,
             icon_url=ctx.message.author.avatar_url,
         )
         channelEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         dmEmbed = discord.Embed(
             title="Erin Moderation",
@@ -366,10 +211,10 @@ class Moderation(commands.Cog):
             pass
         return await ctx.send(embed=channelEmbed)
 
-    @ commands.command(name="search", aliases=["warns"], description="Shows a users punishments")
-    @ commands.guild_only()
+    @commands.command(name="search", aliases=["warns"], description="Shows a users punishments")
+    @commands.guild_only()
     async def search(self, ctx, searchUser: discord.User):
-        user = await self.dbHandler.find_user(str(searchUser.id), ctx.message.guild.id)
+        user = await self.ModUtils.find_user(str(searchUser.id), ctx.message.guild.id)
         threshold = 5
         reason_chunk = [
             user["gid"][f"{ctx.message.guild.id}"][i: i + threshold]
@@ -385,7 +230,7 @@ class Moderation(commands.Cog):
                 timestamp=ctx.message.created_at,
             )
             embed.set_footer(
-                text=ctx.message.author.display_name,
+                text=ctx.message.author.name,
                 icon_url=ctx.message.author.avatar_url,
             )
             embed.set_author(name=self.bot.user.name,
@@ -413,11 +258,11 @@ class Moderation(commands.Cog):
                 timestamp=ctx.message.created_at,
             )
             emb.set_footer(
-                text=ctx.message.author.display_name,
+                text=ctx.message.author.name,
                 icon_url=ctx.message.author.avatar_url,
             )
             emb.set_author(
-                name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+                name=self.bot.user.name, icon_url=self.bot.user.avatar_url
             )
             return await ctx.message.reply(embed=emb)
 
@@ -442,7 +287,7 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def delpunishments(self, ctx, user: discord.User):
-        delUser = await self.dbHandler.find_user(str(user.id), ctx.message.guild.id)
+        delUser = await self.ModUtils.find_user(str(user.id), ctx.message.guild.id)
         request = await ctx.message.reply(
             f"**This will delete ALL punishments that the {user.mention} has.** Type \"yes\" to continue, \"no\" to cancel. "
         )
@@ -455,8 +300,13 @@ class Moderation(commands.Cog):
 
         if "yes" in message.content.lower():
             delUser["gid"].pop(f"{ctx.message.guild.id}")
-            await self.dbHandler.update_user_warn(str(user.id), delUser)
+            await self.ModUtils.update_user_warn(str(user.id), delUser)
 
+            await request.delete()
+            try:
+                await message.delete()
+            except:
+                pass
             return await ctx.message.reply(
                 f"All records of {user.mention} have been deleted."
             )
@@ -478,16 +328,16 @@ class Moderation(commands.Cog):
         try:
             await ctx.guild.fetch_ban(user)
             channelEmbed = discord.Embed(
-                description=f"{user.display_name}#{user.discriminator} is already banned from the server!",
+                description=f"{user.name}#{user.discriminator} is already banned from the server!",
                 color=16724787,
                 timestamp=ctx.message.created_at,
             )
             channelEmbed.set_footer(
-                text=ctx.message.author.display_name,
+                text=ctx.message.author.name,
                 icon_url=ctx.message.author.avatar_url,
             )
             channelEmbed.set_author(
-                name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+                name=self.bot.user.name, icon_url=self.bot.user.avatar_url
             )
             return await ctx.send(embed=channelEmbed)
         except discord.NotFound:
@@ -509,11 +359,11 @@ class Moderation(commands.Cog):
             timestamp=ctx.message.created_at,
         )
         channelEmbed.set_footer(
-            text=ctx.message.author.display_name,
+            text=ctx.message.author.name,
             icon_url=ctx.message.author.avatar_url,
         )
         channelEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         dmEmbed = discord.Embed(
             title="Erin Moderation",
@@ -530,17 +380,17 @@ class Moderation(commands.Cog):
                           value=f"<@{entryData['mod']}>", inline=True)
 
         try:
-            ban_appeal = await self.GuildConfigHandler.get_ban_appeal(ctx.guild)
+            ban_appeal = await self.GuildConfigManager.get_ban_appeal(ctx.guild)
             dmEmbed.add_field(name="Ban Appeal link:",
                               value=ban_appeal, inline=False)
         except KeyError:
             pass
 
         dmEmbed.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         dmEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         if isinstance(user, discord.User):
             await ctx.message.guild.ban(user, reason=reason)
@@ -575,9 +425,9 @@ class Moderation(commands.Cog):
                 return await ctx.message.reply(
                     f"Unable to ban {user.mention}. Make sure i have `Ban members` permission enabled."
                 )
-        userData = await self.dbHandler.find_user(str(user.id), ctx.message.guild.id)
+        userData = await self.ModUtils.find_user(str(user.id), ctx.message.guild.id)
         userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
-        await self.dbHandler.update_user_warn(str(user.id), userData)
+        await self.ModUtils.update_user_warn(str(user.id), userData)
         return await ctx.message.reply(embed=channelEmbed)
 
     @commands.command(name="softban" , description="Softbans a user which bans them and quickly unbans them to purge thier messages")
@@ -593,16 +443,16 @@ class Moderation(commands.Cog):
         try:
             await ctx.guild.fetch_ban(user)
             channelEmbed = discord.Embed(
-                description=f"{user.display_name}#{user.discriminator} is already banned from the server!",
+                description=f"{user.name}#{user.discriminator} is already banned from the server!",
                 color=16724787,
                 timestamp=ctx.message.created_at,
             )
             channelEmbed.set_footer(
-                text=ctx.message.author.display_name,
+                text=ctx.message.author.name,
                 icon_url=ctx.message.author.avatar_url,
             )
             channelEmbed.set_author(
-                name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+                name=self.bot.user.name, icon_url=self.bot.user.avatar_url
             )
             return await ctx.send(embed=channelEmbed)
         except discord.NotFound:
@@ -624,11 +474,11 @@ class Moderation(commands.Cog):
             timestamp=ctx.message.created_at,
         )
         channelEmbed.set_footer(
-            text=ctx.message.author.display_name,
+            text=ctx.message.author.name,
             icon_url=ctx.message.author.avatar_url,
         )
         channelEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         dmEmbed = discord.Embed(
             title="Erin Moderation",
@@ -645,10 +495,10 @@ class Moderation(commands.Cog):
                           value=f"<@{entryData['mod']}>", inline=True)
 
         dmEmbed.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         dmEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         if isinstance(user, discord.User):
             await ctx.message.guild.ban(user, reason=reason, delete_message_days=7)
@@ -685,10 +535,10 @@ class Moderation(commands.Cog):
                 return await ctx.message.reply(
                     f"Unable to soft ban {user.mention}. Make sure i have `Ban Members` permission enabled."
                 )
-        userData = await self.dbHandler.find_user(str(user.id), ctx.message.guild.id)
+        userData = await self.ModUtils.find_user(str(user.id), ctx.message.guild.id)
         userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
         # uodating user entries
-        await self.dbHandler.update_user_warn(str(user.id), userData)
+        await self.ModUtils.update_user_warn(str(user.id), userData)
         return await ctx.message.reply(embed=channelEmbed)
 
     @commands.command(name="unban", description="Unbans a user")
@@ -720,11 +570,11 @@ class Moderation(commands.Cog):
                 timestamp=ctx.message.created_at,
             )
             channelEmbed.set_footer(
-                text=ctx.message.author.display_name,
+                text=ctx.message.author.name,
                 icon_url=ctx.message.author.avatar_url,
             )
             channelEmbed.set_author(
-                name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+                name=self.bot.user.name, icon_url=self.bot.user.avatar_url
             )
             dmEmbed = discord.Embed(
                 title="Erin Moderation",
@@ -742,11 +592,11 @@ class Moderation(commands.Cog):
             )
 
             dmEmbed.set_footer(
-                text=ctx.message.author.display_name,
+                text=ctx.message.author.name,
                 icon_url=ctx.message.author.avatar_url,
             )
             dmEmbed.set_author(
-                name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+                name=self.bot.user.name, icon_url=self.bot.user.avatar_url
             )
             try:
                 await ctx.message.guild.unban(user, reason=reason)
@@ -759,26 +609,26 @@ class Moderation(commands.Cog):
             except:
                 pass
 
-            userData = await self.dbHandler.find_user(
+            userData = await self.ModUtils.find_user(
                 str(user.id), ctx.message.guild.id
             )
             userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
             # uodating user entries
-            await self.dbHandler.update_user_warn(str(user.id), userData)
+            await self.ModUtils.update_user_warn(str(user.id), userData)
             return await ctx.message.reply(embed=channelEmbed)
 
         except discord.NotFound:
             channelEmbed = discord.Embed(
-                description=f"{user.display_name}#{user.discriminator} is not banned from the server!",
+                description=f"{user.name}#{user.discriminator} is not banned from the server!",
                 color=16724787,
                 timestamp=ctx.message.created_at,
             )
             channelEmbed.set_footer(
-                text=ctx.message.author.display_name,
+                text=ctx.message.author.name,
                 icon_url=ctx.message.author.avatar_url,
             )
             channelEmbed.set_author(
-                name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+                name=self.bot.user.name, icon_url=self.bot.user.avatar_url
             )
             return await ctx.send(embed=channelEmbed)
 
@@ -786,7 +636,7 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
     async def rmpunish(self, ctx, user: discord.User, warn: int = None):
-        rmUser = await self.dbHandler.find_user(str(user.id), ctx.message.guild.id)
+        rmUser = await self.ModUtils.find_user(str(user.id), ctx.message.guild.id)
         if not warn:
             return await ctx.send(
                 f"Please mention the warn id of the reason that you want to delete from {user.mention}'s logs."
@@ -794,7 +644,7 @@ class Moderation(commands.Cog):
         if warn > len(rmUser["gid"][f"{ctx.guild.id}"]):
             return await ctx.send(f"Invalid warn id for {user.mention}")
         removedWarn = rmUser["gid"][f"{ctx.guild.id}"].pop(warn - 1)
-        await self.dbHandler.update_user_warn(str(user.id), rmUser)
+        await self.ModUtils.update_user_warn(str(user.id), rmUser)
 
         embed = discord.Embed(
             title="Erin Moderation",
@@ -812,10 +662,10 @@ class Moderation(commands.Cog):
                         value=f"<@{removedWarn['mod']}>", inline=True)
 
         embed.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         embed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         try:
             await user.send(embed=embed)
@@ -825,9 +675,9 @@ class Moderation(commands.Cog):
 
     @commands.command(name="mute", description="Mutes a user")
     @commands.has_guild_permissions(mute_members=True)
-    async def mute(self, ctx, member: discord.Member, mute_period: str, *, reason: str = "No reason given. "):
+    async def mute(self, ctx, member: discord.Member, mute_period: str=None, *, reason: str = "No reason given. "):
         try:
-            muted_role = await self.GuildConfigHandler.get_muted_role(ctx.guild)
+            muted_role = await self.GuildConfigManager.get_muted_role(ctx.guild)
         except KeyError:
             return await ctx.message.reply(
                 "No muted role has been setup for the server. Make a muted role before running the mute command."
@@ -836,8 +686,13 @@ class Moderation(commands.Cog):
             return await ctx.message.reply(
                 "Reason parameter exceeded 150 characters. Please write a shorter reason to continue."
             )
+
+        try:
+            mutedExpireTimeRaw = await self.TimeConverter.convert(ctx,mute_period)
+        except:
+            mutedExpireTimeRaw = await self.GuildConfigManager.get_default_mutetime(ctx.guild)
+
         mutedAt = time()
-        mutedExpireTimeRaw = await self.TimeConverter.convert(ctx, mute_period)
         mutedExpireTime = mutedExpireTimeRaw + mutedAt
         mutedRole = ctx.message.guild.get_role(muted_role)
         if mutedRole in member.roles:
@@ -864,7 +719,7 @@ class Moderation(commands.Cog):
         try:
             await member.add_roles(
                 mutedRole,
-                reason=f"{self.bot.user.display_name} mute function triggered.",
+                reason=f"{self.bot.user.name} mute function triggered.",
             )
         except discord.errors.Forbidden:
             return await ctx.message.reply(
@@ -877,19 +732,19 @@ class Moderation(commands.Cog):
             "time": ctx.message.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"),
             "mod": f"{ctx.message.author.id}",
         }
-        userData = await self.dbHandler.find_user(str(member.id), ctx.message.guild.id)
+        userData = await self.ModUtils.find_user(str(member.id), ctx.message.guild.id)
         userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
-        await self.dbHandler.update_user_warn(str(member.id), userData)
+        await self.ModUtils.update_user_warn(str(member.id), userData)
         channel = discord.Embed(
-            description=f"Punishment(s) for {member.display_name}#{member.discriminator} submitted successfully.",
+            description=f"Punishment(s) for {member.name}#{member.discriminator} submitted successfully.",
             color=11661816,
             timestamp=ctx.message.created_at,
         )
         channel.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         channel.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
 
         dmEmbed = discord.Embed(
@@ -915,17 +770,17 @@ class Moderation(commands.Cog):
         )
 
         dmEmbed.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         dmEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         await ctx.message.reply(embed=channel)
         try:
             await member.send(embed=dmEmbed)
         except:
             pass
-        await self.muteHandler.register_mute(
+        await self.ModUtils.register_mute(
             str(member.id), mutedExpireTime, mutedAt, ctx.message.guild.id, reason
         )
 
@@ -938,20 +793,20 @@ class Moderation(commands.Cog):
             )
 
         try:
-            mutedRoleID = await self.GuildConfigHandler.get_muted_role(ctx.guild)
+            mutedRoleID = await self.GuildConfigManager.get_muted_role(ctx.guild)
         except:
             return await ctx.message.reply(
                 f"Unable to unmute {member.mention} as the guild muted role has not been setup in my config >:(("
             )
         mutedRole = ctx.message.guild.get_role(mutedRoleID)
 
-        mutes = await self.muteHandler.fetch_user_mutes(member.id, ctx.message.guild.id)
+        mutes = await self.ModUtils.fetch_user_mutes(member.id, ctx.message.guild.id)
         if len(mutes) == 0:
             try:
                 if mutedRole in member.roles:
                     await member.remove_roles(
                         mutedRole,
-                        reason=f"{self.bot.user.display_name} was manually unmuted",
+                        reason=f"{self.bot.user.name} was manually unmuted",
                     )
                     entryData = {
                         "type": "mute",
@@ -959,9 +814,9 @@ class Moderation(commands.Cog):
                         "time": ctx.message.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"),
                         "mod": f"{self.bot.user.id}",
                     }
-                    userData = await self.dbHandler.find_user(str(member.id), ctx.message.guild.id)
+                    userData = await self.ModUtils.find_user(str(member.id), ctx.message.guild.id)
                     userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
-                    await self.dbHandler.update_user_warn(str(member.id), userData)
+                    await self.ModUtils.update_user_warn(str(member.id), userData)
                     return await ctx.message.reply(
                         f"*uhhhhhhh awkward moment* {member.mention} is muted, but I have no record of it. Mute role has been removed automatically, and the mute has been logged."
                     )
@@ -975,7 +830,7 @@ class Moderation(commands.Cog):
                 )
 
         for mute in mutes:
-            await self.muteHandler.delete_mute_entry(mute)
+            await self.ModUtils.delete_mute_entry(mute)
 
         if not mutedRole:
             return await ctx.message.reply(
@@ -984,7 +839,7 @@ class Moderation(commands.Cog):
         try:
             await member.remove_roles(
                 mutedRole,
-                reason=f"{self.bot.user.display_name} unmute function triggered",
+                reason=f"{self.bot.user.name} unmute function triggered",
             )
         except discord.errors.Forbidden:
             return ctx.message.reply(
@@ -996,19 +851,19 @@ class Moderation(commands.Cog):
             "time": ctx.message.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"),
             "mod": f"{ctx.message.author.id}",
         }
-        userData = await self.dbHandler.find_user(str(member.id), ctx.message.guild.id)
+        userData = await self.ModUtils.find_user(str(member.id), ctx.message.guild.id)
         userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
-        await self.dbHandler.update_user_warn(str(member.id), userData)
+        await self.ModUtils.update_user_warn(str(member.id), userData)
         channel = discord.Embed(
-            description=f"{member.display_name}#{member.discriminator} unmuted successfully.",
+            description=f"{member.name}#{member.discriminator} unmuted successfully.",
             color=11661816,
             timestamp=ctx.message.created_at,
         )
         channel.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         channel.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
 
         dmEmbed = discord.Embed(
@@ -1028,10 +883,10 @@ class Moderation(commands.Cog):
                           value=f"<@{entryData['mod']}>", inline=True)
 
         dmEmbed.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         dmEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         await ctx.message.reply(embed=channel)
         try:
@@ -1082,11 +937,11 @@ class Moderation(commands.Cog):
             timestamp=ctx.message.created_at,
         )
         channelEmbed.set_footer(
-            text=ctx.message.author.display_name,
+            text=ctx.message.author.name,
             icon_url=ctx.message.author.avatar_url,
         )
         channelEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
         dmEmbed = discord.Embed(
             title="Erin Moderation",
@@ -1104,10 +959,10 @@ class Moderation(commands.Cog):
                           value=f"<@{entryData['mod']}>", inline=True)
 
         dmEmbed.set_footer(
-            text=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url
+            text=ctx.message.author.name, icon_url=ctx.message.author.avatar_url
         )
         dmEmbed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+            name=self.bot.user.name, icon_url=self.bot.user.avatar_url
         )
 
         try:
@@ -1121,9 +976,9 @@ class Moderation(commands.Cog):
             return await ctx.message.reply(
                 f"Unable to kick {user.mention}. Make sure i have `Kick members` permission enabled."
             )
-        userData = await self.dbHandler.find_user(str(user.id), ctx.message.guild.id)
+        userData = await self.ModUtils.find_user(str(user.id), ctx.message.guild.id)
         userData["gid"][f"{ctx.message.author.guild.id}"].append(entryData)
-        await self.dbHandler.update_user_warn(str(user.id), userData)
+        await self.ModUtils.update_user_warn(str(user.id), userData)
         return await ctx.message.reply(embed=channelEmbed)
 
     @commands.command(name="isbanned", description="Shows if a user is banned or not")
@@ -1162,11 +1017,11 @@ class Moderation(commands.Cog):
             name="Banned:", value=f"{member.mention} - {member.id}", inline=False)
         await ctx.send(embed=embed)
 
-    @commands.command(pass_context=True, description="Shows info about a user")
+    @commands.command(pass_context=True, description="Shows useful information about a user")
     @commands.guild_only()
     async def whois(self, ctx, *, member: discord.Member = None):
-        if not member:  # if member is no mentioned
-            member = ctx.message.author  # set member as the author
+        if not member:
+            member = ctx.message.author
         roles = [role for role in member.roles]
         roles = roles[1:]
         if len(roles) != 0:
@@ -1198,32 +1053,22 @@ class Moderation(commands.Cog):
         permissions_formatted = ",  ".join(
             [permissions for permissions in permissions_formatted])
         is_user_bot = "Yes" if member.bot == True else "No"
-        user_admin = "Yes" if "Administrator" in permissions_formatted else "No"
-        user_created_at = member.created_at.strftime(
-            "%a, %#d %B %Y, %I:%M %p UTC")
-        user_joined_guild_at = member.joined_at.strftime(
-            "%a, %#d %B %Y, %I:%M %p UTC")
-
-        user_animated_avatar = member.is_avatar_animated()
-        user_created_days = (datetime.now()-member.created_at).days
-        user_joined_days = (datetime.now()-member.joined_at).days
-        user_boosting_since = None
-        user_boosting_since_days = None
+        user_created = int(member.created_at.timestamp())
+        user_joined = int(member.joined_at.timestamp())
+        user_boosting = None
+        user_boosting_days = None
         if member.premium_since != None:
-            user_boosting_since = member.premium_since.strftime(
-                "%a, %#d %B %Y, %I:%M %p UTC")
-            user_boosting_since_days = (
-                datetime.now()-member.premium_since).days
-            user_boosting_since_days = str(user_boosting_since_days)+"days"
+            user_boosting = f"<t:{int(member.premium_since.timestamp())}:F>"
+            user_boosting_days = f"<t:{int(member.premium_since.timestamp())}:R>"
 
         user_highest_role = member.top_role.mention
-        embed.add_field(name="User identity:", value=f"User mention: {member.mention}\nName and Tag: **{member.name}#{member.discriminator}**\nUser id: **{member.id}**\nServer Nickname: **{member.display_name}**\n\nBot user? **{is_user_bot}**\nServer administrator? **{user_admin}**\nAnimated avatar? **{user_animated_avatar}**\n\nBoosting since: **{user_boosting_since}**\nBoosting days: **{user_boosting_since_days}**", inline=False)
+        embed.add_field(name="User identity:", value=f"User id: **{member.id}**\nBot user? **{is_user_bot}**\n\nBoosting since: **{user_boosting}**\nBoosting days: **{user_boosting_days}**", inline=False)
         embed.add_field(
-            name="Dates:", value=f"Account created at: **{user_created_at}**\nUser account was created: **{user_created_days} days ago**\n\nJoined server at: **{user_joined_guild_at}**\nUser joined the server: **{user_joined_days} days ago**", inline=False)
+                name="Dates:", value=f"Account created at: **<t:{user_created}:F>**\nUser account was created: **<t:{user_created}:R> **\n\nJoined server at: **<t:{user_joined}:F>**\nUser joined the server: **<t:{user_joined}:R> **", inline=False)
         embed.add_field(name="User Permissions: ",
                         value=f"\n{permissions_formatted}", inline=False)
 
-        if not (len(member.roles)-1 >= 30):
+        if not (len(member.roles)-1 >= 25):
             embed.add_field(
                 name=f"Roles[{len(member.roles)-1}]:", value=user_roles, inline=False)
         else:
@@ -1237,7 +1082,7 @@ class Moderation(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command(pass_context=True, description="Shows a users avatar")
-    async def avatar(self, ctx, *, member: discord.Member = None):
+    async def avatar(self, ctx, *, member: discord.User = None):
         if not member:
             member = ctx.author
         embed = discord.Embed(colour=member.color, timestamp=ctx.message.created_at,
@@ -1301,19 +1146,19 @@ class Moderation(commands.Cog):
         role_created_days = (datetime.now()-role.created_at).days
         embed = discord.Embed(
             title="Role info", timestamp=ctx.message.created_at, color=role.color)
-        embed.set_author(name=ctx.message.author.display_name,
+        embed.set_author(name=ctx.message.author.name,
                          icon_url=ctx.message.guild.icon_url)
-        embed.set_footer(text=self.bot.user.display_name,
+        embed.set_footer(text=self.bot.user.name,
                          icon_url=self.bot.user.avatar_url)
         embed.add_field(inline=False, name="General Information:",
                         value=f'Role name: **{role.mention}**\nRole ID: `{role.id}`\nRole Position: **{role.position}**\nRole Color Hex: `{role.color}`\n\nIs role mentioned separately from online members? **{role.hoist}**\nIs role mentionable? **{role.mentionable}**\nIs role managed by integration? **{role.managed}**')
         embed.add_field(inline=False, name="Dates:",
-                        value=f'Role was created at **{role.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC")}**\nRole was created **{role_created_days} days ago**')
+                        value=f'Role was created at **{role.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC")}**\nRole was created **{role_created_days} **')
         embed.add_field(inline=False, name="Permission info:",
                         value=f'Role Permission Integer: `{role.permissions.value}`\n\nPermissions: **{permissions}**')
         await ctx.send(embed=embed)
 
-    @commands.command(name='prune', description="Deletes messages")
+    @commands.command(name='prune', description="Deletes erins messages")
     @isoncooldown
     async def prune(self, ctx, amount: int = 50):
         try:
@@ -1339,7 +1184,143 @@ class Moderation(commands.Cog):
             await ubc.create_cooldown(ctx, 2,180)
         except:
             pass
-# TODO if bot if offline and they're muted with lets say something like another bot and then they're meant to be unmuted with erin then we don't have the log in mutes collection so we need to make sure that if they have the role then we'll just try to remove it and add a warn owo
+
+
+    @commands.group(invoke_without_command=True)
+    @commands.has_guild_permissions(manage_messages=True)
+    async def purge(self, ctx,amount:int=10):
+        if amount >1000:
+            return await ctx.send("Purge limit exceeded. Please provide an integer which is less than or equal to 1000.")
+        deleted = await ctx.channel.purge(limit=amount+1)
+        return await ctx.send(f"Deleted {len(deleted)-1} message(s)")
+
+    @purge.command()
+    @commands.has_guild_permissions(manage_messages=True)
+    async def links(self, ctx, amount: int = 10):
+        if amount >1000:
+            return await ctx.send("Purge limit exceeded. Please provide an integer which is less than or equal to 1000.")
+        global counter
+        counter = 0
+
+        def check(m):
+            global counter
+            if counter >= amount:
+                return False
+            chunks = " ".join(m.content.lower().split("\n"))
+            chunks = chunks.split(" ")
+            for chunk in chunks:
+                if (True if re.search(r"(?i)\b((?:https?:(?:/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)/)(?:[^\s()<>{}\[\]]+|\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\))+(?:\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’])|(?:(?<!@)[a-z0-9]+(?:[.\-][a-z0-9]+)*[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\b/?(?!@)))", chunk) else False): # stupid url regular expression ._.
+                    counter += 1
+                    return True
+        deleted = await ctx.channel.purge(limit=100, check=check)
+        return await ctx.send(f"Deleted {len(deleted)}/{amount} message(s) which had links")
+
+    @purge.command()
+    @commands.has_guild_permissions(manage_messages=True)
+    async def startswith(self, ctx, key, amount: int = 10):
+        if amount >1000:
+            return await ctx.send("Purge limit exceeded. Please provide an integer which is less than or equal to 1000.")
+        global counter
+        counter = 0
+
+        def check(m):
+            global counter
+            if counter >= amount:
+                return False
+
+            if m.content.startswith(key):
+                counter += 1
+                return True
+            else:
+                return False
+        deleted = await ctx.channel.purge(limit=100, check=check)
+        return await ctx.send(f"Deleted {len(deleted)}/{amount} message(s) which started with the given keyword")
+
+    @purge.command()
+    @commands.has_guild_permissions(manage_messages=True)
+    async def endswith(self, ctx, key, amount: int = 10):
+        if amount >1000:
+            return await ctx.send("Purge limit exceeded. Please provide an integer which is less than or equal to 1000.")
+        global counter
+        counter = 0
+
+        def check(m):
+            global counter
+            if counter >= amount:
+                return False
+
+            if m.content.endswith(key):
+                counter += 1
+                return True
+            else:
+                return False
+        deleted = await ctx.channel.purge(limit=100, check=check)
+        return await ctx.send(f"Deleted {len(deleted)}/{amount} message(s) which ended with the given keyword")
+
+    @purge.command()
+    @commands.has_guild_permissions(manage_messages=True)
+    async def contains(self, ctx, key, amount: int = 10):
+        if amount >1000:
+            return await ctx.send("Purge limit exceeded. Please provide an integer which is less than or equal to 1000.")
+        global counter
+        counter = 0
+
+        def check(m):
+            global counter
+            if counter >= amount:
+                return False
+
+            if key in m.content:
+                counter += 1
+                return True
+            else:
+                return False
+        deleted = await ctx.channel.purge(limit=100, check=check)
+        return await ctx.send(f"Deleted {len(deleted)}/{amount} message(s) which contained the given keyword")
+
+    @purge.command()
+    @commands.has_guild_permissions(manage_messages=True)
+    async def user(self, ctx, user: discord.Member, amount: int = 10):
+        if amount >1000:
+            return await ctx.send("Purge limit exceeded. Please provide an integer which is less than or equal to 1000.")
+        global counter
+        counter = 0
+
+        def check(m):
+            global counter
+            if counter >= amount:
+                return False
+
+            if m.author.id == user.id:
+                counter += 1
+                return True
+            else:
+                return False
+        deleted = await ctx.channel.purge(limit=100, check=check)
+        return await ctx.send(f"Deleted {len(deleted)}/{amount} message(s) which were sent by the mentioned user")
+
+    @purge.command()
+    @commands.has_guild_permissions(manage_messages=True)
+    async def invites(self, ctx, amount: int = 10):
+        if amount >1000:
+            return await ctx.send("Purge limit exceeded. Please provide an integer which is less than or equal to 1000.")
+        global counter
+        counter = 0
+
+        def check(m):
+            global counter
+            if counter >= amount:
+                return False
+
+            if "discord.gg/" in m.content.lower():
+                counter += 1
+                return True
+            else:
+                return False
+        deleted = await ctx.channel.purge(limit=100, check=check)
+        return await ctx.send(f"Deleted {len(deleted)}/{amount} message(s) which contained invites")
+
+# TODO: add proper cooldowns to all the commands listed here
 # TODO ability to add a mod log channel and write an async handler to webhook the data to the channel.
 # TODO: 2) TEMPBAN 5) invite lookup
 # TODO add logging features such as member log, vc log, ban log, unban log, kick log, and so on and so forth

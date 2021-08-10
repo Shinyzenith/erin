@@ -8,18 +8,11 @@ import logging
 import humanize
 import datetime
 import coloredlogs
-import motor.motor_asyncio
-
-from typing import Union
-from pathlib import Path
 from discord.utils import get
-from discord.ext import commands, tasks
-from aiohttp import ClientResponseError
-from discord.ext import commands, tasks
-from discord.enums import ActivityType, Status
-from discord.ext.commands.view import StringView
-from collections import OrderedDict, deque, Counter
-
+from discord.ext import commands
+from collections import  Counter
+from utils.GuildConfigManager import GuildConfigManager
+from utils.TimeConverter import TimeConverter
 
 async def webhook_send(
     url,
@@ -45,7 +38,6 @@ allowed_ords = (
     + list(range(90, 97))
 )
 
-
 class plural:
     def __init__(self, value):
         self.value = value
@@ -56,112 +48,6 @@ class plural:
         else:
             return f"{self.value} {format_spec}s"
 
-
-class GuildConfigManager:
-    def __init__(self):
-        self.client = motor.motor_asyncio.AsyncIOMotorClient(
-            os.getenv("CONNECTIONURI"))
-        self.db = self.client.erin
-        self.col = self.db["config"]
-
-    async def register_guild(self, g, recheck=True):
-        if recheck:
-            guild = await self.col.find_one({"gid": g.id})
-            if not guild:
-                guild = {"gid": g.id, "prefixes": ["-"]}
-                await self.col.insert_one(guild)
-        else:
-            guild = {"gid": g.id, "prefixes": ["-"]}
-            await self.col.insert_one(guild)
-        return guild
-
-    async def unregister_guild(self, g, recheck=True):
-        if recheck:
-            guild = await self.col.find_one({"gid": g.id})
-            if guild:
-                await self.col.delete_one({"gid": g.id})
-        else:
-            await self.col.delete_one({"gid": g.id})
-
-    async def update_guild(self, g, document):
-        guild = await self.register_guild(g)
-        await self.col.replace_one({"gid": g.id}, document)
-        return guild
-
-    async def get_prefix(self, g):
-        prefixes = []
-        guild = await self.register_guild(g)
-        prefixes = guild["prefixes"]
-        return prefixes
-
-    async def add_prefix(self, g, prefix):
-        guild = await self.register_guild(g)
-        if prefix in guild["prefixes"]:
-            return False
-        else:
-            guild["prefixes"].append(prefix)
-            await self.update_guild(g, guild)
-            return True
-
-    async def remove_prefix(self, g, prefix):
-        guild = await self.register_guild(g)
-        if not prefix in guild["prefixes"]:
-            return False
-        else:
-            guild["prefixes"].remove(prefix)
-            await self.update_guild(g, guild)
-            return True
-
-    async def add_ban_appeal(self, g, ban_appeal: str):
-        guild = await self.register_guild(g)
-        guild["ban_appeal"] = ban_appeal
-        await self.update_guild(g, guild)
-        return True
-
-    async def remove_ban_appeal(self, g):
-        guild = await self.register_guild(g)
-        guild.pop("ban_appeal")
-        await self.update_guild(g, guild)
-        return True
-
-    async def get_ban_appeal(self, g):
-        guild = await self.register_guild(g)
-        link = guild["ban_appeal"]
-        return link
-
-    async def add_muted_role(self, g, muted_role: int):
-        guild = await self.register_guild(g)
-        guild["muted_role"] = muted_role
-        await self.update_guild(g, guild)
-        return True
-
-    async def remove_muted_role(self, g):
-        guild = await self.register_guild(g)
-        guild.pop("muted_role")
-        await self.update_guild(g, guild)
-
-    async def get_muted_role(self, g):
-        guild = await self.register_guild(g)
-        muted_role = guild["muted_role"]
-        return muted_role
-
-    async def update_currency_channel(self, g, channelID: int):
-        guild = await self.register_guild(g)
-        guild["channel"] = channelID
-        await self.update_guild(g, guild)
-        return True
-
-    async def remove_currency_channel(self, g):
-        guild = await self.register_guild(g)
-        guild.pop("channel")
-        await self.update_guild(g, guild)
-
-    async def get_currency_channel(self, g):
-        guild = await self.register_guild(g)
-        currencyChannnel = guild["channel"]
-        return currencyChannnel
-
-
 class Config(commands.Cog):
     """
     Configuration commands for the server admins!
@@ -169,6 +55,7 @@ class Config(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.TimeConverter = TimeConverter()
         self.gcm = GuildConfigManager()
 
     @commands.Cog.listener()
@@ -233,29 +120,6 @@ class Config(commands.Cog):
             message=channelEmbed,
             username="Erin leave logs"
         )
-    # print guild prefixes on pinging the bot
-
-    # Removed cause you now can ping the bot instead of using a prefix to run
-    # commands
-    #
-    # @commands.Cog.listener()
-    # async def on_message(self, message):
-    #     if message.author.bot:
-    #         return
-    #     if not message.guild:
-    #         return
-    #     if len(message.mentions) == 1:
-    #         if message.mentions[0] == self.bot.user:
-    #             message_content = message.content.split()
-    #             try:
-    #                 if message_content[1].lower() == "prefix":
-    #                     prefixes = await self.gcm.get_prefix(message.guild)
-    #                     reply_message = "".join(
-    #                         [f"\n`{prefix}`" for prefix in prefixes])
-    #                     await message.reply(f"My prefixes in this server are:{reply_message}")
-    #             except:
-    #                 pass
-
     # prefix manager sub command
     @commands.group(name="prefix", aliases=["setprefix"], case_insensitive=True, description="Sets my prefix!")
     @commands.cooldown(10, 120, commands.BucketType.guild)
@@ -263,28 +127,8 @@ class Config(commands.Cog):
     async def prefix(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.message.reply(
-                "Please mention a proper argument such as `add` or `remove`"
+                "Please mention a proper argument such as `add`, `remove`, or `list`"
             )
-
-    @commands.group(name="prefixes", aliases=["getprefix", "getprefixes"], case_insensitive=True, description="Gets my prefix!")
-    @commands.cooldown(10, 120, commands.BucketType.guild)
-    async def prefixes(self, ctx):
-        prefixes = await self.gcm.get_prefix(ctx.guild)
-        embed = discord.Embed(
-            color=ctx.message.author.color, timestamp=ctx.message.created_at
-        )
-        embed.set_footer(
-            text=ctx.message.author.display_name,
-            icon_url=ctx.message.author.avatar_url
-        )
-        embed.set_author(
-            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
-        )
-        embed.title = "Current prefix list"
-        prefixNames = "".join([f"`{prefix}`\n" for prefix in prefixes])
-        embed.description = prefixNames
-        embed.set_thumbnail(url=ctx.message.author.avatar_url)
-        return await ctx.message.reply(embed=embed)
 
     @prefix.command()
     @commands.has_permissions(manage_guild=True)
@@ -337,7 +181,7 @@ class Config(commands.Cog):
 
     @prefix.command()
     @commands.has_permissions(manage_guild=True)
-    async def remove(self, ctx, *, prefix: str = None):
+    async def remove(self, ctx, *, prefix: str = ""):
         prefixes = await self.gcm.get_prefix(ctx.guild)
 
         embed = discord.Embed(
@@ -356,7 +200,7 @@ class Config(commands.Cog):
             return await ctx.message.reply(
                 "Guild must have atleast 1 prefix, add another one before removing any."
             )
-        if len(prefix) > 2:
+        if len(prefix) == 0:
             return await ctx.message.reply("Please provide a valid prefix to remove.")
         if not (prefix in prefixes):
             return await ctx.message.reply(
@@ -369,6 +213,47 @@ class Config(commands.Cog):
         else:
             embed.title = "Prefix not removed"
             embed.description = f"`{prefix}` was already in the guild prefix list"
+        return await ctx.message.reply(embed=embed)
+
+    @prefix.command()
+    @commands.cooldown(10, 120, commands.BucketType.guild)
+    async def list(self, ctx):
+        prefixes = await self.gcm.get_prefix(ctx.guild)
+        embed = discord.Embed(
+            color=ctx.message.author.color, timestamp=ctx.message.created_at
+        )
+        embed.set_footer(
+            text=ctx.message.author.display_name,
+            icon_url=ctx.message.author.avatar_url
+        )
+        embed.set_author(
+            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+        )
+        embed.title = "Current prefix list"
+        prefixNames = "".join([f"`{prefix}`\n" for prefix in prefixes])
+        embed.description = prefixNames
+        embed.set_thumbnail(url=ctx.message.author.avatar_url)
+        return await ctx.message.reply(embed=embed)
+
+
+    @commands.group(name="prefixes", aliases=["getprefix", "getprefixes"], case_insensitive=True, description="Gets my prefix!")
+    @commands.cooldown(10, 120, commands.BucketType.guild)
+    async def prefixes(self, ctx):
+        prefixes = await self.gcm.get_prefix(ctx.guild)
+        embed = discord.Embed(
+            color=ctx.message.author.color, timestamp=ctx.message.created_at
+        )
+        embed.set_footer(
+            text=ctx.message.author.display_name,
+            icon_url=ctx.message.author.avatar_url
+        )
+        embed.set_author(
+            name=self.bot.user.display_name, icon_url=self.bot.user.avatar_url
+        )
+        embed.title = "Current prefix list"
+        prefixNames = "".join([f"`{prefix}`\n" for prefix in prefixes])
+        embed.description = prefixNames
+        embed.set_thumbnail(url=ctx.message.author.avatar_url)
         return await ctx.message.reply(embed=embed)
 
     @commands.group(name="muterole", case_insensitive=True, description="Sets up a `Muted` role!")
@@ -427,6 +312,48 @@ class Config(commands.Cog):
         embed = discord.Embed(
             title=f"{ctx.guild.name} - muted role is:",
             description=f"{muted_role.mention}",
+            timestamp=ctx.message.created_at,
+            color=ctx.message.author.color,
+        )
+        return await ctx.message.reply(embed=embed)
+
+    
+    @commands.group(name="muteduration", case_insensitive=True, description="Sets up a `Muted` role!")
+    @commands.cooldown(10, 120, commands.BucketType.guild)
+    @commands.has_permissions(manage_guild=True)
+    async def muteduration(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.message.reply(
+                "please mention a proper argument such as `set` or `show`"
+            )
+
+    @muteduration.command(name="set")
+    @commands.has_permissions(manage_guild=True)
+    async def muteduration_set(self, ctx,mute_period:str=None):
+        _mute_period = await self.TimeConverter.convert(ctx, mute_period)
+        _mute_period_time = humanize.precisedelta(_mute_period)
+        await self.gcm.set_default_mutetime(ctx.guild,_mute_period)
+        embed = discord.Embed(
+            title=f"{ctx.guild.name} - Default mute duration has been set to:",
+            description=f"{_mute_period_time}",
+            timestamp=ctx.message.created_at,
+            color=ctx.message.author.color,
+        )
+        return await ctx.send(embed=embed)
+
+
+    @muteduration.command(name="show")
+    async def muteduration_show(self, ctx):
+        try:
+            muteduration = await self.gcm.get_default_mutetime(ctx.guild)
+        except KeyError:
+            await self.gcm.set_default_mutetime(ctx.guild)
+            return await ctx.message.reply(
+                f"A default mute duration has not been setup for {ctx.guild.name}. Setting default mute duration to 1 hour."
+            )
+        embed = discord.Embed(
+            title=f"{ctx.guild.name} - Default mute duration is:",
+            description=f"{humanize.precisedelta(muteduration)}",
             timestamp=ctx.message.created_at,
             color=ctx.message.author.color,
         )
@@ -630,7 +557,5 @@ class Config(commands.Cog):
         em.set_footer(text=f"{ctx.author}", icon_url=ctx.message.author.avatar_url)
         await ctx.send(embed=em)
         
-
-
 def setup(bot):
     bot.add_cog(Config(bot))
