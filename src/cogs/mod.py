@@ -211,8 +211,8 @@ class Moderation(commands.Cog):
             pass
         return await ctx.send(embed=channelEmbed)
 
-    @ commands.command(name="search", aliases=["warns"], description="Shows a users punishments")
-    @ commands.guild_only()
+    @commands.command(name="search", aliases=["warns"], description="Shows a users punishments")
+    @commands.guild_only()
     async def search(self, ctx, searchUser: discord.User):
         user = await self.ModUtils.find_user(str(searchUser.id), ctx.message.guild.id)
         threshold = 5
