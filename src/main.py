@@ -12,6 +12,7 @@ from pathlib import Path
 from pymongo import MongoClient
 from discord.ext import commands
 from discord.ext.commands.cog import Cog
+from utils.GuildConfigManager import GuildConfigManager
 
 # logger config
 log = logging.getLogger("ErinBot")
@@ -54,24 +55,11 @@ async def webhook_send(url, message, username="Erin uptime Logs", avatar="https:
 # prefix manager class
 class PrefixManager:
     def __init__(self):
-        self.client = MongoClient(os.getenv('CONNECTIONURI'))
-        self.db = self.client.erin
-        self.col = self.db["config"]
+        self.gcm = GuildConfigManager()
         self.prefixes = {}
 
-    def register_guild(self, g):
-        self.col.insert_one({"gid": g.id, "prefixes": ["-"]})
-
-    def get_prefix(self, client, message):
-        # if str(message.guild.id) in self.prefixes:
-        #     return self.prefixes[str(message.guild.id)]
-        prefixes = []
-        guild = self.col.find_one({"gid": message.guild.id})
-        if not guild:
-            self.register_guild(message.guild)
-            prefixes = ["-"]
-        else:
-            prefixes = guild["prefixes"]
+    async def get_prefix(self, client, message):
+        prefixes = await self.gcm.get_prefix(message.guild)
         # May or may not have copied code from:
         # https://stackoverflow.com/a/64434732/10291933
         prefixes = commands.when_mentioned_or(*prefixes)(bot, message)
