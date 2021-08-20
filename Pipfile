@@ -16,6 +16,7 @@ psutil = "*"
 DiscordUtils = "*"
 Pillow = "*"
 aiohttp = "*"
+lru-dict = "*"
 
 [dev-packages]
 

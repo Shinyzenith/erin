@@ -1,8 +1,13 @@
 import os
 import discord
 import motor.motor_asyncio
+from lru import LRU
+from utils.singleton import Singleton
 
-class GuildConfigManager:
+PREFIX_CACHE_SIZE = 1000
+
+
+class GuildConfigManager(metaclass=Singleton):
     """
     Guild config util class for erin
     """
@@ -12,6 +17,7 @@ class GuildConfigManager:
             os.getenv("CONNECTIONURI"))
         self.db = self.client.erin
         self.col = self.db["config"]
+        self.prefix_lru = LRU(PREFIX_CACHE_SIZE)
 
     async def register_guild(self, guild_object:discord.Guild, recheck=True):
         if recheck:
@@ -38,9 +44,12 @@ class GuildConfigManager:
         return guild
 
     async def get_prefix(self, guild_object:discord.Guild):
-        prefixes = []
-        guild = await self.register_guild(guild_object)
-        prefixes = guild["prefixes"]
+        if guild_object.id in self.prefix_lru:
+            prefixes = self.prefix_lru[guild_object.id]
+        else:
+            guild = await self.register_guild(guild_object)
+            prefixes = guild["prefixes"]
+            self.prefix_lru[guild_object.id] = prefixes
         return prefixes
 
     async def add_prefix(self, guild_object:discord.Guild, prefix):
@@ -50,6 +59,7 @@ class GuildConfigManager:
         else:
             guild["prefixes"].append(prefix)
             await self.update_guild(guild_object, guild)
+            del self.prefix_lru[guild_object.id]
             return True
 
     async def remove_prefix(self, guild_object:discord.Guild, prefix):
@@ -59,6 +69,7 @@ class GuildConfigManager:
         else:
             guild["prefixes"].remove(prefix)
             await self.update_guild(guild_object, guild)
+            del self.prefix_lru[guild_object.id]
             return True
 
     async def add_ban_appeal(self, guild_object:discord.Guild, ban_appeal: str):
