@@ -1,0 +1,10 @@
+discord 
+numpy 
+coloredlogs 
+pymongo 
+motor 
+discordUtils 
+python-dotenv
+humanize
+dateparser
+psutil
