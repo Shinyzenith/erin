@@ -1,6 +1,7 @@
 import os
 import discord
 import aiohttp
+from dotenv import load_dotenv
 import logging
 import datetime
 import coloredlogs
@@ -12,6 +13,13 @@ from pathlib import Path
 from pymongo import MongoClient
 from discord.ext import commands
 from discord.ext.commands.cog import Cog
+
+
+# dotenv config
+load_dotenv()
+load_dotenv(verbose=True)
+env_path = Path('./../') / '.env'
+load_dotenv(dotenv_path=env_path)
 
 # logger config
 log = logging.getLogger("ErinBot")
