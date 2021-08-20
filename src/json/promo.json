@@ -9,6 +9,16 @@
         "cooldown": 9999,
         "per_person": 1
     },
+    "august": {
+        "active": true,
+        "award": {
+            "item": "megumin",
+            "quantity": 5
+        },
+        "uses": 6,
+        "cooldown": 9999,
+        "per_person": 1
+    },
     "daily": {
         "active": true,
         "award": {
